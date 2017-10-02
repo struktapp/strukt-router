@@ -22,28 +22,47 @@ $env = new Environment($_SERVER, fopen('php://input', 'w+'), $_POST, $_COOKIE, $
 
 $servReq = (new ServerRequestFactory())->create($env);
 
-//Dependency Injection
-Strukt\Core\Registry::getInstance()
-	->set("Response.Ok", new Strukt\Event\Single(function(){
+$registry = Strukt\Core\Registry::getInstance();
 
-		return new \Kambo\Http\Message\Response;
+$registry->set("servReq", $servReq);
+
+//Dependency Injection
+foreach(["Ok"=>200,
+		"Redirected"=>302] as $msg=>$code)
+	$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Single(function() use($code){
+
+		return new \Kambo\Http\Message\Response($code);
 	}));
 
 foreach(["NotFound"=>404,
-		 "MethodNotFound"=>405,
-		 "Forbidden"=>403] as $msg=>$code)
-	Strukt\Core\Registry::getInstance()
-		->set(sprintf("Response.%s", $msg), new Strukt\Event\Single(function() use($code){
+	 	"MethodNotFound"=>405,
+	 	"Forbidden"=>403,
+		"ServerError"=>500] as $msg=>$code)
+	$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Single(function() use($code){
 
-			$res = new \Kambo\Http\Message\Response($code);
-			$res->getBody()->write($res->getReasonPhrase());
+		$res = new \Kambo\Http\Message\Response($code);
+		$res->getBody()->write(\Strukt\Fs::cat(sprintf("public/errors/%d.html", $code)));
 
-			return $res;
-		}));
+		return $res;
+	}));
 
 // $allowed = array("user_del");
 
 $r = new Strukt\Router\Router($servReq, $allowed);
+
+$r->before(function() use ($registry){
+
+	$path = $registry->get("servReq")->getUri()->getPath();
+
+	if($path == "/"){
+
+		$resp = $registry->get("Response.Redirected")->exec();
+
+		$resp = $resp->withStatus(200)->withHeader('Location', '/hello/friend');
+		
+		Strukt\Router\Router::emit($resp);
+	}
+});
 
 $r->get("/", function(){
 
@@ -70,12 +89,11 @@ $r->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res
 
 	$id = (int) $req->getAttribute('id');
     $res->getBody()->write("You asked for blog entry {$id}.");
-    return $res->getBody();
+
+    return $res;
 
 	// print_r($req->getUploadedFiles());
 });
-
-// $perm = array("user_del");
 
 // echo $r->dispatch("/hello/sam");
 // echo $r->dispatch("/");

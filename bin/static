@@ -1,0 +1,86 @@
+#!/usr/bin/env php
+<?php
+
+// require "bootstrap.php";
+
+$autoloadFiles = array(__DIR__ . '/../vendor/autoload.php',
+                       __DIR__ . '/../../../autoload.php');
+
+foreach($autoloadFiles as $autoloadFile)
+    if(file_exists($autoloadFile))
+        require_once $autoloadFile;
+
+Strukt\Fs::mkdir("public/static/css");
+Strukt\Fs::mkdir("public/static/js");
+Strukt\Fs::mkdir("public/errors");
+
+Strukt\Fs::touchWrite("public/static/js/script.js",'/*javascript goes here*/');
+Strukt\Fs::touchWrite("public/static/css/style.css",'/*css goes here*/');
+
+$error = '<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		.error{
+
+			position: absolute;top: 40%;
+			left: 50%;
+			margin-right: -50%;
+		    text-align:center;
+		    transform: translate(-50%, -50%)
+		}
+
+		.error h1{
+
+			font-size:100px;
+		}
+
+		.error h3{
+
+			font-size:30px;
+		}
+	</style>
+	<title>__ERR_CODE__ | Strukt</title>
+</head>
+<body>
+	<span class="error">
+	    <h1>Strukt</br>Error __ERR_CODE__</h1>
+	    <h3>__ERR_MSG__</h3>
+    </span>
+</body>
+</html>';
+
+foreach(array("403"=>"Forbidden",
+				"404"=>"Resource Not Found",
+				"405"=>"Method Not Allowed",
+				"500"=>"Server Error") as $code=>$msg)
+	Strukt\Fs::touchWrite(sprintf("public/errors/%d.html", $code), str_replace(
+
+		array(
+
+			"__ERR_CODE__", 
+			"__ERR_MSG__"
+		), 
+		array(
+
+			$code, 
+			sprintf("%s!", $msg)
+		), 
+		$error
+	));
+
+Strukt\Fs::touchWrite("public/static/index.html",'<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		.hello-world{
+
+			font-weight: bold;
+		}
+	</style>
+	<title>Strukt Framework</title>
+</head>
+<body>
+	<span class="hello-world">Hello World!!!</span>
+</body>
+</html>');

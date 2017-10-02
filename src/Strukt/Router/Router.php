@@ -7,6 +7,8 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Strukt\Core\Registry;
 
+use  Strukt\Event\Single;
+
 class Router{
 
 	private $routes;
@@ -32,6 +34,13 @@ class Router{
 			"method"=>$method,
 			"group"=>$group
 		);
+	}
+
+	public function before(\Closure $func){
+
+		$event = Single::newEvent($func);
+
+		$event->getEvent()->exec();
 	}
 
 	public function get($url, \Closure $callable, $group = null){
@@ -67,7 +76,7 @@ class Router{
 		return $result;
 	}
 
-	private function emit(ResponseInterface $response){
+	public static function emit(ResponseInterface $response){
 
 		$http_line = sprintf('HTTP/%s %s %s',
 	        $response->getProtocolVersion(),
