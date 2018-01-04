@@ -9,17 +9,30 @@ class Route{
 	private $matcher;
 	private $callable;
 	private $params;
+	private $event;
 
 	public function __construct($tpl_url, \Closure $callable){
 
 		$this->matcher = new Matcher($tpl_url);
 
-		$this->callable = $callable;
+		$this->event = Single::newEvent($callable);
 	}
 
 	public function isMatch($url){
 
 		return $this->matcher->isMatch($url);
+	}
+
+	public function getEvent(){
+
+		return $this->event->getEvent();
+	}
+
+	public function setParam($name, $param){
+
+		$this->params[$name] = $param;
+
+		return $this;
 	}
 
 	public function addParam($param){
@@ -45,12 +58,12 @@ class Route{
 			$params = $this->params;
 		}
 
-		$event = Single::newEvent($this->callable);
+		// print_r($params);
 
 		if(!empty($params))
-			$response = $event->getEvent()->applyArgs($params)->exec();
+			$response = $this->event->getEvent()->applyArgs($params)->exec();
 		else
-			$response = $event->exec();
+			$response = $this->event->exec();
 
 		return $response;
 	}

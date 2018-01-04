@@ -9,7 +9,7 @@ require "bootstrap.php";
 
 use Kambo\Http\Message\Environment\Environment;
 use Kambo\Http\Message\Factories\Environment\ServerRequestFactory;
-use Kambo\Http\Message\Stream;
+// use Kambo\Http\Message\Stream;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -74,9 +74,26 @@ $r->get("/hello/{to:alpha}", function($to){
 	return "Hello $to";
 });
 
-$r->post("/login", function(){
+$r->post("/login", function() use ($servReq){
 
-	return "khasdkhask";
+	// return "khasdkhask";
+
+	// $request = $registry->get("servReq");
+
+	// $parsedBody = $servReq->getParsedBody();
+
+	// $body = (string)$env->getBody();
+
+	// print_r($parsedBody);
+	// var_dump($parsedBody);
+
+	print_r($_REQUEST);
+
+	$body = $servReq->getParsedBody();
+
+	// echo 2;
+
+	var_dump($body);
 });
 
 $r->delete("/user/delete/{id:int}", function($id){

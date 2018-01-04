@@ -14,7 +14,7 @@ class Matcher{
 	*
 	* @var string 
 	*/
-	private $partern;
+	private $pattern;
 
 	/**
 	* Url parameters
@@ -26,11 +26,11 @@ class Matcher{
 	/**
      * Constructor
      *
-     * @param string $partern url pattern
+     * @param string $pattern url pattern
      */
-	public function __construct($partern){
+	public function __construct($pattern){
 
-		$this->partern = trim($partern);
+		$this->pattern = trim($pattern);
 	}
 
 	/**
@@ -43,17 +43,20 @@ class Matcher{
 	public function isMatch($url){
 
 		$url = trim($url);
-		if($url == $this->partern)
+		if($url == $this->pattern)
 			return true;
 
 		$parts = explode("/", trim($url, "/"));
-		$partern = explode("/", trim($this->partern, "/"));
+		$pattern = explode("/", trim($this->pattern, "/"));
 
-		if(count($parts) != count($partern))
+		if(count($parts) != count($pattern))
 			return false;
 
+		// print_r($pattern);
+
 		$regex = array();
-		foreach($partern as $key=>$url_item)
+		foreach($pattern as $key=>$url_item){
+
 			if(preg_match_all("|{(.*):(.*)}|", $url_item, $matches)){
 
 				if(in_array(reset($matches[2]),  array("int", "bool", "alpha", "float", "date"))){
@@ -79,13 +82,20 @@ class Matcher{
 
 					$this->params[reset($matches[1])] = $parts[$key];
 				}
+
+				// print_r(array($this->params, "A"));
 			}
 			elseif(preg_match_all("|{(.*)}|", $url_item, $matches)){
 
 				$regex[] = ".*";
 				$this->params[reset($matches[1])] = $parts[$key];
+
+				// print_r(array($this->params, "B"));
 			}
 			else $regex[] = $url_item;
+		}
+
+		// print_r($this->params);
 
 		return (bool)preg_match(sprintf("/^%s$/", implode("\/", $regex)), trim($url, "/"));
 	}
@@ -96,6 +106,8 @@ class Matcher{
      * @return array
      */
 	public function getParams(){
+
+		// print_r(array($this->params, "C"));
 
 		return $this->params;
 	}

@@ -104,6 +104,8 @@ class Router{
 			$method = $this->servReq->getMethod();
 		}
 
+		// print_r($this->servReq);
+
 		if(in_array($path, array_keys($this->routes))){
 
 			$route = $this->routes[$path];
@@ -133,18 +135,36 @@ class Router{
 						return $this->registry->get("Response.Forbidden")->exec();
 				}
 
-				if($route["method"] == "ANY"){
-
-					$params = $route["action"]->getParams();
-					foreach($params as $key=>$param)
-						@$this->servReq = $this->servReq->withAttribute($key, $param[$key]);
-
-					$route["action"]
-						->addParam($this->servReq)
-						->addParam($this->registry->get("Response.Ok")->exec());
-				}
-				else if($route["method"] != $method)
+				if($route["method"] != $method && $route["method"]!="ANY")
 					return $this->registry->get("Response.MethodNotFound")->exec();
+
+				$params = $route["action"]->getParams();
+
+				if(!empty($params)){
+
+					foreach($params as $key=>$param)
+						@$this->servReq = $this->servReq->withAttribute($key, $params[$key]);
+				}
+
+				$properties = $route["action"]->getEvent()->getParams();
+
+				foreach($properties as $property){
+
+					if($property->hasType()){
+
+						if($property->getType() == "Psr\Http\Message\ResponseInterface"){
+
+							$res = $this->registry->get("Response.Ok")->exec();
+
+							$route["action"]->setParam($property->getName(), $res);
+						}
+
+						if($property->getType() == "Psr\Http\Message\RequestInterface"){
+
+							$route["action"]->setParam($property->getName(), $this->servReq);
+						}
+					}
+				}
 
 				return $this->validate($route["action"]->exec());
 			}
