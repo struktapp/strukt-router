@@ -27,21 +27,18 @@ $registry = Strukt\Core\Registry::getInstance();
 $registry->set("servReq", $servReq);
 
 //Dependency Injection
-foreach(["Ok"=>200,
-		"Redirected"=>302] as $msg=>$code)
-	$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Single(function() use($code){
-
-		return new \Kambo\Http\Message\Response($code);
-	}));
-
 foreach(["NotFound"=>404,
-	 	"MethodNotFound"=>405,
-	 	"Forbidden"=>403,
-		"ServerError"=>500] as $msg=>$code)
+		 	"MethodNotFound"=>405,
+		 	"Forbidden"=>403,
+			"ServerError"=>500,
+			"Ok"=>200,
+			"Redirected"=>302] as $msg=>$code)
 	$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Single(function() use($code){
 
-		$res = new \Kambo\Http\Message\Response($code);
-		$res->getBody()->write(\Strukt\Fs::cat(sprintf("public/errors/%d.html", $code)));
+		$res = new Kambo\Http\Message\Response($code);
+
+		if(in_array($code, array(403,404,405,500)))
+			$res->getBody()->write(Strukt\Fs::cat(sprintf("public/errors/%d.html", $code)));
 
 		return $res;
 	}));

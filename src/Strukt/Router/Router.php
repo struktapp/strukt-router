@@ -26,7 +26,7 @@ class Router{
 		$this->allowedGroup = $allowed;
 	}
 
-	public function route($method, $url, \Closure $callable, $group=null){
+	public function addRoute($method, $url, \Closure $callable, $group=null){
 
 		$this->routes[$url] = array(
 
@@ -45,22 +45,22 @@ class Router{
 
 	public function get($url, \Closure $callable, $group = null){
 
-		$this->route("GET", $url, $callable, $group);
+		$this->addRoute("GET", $url, $callable, $group);
 	}
 
 	public function post($url, \Closure $callable, $group = null){
 
-		$this->route("POST", $url, $callable, $group);
+		$this->addRoute("POST", $url, $callable, $group);
 	}
 
 	public function delete($url, \Closure $callable, $group = null){
 
-		$this->route("DELETE", $url, $callable, $group);
+		$this->addRoute("DELETE", $url, $callable, $group);
 	}
 
 	public function any($url, \Closure $callable, $group = null){
 
-		$this->route("ANY", $url, $callable, $group);
+		$this->addRoute("ANY", $url, $callable, $group);
 	}
 
 	private function validate($result){
