@@ -26,11 +26,15 @@ class Router{
 		$this->allowedGroup = $allowed;
 	}
 
-	public function addRoute($method, $url, \Closure $callable, $group=null){
+	public function addRoute($method, $url, \Closure $callable = null, $group=null){
+
+		$action == null;
+		if(get_class($callable) == "Closure")
+			$action = new Route($url, $callable);
 
 		$this->routes[$url] = array(
 
-			"action"=>new Route($url, $callable),
+			"action"=>$action,
 			"method"=>$method,
 			"group"=>$group
 		);
@@ -116,6 +120,8 @@ class Router{
 			$routes = $this->routes;
 		}
 
+		// print_r(get_class($route["action"]));exit;
+
 		foreach($routes as $route){
 
 			if($route["action"]->isMatch($path)){
@@ -146,7 +152,11 @@ class Router{
 						@$this->servReq = $this->servReq->withAttribute($key, $params[$key]);
 				}
 
+
+
 				$properties = $route["action"]->getEvent()->getParams();
+
+				// print_r($route); exit;
 
 				foreach($properties as $property){
 
