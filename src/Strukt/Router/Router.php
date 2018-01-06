@@ -28,7 +28,7 @@ class Router{
 
 	public function addRoute($method, $url, \Closure $callable = null, $group=null){
 
-		$action == null;
+		$action = null;
 		if(get_class($callable) == "Closure")
 			$action = new Route($url, $callable);
 
