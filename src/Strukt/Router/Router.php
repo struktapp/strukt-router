@@ -69,9 +69,15 @@ class Router{
 
 	private function validate($result){
 
-		if(!$result instanceof ResponseInterface){
+		if($result instanceof Single){
+
+			$result = $result->exec();
+		}
+
+		if(is_string($result)){
 
 			$response = $this->registry->get("Response.Ok")->exec();
+
 			$response->getBody()->write($result);
 
 			return $response;
