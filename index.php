@@ -5,65 +5,43 @@ ini_set("date.timezone", "Africa/Nairobi");
 
 error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-require "bootstrap.php";
-
-use Kambo\Http\Message\Environment\Environment;
-use Kambo\Http\Message\Factories\Environment\ServerRequestFactory;
-// use Kambo\Http\Message\Stream;
-
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-
-if(empty($_SERVER["REQUEST_SCHEME"]))
-	$_SERVER["REQUEST_SCHEME"] = "http";
-
-$env = new Environment($_SERVER, fopen('php://input', 'w+'), $_POST, $_COOKIE, $_FILES);
-
-$servReq = (new ServerRequestFactory())->create($env);
-
-$registry = Strukt\Core\Registry::getInstance();
-
-$registry->set("servReq", $servReq);
-
-//Dependency Injection
-foreach(["NotFound"=>404,
-		 	"MethodNotFound"=>405,
-		 	"Forbidden"=>403,
-			"ServerError"=>500,
-			"Ok"=>200,
-			"Redirected"=>302] as $msg=>$code)
-	$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Single(function() use($code){
-
-		$res = new Kambo\Http\Message\Response($code);
-
-		if(in_array($code, array(403,404,405,500)))
-			$res->getBody()->write(Strukt\Fs::cat(sprintf("public/errors/%d.html", $code)));
-
-		return $res;
-	}));
+require "bootstrap.php";
 
 // $allowed = array("user_del");
 
 $r = new Strukt\Router\Router($servReq, $allowed);
 
-$r->before(function() use ($registry){
+$r->before(function(RequestInterface $req, ResponseInterface $res) use ($registry){
 
-	$path = $registry->get("servReq")->getUri()->getPath();
+	// $path = $registry->get("servReq")->getUri()->getPath();
+
+	$req->getUri()->getPath();
 
 	if($path == "/"){
 
-		$resp = $registry->get("Response.Redirected")->exec();
+		// $resp = $registry->get("Response.Redirected")->exec();
 
-		$resp = $resp->withStatus(200)->withHeader('Location', '/hello/friend');
+		// $resp = $resp->withStatus(200)->withHeader('Location', '/hello/friend');
+
+		$res = $res->withStatus(200)->withHeader('Location', '/hello/friend');
+
+		Strukt\Router\Router::emit($res);
 		
-		Strukt\Router\Router::emit($resp);
+		// Strukt\Router\Router::emit($resp);
 	}
 });
 
-$r->get("/", function(){
+$r->get("/", function(ResponseInterface $res){
 
-	return "Hello World";
+	// return "Hello World";
+
+	// $res->getBody()->write("Hello World!");
+	$res->getBody()->write(Strukt\Fs::cat("public/static/index.html"));
+
+	return $res;
 });
 
 $r->get("/hello/{to:alpha}", function($to){

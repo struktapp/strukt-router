@@ -79,6 +79,8 @@ Strukt\Fs::touchWrite("public/static/index.html",'<!DOCTYPE html>
 		}
 	</style>
 	<title>Strukt Framework</title>
+	<script type="text/javascript" src="js/script.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 	<span class="hello-world">Hello World!!!</span>

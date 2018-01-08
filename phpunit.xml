@@ -1,4 +1,4 @@
-<phpunit bootstrap="bootstrap.php">
+<phpunit bootstrap="bootstrap-phpunit.php">
   <testsuites>
     <testsuite name="Strukt Router">
       <directory>./tests</directory>

@@ -5,9 +5,10 @@ namespace Strukt\Router;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Strukt\Core\Registry;
 
-use  Strukt\Event\Single;
+use Strukt\Core\Registry;
+use Strukt\Event\Single;
+use Strukt\Fs;
 
 class Router{
 
@@ -24,17 +25,19 @@ class Router{
 		$this->registry = Registry::getInstance();
 
 		$this->allowedGroup = $allowed;
+
+		$this->loadStaticFiles();
 	}
 
 	public function addRoute($method, $url, \Closure $callable = null, $group=null){
 
-		$action = null;
+		$route = null;
 		if(get_class($callable) == "Closure")
-			$action = new Route($url, $callable);
+			$route = new Route($url, $callable);
 
 		$this->routes[$url] = array(
 
-			"action"=>$action,
+			"route"=>$route,
 			"method"=>$method,
 			"group"=>$group
 		);
@@ -42,9 +45,26 @@ class Router{
 
 	public function before(\Closure $func){
 
-		$event = Single::newEvent($func);
+		$sRes = "Psr\Http\Message\ResponseInterface";
+		$sReq = "Psr\Http\Message\RequestInterface";
 
-		$event->getEvent()->exec();
+		$event = Single::newEvent($func)->getEvent();
+
+		$params = $event->getParams();
+		
+		$res = $this->registry->get("Response.Ok")->exec();
+
+		$args = [];
+		foreach($params as $name=>$type)
+			if($type == $sRes)
+				$args[$name] = $res;
+			elseif($type == $sReq)
+				$args[$name] = $this->servReq;
+
+		if(empty($args))
+			throw new \Exception(sprintf("Router::before requires Psr\Http\Message\[%s & %s]!", $sRes, $sReq));
+
+		$event->applyArgs($args)->exec();
 	}
 
 	public function get($url, \Closure $callable, $group = null){
@@ -106,6 +126,65 @@ class Router{
         exit((string)$response->getBody());
 	}
 
+	/** 
+	* Handle static files
+	*
+	* @todo load static files to cache for effeciency
+	*/
+	private function loadStaticFiles(){
+
+		$staticDir = $this->registry->get("_staticDir");
+
+		$staticDir = str_replace("\\", "/", $staticDir);
+
+		if(!empty($staticDir)){
+
+			$dItr = new \RecursiveDirectoryIterator($staticDir);
+			$rItrItr  = new \RecursiveIteratorIterator($dItr, \RecursiveIteratorIterator::SELF_FIRST);
+
+			foreach ($rItrItr as $file) {
+
+			    $path = $file->getRealPath();
+
+			    if ($file->isFile()){
+
+			    	$path = str_replace("\\", "/", $path);
+			    	$shortUrl = "/".str_replace($staticDir, "", $path);
+
+			        $this->get($shortUrl, function(ResponseInterface $res) use($path){
+
+			        	$ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+			        	$mimeTypes = array(
+
+							"png"=>"image/png",
+							"gif"=>"image/gif",
+							"jpeg"=>"image/jpeg",
+							"jpg"=>"image/jpeg",
+							"swf"=>"application/x-shockwave-flash",
+							"swc"=>"application/x-shockwave-flash",
+							"psd"=>"image/psd",
+							"bmp"=>"image/bmp",
+							"tiff"=>"image/tiff",
+							"css"=>"text/css",
+							"js"=>"text/js",
+							"text"=>"text/plain",
+							"json"=>"application/json",
+							"html"=>"text/html"
+						);
+
+			        	if(in_array($ext, array_keys($mimeTypes)))
+							$res = $res->withHeader("content-type", $mimeTypes[$ext]);
+
+			        	$res->getBody()->write(Fs::cat($path));
+
+			        	return $res;
+			        });
+			    }
+			}
+		}
+	}
+
 	public function dispatch($path=null, $method="GET"){
 
 		if(!is_null($this->servReq)){
@@ -113,8 +192,6 @@ class Router{
 			$path = $this->servReq->getUri()->getPath();
 			$method = $this->servReq->getMethod();
 		}
-
-		// print_r($this->servReq);
 
 		if(in_array($path, array_keys($this->routes))){
 
@@ -126,11 +203,9 @@ class Router{
 			$routes = $this->routes;
 		}
 
-		// print_r(get_class($route["action"]));exit;
-
 		foreach($routes as $route){
 
-			if($route["action"]->isMatch($path)){
+			if($route["route"]->isMatch($path)){
 
 				$isForbidden = false;
 
@@ -150,39 +225,34 @@ class Router{
 				if($route["method"] != $method && $route["method"]!="ANY")
 					return $this->registry->get("Response.MethodNotFound")->exec();
 
-				$params = $route["action"]->getParams();
+				$rParams = $route["route"]->getParams();
 
-				if(!empty($params)){
+				if(!empty($rParams)){
 
-					foreach($params as $key=>$param)
-						@$this->servReq = $this->servReq->withAttribute($key, $params[$key]);
+					foreach($rParams as $key=>$rParam)
+						@$this->servReq = $this->servReq->withAttribute($key, $rParams[$key]);
 				}
 
+				$event = $route["route"]->getEvent();
 
+				$eParams = $event->getParams();
 
-				$properties = $route["action"]->getEvent()->getParams();
+				foreach($eParams as $name=>$type){					
 
-				// print_r($route); exit;
+					if($type == "Psr\Http\Message\ResponseInterface"){
 
-				foreach($properties as $property){
+						$res = $this->registry->get("Response.Ok")->exec();
 
-					if($property->hasType()){
+						$route["route"]->setParam($name, $res);
+					}
 
-						if($property->getType() == "Psr\Http\Message\ResponseInterface"){
+					if($type == "Psr\Http\Message\RequestInterface"){
 
-							$res = $this->registry->get("Response.Ok")->exec();
-
-							$route["action"]->setParam($property->getName(), $res);
-						}
-
-						if($property->getType() == "Psr\Http\Message\RequestInterface"){
-
-							$route["action"]->setParam($property->getName(), $this->servReq);
-						}
+						$route["route"]->setParam($name, $this->servReq);
 					}
 				}
 
-				return $this->validate($route["action"]->exec());
+				return $this->validate($route["route"]->exec());
 			}
 		}
 

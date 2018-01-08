@@ -7,30 +7,32 @@ class RouteReqResTest extends PHPUnit_Framework_TestCase{
 
 	public function setUp(){
 
-		$clos = function($id, RequestInterface $req, ResponseInterface $res){
+		$this->route = new Strukt\Router\Route("/test/{id:int}", function($id, RequestInterface $req, ResponseInterface $res){
 
 			return "This is an ". $id;
-		};
-
-		$this->route = new Strukt\Router\Route("/test/{id:int}", $clos);
+		});
 	}
 
 	public function testGetParams(){
 
-		$params = $this->route->getEvent()->getParams();
+		$event = $this->route->getEvent();
 
-		$this->assertFalse($params[0]->hasType());
-		$this->assertEquals("Psr\Http\Message\RequestInterface", (string)$params[1]->getType());
-		$this->assertEquals("Psr\Http\Message\ResponseInterface", (string)$params[2]->getType());
+		// print_r($event->getParams());
+
+		$params = $event->getParams();
+
+		$this->assertTrue(empty($params["id"]));
+		$this->assertEquals("Psr\Http\Message\RequestInterface", $params["req"]);
+		$this->assertEquals("Psr\Http\Message\ResponseInterface", $params["res"]);
 	}
 
-	public function testGetParamName(){
+	// public function testGetParamName(){
 
-		$params = $this->route->getEvent()->getParams();
+	// 	$params = $this->route->getEvent()->getParams();
 
-		$this->assertEquals("id", $params[0]->getName());
-		$this->assertEquals("req", $params[1]->getName());
-		$this->assertEquals("res", $params[2]->getName());
-	}
+	// 	$this->assertEquals("id", $params[0]->getName());
+	// 	$this->assertEquals("req", $params[1]->getName());
+	// 	$this->assertEquals("res", $params[2]->getName());
+	// }
 
 }
