@@ -149,7 +149,7 @@ class Router{
 			    if ($file->isFile()){
 
 			    	$path = str_replace("\\", "/", $path);
-			    	$shortUrl = "/".str_replace($staticDir, "", $path);
+			    	$shortUrl = str_replace($staticDir, "", $path);
 
 			        $this->get($shortUrl, function(ResponseInterface $res) use($path){
 
