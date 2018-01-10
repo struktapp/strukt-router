@@ -16,6 +16,8 @@ class Route{
 		$this->matcher = new Matcher($tpl_url);
 
 		$this->event = Single::newEvent($callable);
+
+		$this->params = [];
 	}
 
 	public function isMatch($url){
