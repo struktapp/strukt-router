@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 
 require "bootstrap.php";
 
-// $allowed = array("user_del");
+$allowed = array("user_del");
 
 $r = new Strukt\Router\Router($servReq, $allowed);
 
