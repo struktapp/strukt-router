@@ -44,9 +44,15 @@ $r->get("/", function(ResponseInterface $res){
 	return $res;
 });
 
-$r->get("/hello/{to:alpha}", function($to){
+$r->get("/hello/{to:alpha}", function($to, RequestInterface $req, ResponseInterface $res){
 
-	return "Hello $to";
+
+	// if($req->getAttribute("to") == $to)
+		// return "Hello $to";
+
+	$res->getBody()->write("Hello $to");
+
+	return $res;
 });
 
 $r->post("/login", function() use ($servReq){

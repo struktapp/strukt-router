@@ -49,14 +49,16 @@ class Route{
 
 	public function exec(){
 
-		if(is_null($this->params)){
+		$params = array_merge($this->matcher->getParams(), $this->params);
 
-			$params = $this->matcher->getParams();
-		}
-		else{
+		// if(is_null($this->params)){
 
-			$params = $this->params;
-		}
+		// 	$params = $this->matcher->getParams();
+		// }
+		// else{
+
+		// 	$params = $this->params;
+		// }
 
 		// print_r($params);
 

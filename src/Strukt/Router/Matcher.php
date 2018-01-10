@@ -31,6 +31,8 @@ class Matcher{
 	public function __construct($pattern){
 
 		$this->pattern = trim($pattern);
+
+		$this->params = [];
 	}
 
 	/**
