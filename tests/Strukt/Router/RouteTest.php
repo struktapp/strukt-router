@@ -6,7 +6,7 @@ class RouteTest extends PHPUnit_Framework_TestCase{
 
 		$this->route = new Strukt\Router\Route("/test/{id:int}", function($id){
 
-			return "This is an ". $id;
+			return sprintf("This is an %s", $id);
 		});
 	}
 
@@ -23,8 +23,6 @@ class RouteTest extends PHPUnit_Framework_TestCase{
 	}
 
 	public function testExec(){
-
-		// $this->route->addParam(1);
 
 		$this->route->isMatch("/test/44");
 
