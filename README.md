@@ -23,36 +23,42 @@ Create `composer.json` script with contents below then run `composer update`
 }
 ```
 
+After installation run  `composer exec static` to get `public\` directory.
+
+```
+    public/
+    ├── errors
+    │   ├── 403.html
+    │   ├── 404.html
+    │   ├── 405.html
+    │   └── 500.html
+    └── static
+        ├── css
+        │   └── style.css
+        ├── index.html
+        └── js
+            └── script.js
+```
+
 ## Get Started
 
-### Sample Index File
-
-This router uses `kambo/httpmessage` which is PSR-7 compliant.
+### Bootstrap
 
 ```php
-
+//bootstrap.php
 use Kambo\Http\Message\Environment\Environment;
 use Kambo\Http\Message\Factories\Environment\ServerRequestFactory;
 use Kambo\Http\Message\Response;
-
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 use Strukt\Core\Registry;
 use Strukt\Event\Single;
 use Strukt\Fs;
 
-ini_set('display_errors', '1');
-ini_set("date.timezone", "Africa/Nairobi");
-
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
 $loader = require "vendor/autoload.php";
 
 $registry = Registry::getInstance();
-$registry->set("_staticDir", __DIR__."/public/static"); //register folder to static files
+$registry->set("_staticDir", __DIR__."/public/static");
 
-/**BOILER PLATE**/
 if(empty($_SERVER["REQUEST_SCHEME"]))
     $_SERVER["REQUEST_SCHEME"] = "http";
 
@@ -63,7 +69,7 @@ $servReq = (new ServerRequestFactory())->create($env);
 //Dependency Injection
 foreach(["NotFound"=>404, "MethodNotFound"=>405,
             "Forbidden"=>403, "ServerError"=>500,
-            "Ok"=>200] as $msg=>$code)
+            "Ok"=>200, "Redirected"=>302] as $msg=>$code)
     $registry->set(sprintf("Response.%s", $msg), new Single(function() use($code){
 
         $res = new Response($code);
@@ -73,7 +79,17 @@ foreach(["NotFound"=>404, "MethodNotFound"=>405,
 
         return $res;
     }));
-/**BOILER PLATE**/
+```
+
+### Entry Point
+
+This router uses `kambo/httpmessage` which is PSR-7 compliant.
+
+```php
+//index.php
+
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 require "bootstrap.php";
 
@@ -83,7 +99,7 @@ $r = new Strukt\Router\Router($servReq, $allowed);
 
 $r->before(function(RequestInterface $req, ResponseInterface $res){
 
-    $req->getUri()->getPath();
+    $path = $req->getUri()->getPath();
 
     if($path == "/"){
 
@@ -124,27 +140,10 @@ $r->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res
 $r->run();
 ```
 
-Use PHP in-built server:
+Run with PHP in-built server:
 
 ```sh
 php -S localhost:8080 index.php
-```
-
-After installation run  `composer exec static` to get `public\` directory.
-
-```
-    public/
-    ├── errors
-    │   ├── 403.html
-    │   ├── 404.html
-    │   ├── 405.html
-    │   └── 500.html
-    └── static
-        ├── css
-        │   └── style.css
-        ├── index.html
-        └── js
-            └── script.js
 ```
 
 ### Apache
