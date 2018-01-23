@@ -46,10 +46,6 @@ $r->get("/", function(ResponseInterface $res){
 
 $r->get("/hello/{to:alpha}", function($to, RequestInterface $req, ResponseInterface $res){
 
-
-	// if($req->getAttribute("to") == $to)
-		// return "Hello $to";
-
 	$res->getBody()->write("Hello $to");
 
 	return $res;
@@ -57,24 +53,7 @@ $r->get("/hello/{to:alpha}", function($to, RequestInterface $req, ResponseInterf
 
 $r->post("/login", function() use ($servReq){
 
-	// return "khasdkhask";
-
-	// $request = $registry->get("servReq");
-
-	// $parsedBody = $servReq->getParsedBody();
-
-	// $body = (string)$env->getBody();
-
-	// print_r($parsedBody);
-	// var_dump($parsedBody);
-
-	print_r($_REQUEST);
-
-	$body = $servReq->getParsedBody();
-
-	// echo 2;
-
-	var_dump($body);
+	return "Not yet implemented!";
 });
 
 $r->delete("/user/delete/{id:int}", function($id){
