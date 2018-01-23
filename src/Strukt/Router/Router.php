@@ -7,7 +7,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 use Strukt\Core\Registry;
-use Strukt\Event\Single;
+use Strukt\Event\Event;
 use Strukt\Fs;
 
 class Router{
@@ -48,7 +48,7 @@ class Router{
 		$sRes = "Psr\Http\Message\ResponseInterface";
 		$sReq = "Psr\Http\Message\RequestInterface";
 
-		$event = Single::newEvent($func)->getEvent();
+		$event = Event::newEvent($func);
 
 		$params = $event->getParams();
 		
@@ -89,7 +89,7 @@ class Router{
 
 	private function validate($result){
 
-		if($result instanceof Single){
+		if($result instanceof Event){
 
 			$result = $result->exec();
 		}
@@ -205,7 +205,10 @@ class Router{
 
 		foreach($routes as $route){
 
-			if($route["route"]->isMatch($path)){
+			$event = $route["route"];
+			$_method = $route["method"];
+
+			if($event->isMatch($path)){
 
 				$isForbidden = false;
 
@@ -222,10 +225,10 @@ class Router{
 						return $this->registry->get("Response.Forbidden")->exec();
 				}
 
-				if($route["method"] != $method && $route["method"]!="ANY")
+				if($_method != $method && $_method!="ANY")
 					return $this->registry->get("Response.MethodNotFound")->exec();
 
-				$rParams = $route["route"]->getParams();
+				$rParams = $event->getParams();
 
 				if(!empty($rParams)){
 
@@ -233,9 +236,7 @@ class Router{
 						@$this->servReq = $this->servReq->withAttribute($key, $rParams[$key]);
 				}
 
-				$event = $route["route"]->getEvent();
-
-				$eParams = $event->getParams();
+				$eParams = $event->getEvent()->getParams();
 
 				foreach($eParams as $name=>$type){					
 
@@ -243,16 +244,16 @@ class Router{
 
 						$res = $this->registry->get("Response.Ok")->exec();
 
-						$route["route"]->setParam($name, $res);
+						$event->setParam($name, $res);
 					}
 
 					if($type == "Psr\Http\Message\RequestInterface"){
 
-						$route["route"]->setParam($name, $this->servReq);
+						$event->setParam($name, $this->servReq);
 					}
 				}
 
-				return $this->validate($route["route"]->exec());
+				return $this->validate($event->exec());
 			}
 		}
 

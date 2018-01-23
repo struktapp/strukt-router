@@ -2,7 +2,7 @@
 
 namespace Strukt\Router;
 
-use Strukt\Event\Single;
+use Strukt\Event\Event;
 
 class Route{
 
@@ -15,7 +15,7 @@ class Route{
 
 		$this->matcher = new Matcher($tpl_url);
 
-		$this->event = Single::newEvent($callable);
+		$this->event = Event::newEvent($callable);
 
 		$this->params = [];
 	}
@@ -27,7 +27,7 @@ class Route{
 
 	public function getEvent(){
 
-		return $this->event->getEvent();
+		return $this->event;
 	}
 
 	public function setParam($name, $param){
@@ -64,8 +64,10 @@ class Route{
 
 		// print_r($params);
 
+		
+
 		if(!empty($params))
-			$response = $this->event->getEvent()->applyArgs($params)->exec();
+			$response = $this->event->applyArgs($params)->exec();
 		else
 			$response = $this->event->exec();
 
