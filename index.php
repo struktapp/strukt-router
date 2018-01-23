@@ -72,6 +72,11 @@ $r->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res
 	// print_r($req->getUploadedFiles());
 });
 
+$r->post("/test/json", function(RequestInterface $req, ResponseInterface $res){
+
+    return json_encode($req->getParsedBody());
+});
+
 // echo $r->dispatch("/hello/sam");
 // echo $r->dispatch("/");
 $r->run();

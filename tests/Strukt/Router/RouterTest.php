@@ -17,7 +17,10 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 			if(!$registry->exists(sprintf("Response.%s", $msg)))
 				$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Event(function() use($code){
 
-					return new \Kambo\Http\Message\Response($code);
+					$res = new Zend\Diactoros\Response();
+					$res = $res->withStatus($code);
+
+					return $res;
 				}));
 
 		foreach(["NotFound"=>404,
@@ -27,7 +30,8 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 			if(!$registry->exists(sprintf("Response.%s", $msg)))
 				$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Event(function() use($code){
 
-					$res = new \Kambo\Http\Message\Response($code);
+					$res = new Zend\Diactoros\Response();
+					$res = $res->withStatus($code);
 					$res->getBody()->write(\Strukt\Fs::cat(sprintf("public/errors/%d.html", $code)));
 
 					return $res;

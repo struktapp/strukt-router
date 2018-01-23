@@ -12,9 +12,9 @@
     "require": {
 
     	"php": ">=7.0",
-        "kambo/httpmessage": "^0.9.0",
         "strukt/fs": "dev-master",
-		"strukt/commons": "dev-master"
+		"strukt/commons": "dev-master",
+		"zendframework/zend-diactoros": "^1.7"
     },
     "require-dev": {
 
