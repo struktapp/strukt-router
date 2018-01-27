@@ -84,20 +84,14 @@ class Matcher{
 
 					$this->params[reset($matches[1])] = $parts[$key];
 				}
-
-				// print_r(array($this->params, "A"));
 			}
 			elseif(preg_match_all("|{(.*)}|", $url_item, $matches)){
 
 				$regex[] = ".*";
 				$this->params[reset($matches[1])] = $parts[$key];
-
-				// print_r(array($this->params, "B"));
 			}
 			else $regex[] = $url_item;
 		}
-
-		// print_r($this->params);
 
 		return (bool)preg_match(sprintf("/^%s$/", implode("\/", $regex)), trim($url, "/"));
 	}
@@ -108,8 +102,6 @@ class Matcher{
      * @return array
      */
 	public function getParams(){
-
-		// print_r(array($this->params, "C"));
 
 		return $this->params;
 	}

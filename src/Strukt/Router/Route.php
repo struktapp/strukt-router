@@ -53,19 +53,6 @@ class Route{
 
 		$params = array_merge($this->matcher->getParams(), $this->params);
 
-		// if(is_null($this->params)){
-
-		// 	$params = $this->matcher->getParams();
-		// }
-		// else{
-
-		// 	$params = $this->params;
-		// }
-
-		// print_r($params);
-
-		
-
 		if(!empty($params))
 			$response = $this->event->applyArgs($params)->exec();
 		else

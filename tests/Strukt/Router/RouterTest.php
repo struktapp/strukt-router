@@ -24,9 +24,9 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 				}));
 
 		foreach(["NotFound"=>404,
-			 	"MethodNotFound"=>405,
-			 	"Forbidden"=>403,
-				"ServerError"=>500] as $msg=>$code)
+				 	"MethodNotFound"=>405,
+				 	"Forbidden"=>403,
+					"ServerError"=>500] as $msg=>$code)
 			if(!$registry->exists(sprintf("Response.%s", $msg)))
 				$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Event(function() use($code){
 

@@ -108,11 +108,6 @@ class Router{
 
 	public static function emit(ResponseInterface $response){
 
-		// $body = $response->getBody();
-
-		// if(empty($body))
-			// $response = Registry::getInstance()->get("Response.NoContent")->exec();
-
 		$http_line = sprintf('HTTP/%s %s %s',
 	        $response->getProtocolVersion(),
 	        $response->getStatusCode(),
