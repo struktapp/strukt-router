@@ -45,7 +45,12 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 		$this->attrBag = array();
 	}
 
-	public function execCall($method, $path){
+	public function execReq($method, $path, $reqBody = null){
+
+		if(!is_null($reqBody))
+			if(!empty($reqParams = json_decode($reqBody)))
+				foreach ($reqParams as $key => $val)
+					$this->attrBag[$key] = $val;
 
 		$this->uriMock->expects($this->any())
             ->method('getPath')
@@ -81,7 +86,7 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 
 	public function testIndexRoute(){
 
-		$this->execCall("GET", "/");
+		$this->execReq("GET", "/");
 
 		$this->router->get("/", function(){
 
@@ -95,11 +100,11 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 
 	public function testHelloWorldRoute(){
 
-		$this->execCall("GET", "/hello/Pitsolu");
+		$this->execReq("GET", "/hello/pitsolu");
 
 		$this->router->get("/hello/{to:alpha}", function($to){
 
-			return "Hello $to!";
+			return sprintf("Hello %s!", ucfirst($to));
 		});
 
 		$resp = $this->router->dispatch();
@@ -109,7 +114,7 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 
 	public function testReqRes(){
 
-		$this->execCall("GET", "/test/10");
+		$this->execReq("GET", "/test/10");
 
 		$this->router->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res){
 
@@ -123,5 +128,29 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 		$resp = $this->router->dispatch();
 
 		$this->assertEquals("You asked for blog entry 10.", (string)$resp->getBody());
+	}
+
+	//only a demonstration of how request would work
+	public function testReqParams(){
+
+		$params = json_encode(array("name"=>"admin", "descr"=>"N/A"));
+
+		$this->execReq("POST", "/role/add", $params);
+
+		$this->router->any("/role/add", function(RequestInterface $req, ResponseInterface $res){
+
+			$name = $req->getAttribute('name');
+			$descr = $req->getAttribute('descr');
+
+			$hash = sha1(json_encode(array("name"=>$name, "descr"=>$descr)));
+
+		    $res->getBody()->write($hash);
+
+		    return $res;
+		});
+
+		$resp = $this->router->dispatch();
+
+		$this->assertEquals($resp->getBody(), sha1($params));
 	}
 }

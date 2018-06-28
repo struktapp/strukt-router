@@ -12,6 +12,13 @@ require "bootstrap.php";
 
 $allowed = array("user_del");
 
+// $registry = Strukt\Core\Registry::getInstance();
+// $registry->set("mime-types", array(
+
+// 	"s"=>"b",
+// 	"t"=>"c"
+// ));
+
 $r = new Strukt\Router\Router($servReq, $allowed);
 
 $r->before(function(RequestInterface $req, ResponseInterface $res) use ($registry){
@@ -75,6 +82,18 @@ $r->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res
 $r->post("/test/json", function(RequestInterface $req, ResponseInterface $res){
 
     return json_encode($req->getParsedBody());
+});
+
+$r->post("/test/reqpar", function(RequestInterface $req, ResponseInterface $res){
+
+    // return json_encode($req->getParsedBody());
+
+    echo $req->getAttribute("name");
+    echo $req->getAttribute("dept");
+
+    return "";
+
+    // echo new Zend\Diactoros\PhpInputStream();
 });
 
 // echo $r->dispatch("/hello/sam");

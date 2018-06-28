@@ -17,13 +17,20 @@ class Router{
 	private $registry = null;
 	private $allowed = null;
 
+	public function __construct(ServerRequestInterface $servReq = null, Array $allowed = null){		
 
-	public function __construct(ServerRequestInterface $servReq = null, Array $allowed = null){
-
-		$this->servReq = $servReq;
+		MimeTypes::register();
 
 		$this->registry = Registry::getInstance();
 
+		if(is_null($servReq))
+			if($this->registry->exist("servReq"))
+				$this->servReq = $this->registry->get("servReq");
+			else
+				throw new \Exception("Strukt\Router\Router requires servReq object!");
+		else
+			$this->servReq = $servReq;
+				
 		$this->allowedGroup = $allowed;
 
 		$this->loadStaticFiles();
@@ -45,24 +52,21 @@ class Router{
 
 	public function before(\Closure $func){
 
-		$sRes = "Psr\Http\Message\ResponseInterface";
-		$sReq = "Psr\Http\Message\RequestInterface";
-
 		$event = Event::newEvent($func);
 
 		$params = $event->getParams();
-		
-		$res = $this->registry->get("Response.Ok")->exec();
 
 		$args = [];
 		foreach($params as $name=>$type)
-			if($type == $sRes)
-				$args[$name] = $res;
-			elseif($type == $sReq)
+			if($type == "Psr\Http\Message\ResponseInterface")
+				$args[$name] = $this->registry->get("Response.Ok")->exec();
+			elseif($type == "Psr\Http\Message\RequestInterface")
 				$args[$name] = $this->servReq;
 
 		if(empty($args))
-			throw new \Exception(sprintf("Router::before requires Psr\Http\Message\[%s & %s]!", $sRes, $sReq));
+			throw new \Exception("Router::before requires both Psr\Http\Message\[RequestInterface, ResponseInterface]!");
+
+		$this->translateRequestBodyToAttributes();
 
 		$event->applyArgs($args)->exec();
 	}
@@ -85,6 +89,19 @@ class Router{
 	public function any($url, \Closure $callable, $group = null){
 
 		$this->addRoute("ANY", $url, $callable, $group);
+	}
+
+	private function translateRequestBodyToAttributes(){
+
+		$body = (string)$this->servReq->getParsedBody();
+
+		if(!empty($body)){
+
+			$params = json_decode($body, 1);
+
+			foreach($params as $key=>$val)
+				@$this->servReq = $this->servReq->withAttribute($key, $val);
+		}
 	}
 
 	private function validate($result){
@@ -151,32 +168,22 @@ class Router{
 			    	$path = str_replace("\\", "/", $path);
 			    	$shortUrl = str_replace($staticDir, "", $path);
 
-			        $this->get($shortUrl, function(ResponseInterface $res) use($path){
+			    	$mimeTypes = $this->registry->get("mimeTypes");
 
-			        	$ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+			    	$ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-			        	$mimeTypes = array(
+		        	if(in_array($ext, array_keys($mimeTypes))){
 
-							"png"=>"image/png",
-							"gif"=>"image/gif",
-							"jpeg"=>"image/jpeg",
-							"jpg"=>"image/jpeg",
-							"swf"=>"application/x-shockwave-flash",
-							"swc"=>"application/x-shockwave-flash",
-							"psd"=>"image/psd",
-							"bmp"=>"image/bmp",
-							"tiff"=>"image/tiff",
-							"css"=>"text/css",
-							"js"=>"text/js",
-							"text"=>"text/plain",
-							"json"=>"application/json",
-							"html"=>"text/html"
-						);
+		        		$res = $this->registry->get("Response.Ok")->exec();
+						$res = $res->withHeader("content-type", $mimeTypes[$ext]);
+						$res->getBody()->write(Fs::cat($path));
+		        	}
+		        	else{
 
-			        	if(in_array($ext, array_keys($mimeTypes)))
-							$res = $res->withHeader("content-type", $mimeTypes[$ext]);
+		        		$res = $this->registry->get("Response.Forbidden")->exec();
+		        	}
 
-			        	$res->getBody()->write(Fs::cat($path));
+			        $this->get($shortUrl, function() use($res, $mimeTypes){
 
 			        	return $res;
 			        });
@@ -185,12 +192,12 @@ class Router{
 		}
 	}
 
-	public function dispatch($path=null, $method="GET"){
+	public function dispatch($path=null, $reqMwthod="GET"){
 
 		if(!is_null($this->servReq)){
 
 			$path = $this->servReq->getUri()->getPath();
-			$method = $this->servReq->getMethod();
+			$reqMwthod = $this->servReq->getMethod();
 		}
 
 		if(in_array($path, array_keys($this->routes))){
@@ -206,7 +213,7 @@ class Router{
 		foreach($routes as $route){
 
 			$event = $route["route"];
-			$_method = $route["method"];
+			$routeMethod = $route["method"];
 
 			if($event->isMatch($path)){
 
@@ -225,20 +232,18 @@ class Router{
 						return $this->registry->get("Response.Forbidden")->exec();
 				}
 
-				if($_method != $method && $_method!="ANY")
+				if($routeMethod != $reqMwthod && $routeMethod != "ANY")
 					return $this->registry->get("Response.MethodNotFound")->exec();
 
-				$rParams = $event->getParams();
+				$routeParams = $event->getParams();
 
-				if(!empty($rParams)){
+				if(!empty($routeParams))
+					foreach($routeParams as $key=>$rParam)
+						@$this->servReq = $this->servReq->withAttribute($key, $routeParams[$key]);
 
-					foreach($rParams as $key=>$rParam)
-						@$this->servReq = $this->servReq->withAttribute($key, $rParams[$key]);
-				}
+				$routeEvtParams = $event->getEvent()->getParams();
 
-				$eParams = $event->getEvent()->getParams();
-
-				foreach($eParams as $name=>$type){					
+				foreach($routeEvtParams as $name=>$type){					
 
 					if($type == "Psr\Http\Message\ResponseInterface"){
 
@@ -248,6 +253,8 @@ class Router{
 					}
 
 					if($type == "Psr\Http\Message\RequestInterface"){
+
+						$this->translateRequestBodyToAttributes();
 
 						$event->setParam($name, $this->servReq);
 					}
