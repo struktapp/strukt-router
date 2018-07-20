@@ -3,11 +3,7 @@
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class RouterTest extends PHPUnit_Framework_TestCase{
-
-	private $router;
-	private $servReqMock;
-	private $uriMock;
+class RoutesTest extends PHPUnit_Framework_TestCase{
 
 	public function setUp(){
 
@@ -67,22 +63,34 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 
 		$this->router = new Strukt\Router\Router($this->servReqMock, $allowed = array());
 
-		$this->router->get("/", function(){
+		$this->router->get("/", function(ResponseInterface $res){
 
-			return "Hello World";
+			$res->getBody()->write("Hello World!");
+
+			return $res;
 		});
 
-		$this->router->try("POST", "/login/{username:alpha}", function(RequestInterface $req, 																	ResponseInterface $res){
+		$this->router->get("/hello/{to:alpha}", function($to, RequestInterface $req, 
+																ResponseInterface $res){
 
-			$username = $req->getAttribute('username');
-			$password = $req->getAttribute('password');
+			$res->getBody()->write("Hello $to");
 
-			$digest = sha1($username.$password);
+			return $res;
 
-		    $res->getBody()->write($digest);
+		}, null, "hello_to");
+
+		$this->router->try("POST", "/role/add", function(RequestInterface $req, 
+															ResponseInterface $res){
+
+			$name = $req->getAttribute('name');
+			$descr = $req->getAttribute('descr');
+
+			$hash = sha1(json_encode(array("name"=>$name, "descr"=>$descr)));
+
+		    $res->getBody()->write($hash);
 
 		    return $res;
-		});
+		});	
 	}
 
 	public function execReq($method, $path, $reqBody = null){
@@ -102,23 +110,53 @@ class RouterTest extends PHPUnit_Framework_TestCase{
 
 	}
 
-	public function testIndexRoute(){
+	public function testIndex(){
 
 		$this->execReq("GET", "/");
 
-		$resp = $this->router->dispatch();
+		$routes = $this->router->getRoutes();
 
-		$this->assertEquals("Hello World", $resp->getBody());
+		$route = $routes->getRouteByUrl("/");
+
+		$route->setParam("res", new Zend\Diactoros\Response());
+
+		$this->assertEquals("Hello World!", (string)$route->exec()->getBody());
 	}
 
-	public function testReqRes(){
+	public function testParameterizedRoute(){
 
-		$params = json_encode(array("password"=>"p@55w0rd"));
+		$this->execReq("GET", "/hello/pitsolu");
 
-		$this->execReq("POST", "/login/paul", $params);
+		$routes = $this->router->getRoutes();
 
-		$resp = $this->router->dispatch();
+		$route = $routes->getByName("hello_to");
 
-		$this->assertEquals($resp->getBody(), sha1("paulp@55w0rd"));
+		$path = $this->servReqMock->getUri()->getPath();
+
+		$params = [];
+		if($route->isMatch($path))
+			$params = $route->getParams();
+
+		$route->setParam("to", $params["to"]);
+		$route->setParam("res", new Zend\Diactoros\Response());
+		$route->setParam("req", $this->servReqMock);
+
+		$this->assertEquals("Hello pitsolu", (string)$route->exec()->getBody());
+	}
+
+	public function testPostReq(){
+
+		$params = json_encode(array("name"=>"admin", "descr"=>"N/A"));
+
+		$this->execReq("POST", "/role/add", $params);
+
+		$routes = $this->router->getRoutes();
+
+		$route = $routes->getRouteByUrl("/role/add");
+
+		$route->setParam("res", new Zend\Diactoros\Response());
+		$route->setParam("req", $this->servReqMock);
+
+		$this->assertEquals((string)$route->exec()->getBody(), sha1($params));
 	}
 }

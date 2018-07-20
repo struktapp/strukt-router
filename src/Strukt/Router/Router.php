@@ -12,7 +12,7 @@ use Strukt\Fs;
 
 class Router{
 
-	private $routes;
+	private $routes = null;
 	private $servReq = null;
 	private $registry = null;
 	private $allowed = null;
@@ -33,21 +33,14 @@ class Router{
 				
 		$this->allowedGroup = $allowed;
 
+		$this->routes = new Routes();
+
 		$this->loadStaticFiles();
 	}
 
-	public function addRoute($method, $url, \Closure $callable = null, $group=null){
+	public function getRoutes(){
 
-		$route = null;
-		if(get_class($callable) == "Closure")
-			$route = new Route($url, $callable);
-
-		$this->routes[$url] = array(
-
-			"route"=>$route,
-			"method"=>$method,
-			"group"=>$group
-		);
+		return $this->routes;
 	}
 
 	public function before(\Closure $func){
@@ -58,9 +51,9 @@ class Router{
 
 		$args = [];
 		foreach($params as $name=>$type)
-			if($type == "Psr\Http\Message\ResponseInterface")
+			if($type == \Psr\Http\Message\ResponseInterface::class)
 				$args[$name] = $this->registry->get("Response.Ok")->exec();
-			elseif($type == "Psr\Http\Message\RequestInterface")
+			elseif($type == \Psr\Http\Message\RequestInterface::class)
 				$args[$name] = $this->servReq;
 
 		if(empty($args))
@@ -71,24 +64,24 @@ class Router{
 		$event->applyArgs($args)->exec();
 	}
 
-	public function get($url, \Closure $callable, $group = null){
+	public function get($url, \Closure $callable, $group = null, $name = null){
 
-		$this->addRoute("GET", $url, $callable, $group);
+		$this->routes->addRoute("GET", $url, $callable, $group, $name);
 	}
 
-	public function post($url, \Closure $callable, $group = null){
+	public function post($url, \Closure $callable, $group = null, $name = null){
 
-		$this->addRoute("POST", $url, $callable, $group);
+		$this->routes->addRoute("POST", $url, $callable, $group, $name);
 	}
 
-	public function delete($url, \Closure $callable, $group = null){
+	public function delete($url, \Closure $callable, $group = null, $name = null){
 
-		$this->addRoute("DELETE", $url, $callable, $group);
+		$this->routes->addRoute("DELETE", $url, $callable, $group, $name);
 	}
 
-	public function any($url, \Closure $callable, $group = null){
+	public function try($method, $url, \Closure $callable, $group = null, $name = null){
 
-		$this->addRoute("ANY", $url, $callable, $group);
+		$this->routes->addRoute($method, $url, $callable, $group, $name);
 	}
 
 	private function translateRequestBodyToAttributes(){
@@ -192,79 +185,67 @@ class Router{
 		}
 	}
 
-	public function dispatch($path=null, $reqMwthod="GET"){
+	public function dispatch($path=null, $reqMethod="GET"){
 
-		if(!is_null($this->servReq)){
+		$path = $this->servReq->getUri()->getPath();
+		$reqMethod = $this->servReq->getMethod();
 
-			$path = $this->servReq->getUri()->getPath();
-			$reqMwthod = $this->servReq->getMethod();
-		}
+		$route = $this->routes->getRouteByUrl($path);
 
-		if(in_array($path, array_keys($this->routes))){
+		if(is_null($route))
+			$route = $this->routes->matchRouteByPath($path);
 
-			$route = $this->routes[$path];
-			$routes[$path] = $route;
-		}
-		else{
+		if(!is_null($route)){
 
-			$routes = $this->routes;
-		}
+			$props = $route->getProperties();
 
-		foreach($routes as $route){
-
-			$event = $route["route"];
-			$routeMethod = $route["method"];
-
-			if($event->isMatch($path)){
+			if(!empty($props["group"])){
 
 				$isForbidden = false;
-
-				if(!is_null($route["group"])){
-
-					if(!is_null($this->allowedGroup))
-						if(!in_array($route["group"], $this->allowedGroup)) 
-							$isForbidden = true;
-
-					if(empty($this->allowedGroup))
+				if(!is_null($this->allowedGroup))
+					if(!in_array($props["group"], $this->allowedGroup))
 						$isForbidden = true;
 
-					if($isForbidden)
-						return $this->registry->get("Response.Forbidden")->exec();
-				}
+				if(empty($this->allowedGroup))
+					$isForbidden = true;
 
-				if($routeMethod != $reqMwthod && $routeMethod != "ANY")
-					return $this->registry->get("Response.MethodNotFound")->exec();
-
-				$routeParams = $event->getParams();
-
-				if(!empty($routeParams))
-					foreach($routeParams as $key=>$rParam)
-						@$this->servReq = $this->servReq->withAttribute($key, $routeParams[$key]);
-
-				$routeEvtParams = $event->getEvent()->getParams();
-
-				foreach($routeEvtParams as $name=>$type){					
-
-					if($type == "Psr\Http\Message\ResponseInterface"){
-
-						$res = $this->registry->get("Response.Ok")->exec();
-
-						$event->setParam($name, $res);
-					}
-
-					if($type == "Psr\Http\Message\RequestInterface"){
-
-						$this->translateRequestBodyToAttributes();
-
-						$event->setParam($name, $this->servReq);
-					}
-				}
-
-				return $this->validate($event->exec());
+				if($isForbidden)
+					return $this->registry->get("Response.Forbidden")->exec();
 			}
+
+			$method = $this->routes->getMethodByUrl($props["tpl_url"]);
+			if($method != $reqMethod)
+				return $this->registry->get("Response.MethodNotFound")->exec();
+
+			$routeParams = $route->getParams();
+
+			if(!empty($routeParams))
+				foreach($routeParams as $key=>$rParam)
+					@$this->servReq = $this->servReq->withAttribute($key, $routeParams[$key]);
+
+			$routerEventParams = $route->getEvent()->getParams();
+
+			foreach($routerEventParams as $name=>$type){					
+
+				if($type == \Psr\Http\Message\ResponseInterface::class){
+
+					$res = $this->registry->get("Response.Ok")->exec();
+
+					$route->setParam($name, $res);
+				}
+
+				if($type == \Psr\Http\Message\RequestInterface::class){
+
+					$this->translateRequestBodyToAttributes();
+
+					$route->setParam($name, $this->servReq);
+				}
+			}
+
+			return $this->validate($route->exec());
 		}
 
-        return $this->registry->get("Response.NotFound")->exec();
+		return $this->registry->get("Response.NotFound")->exec();
 	}
 
 	public function run(){

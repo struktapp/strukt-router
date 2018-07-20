@@ -10,14 +10,27 @@ class Route{
 	private $callable;
 	private $params;
 	private $event;
+	private $props;
 
-	public function __construct($tpl_url, \Closure $callable){
+	public function __construct($tpl_url, \Closure $callable, $group = null, $name = null){
 
 		$this->matcher = new Matcher($tpl_url);
 
 		$this->event = Event::newEvent($callable);
 
 		$this->params = [];
+
+		$this->props = array(
+
+			"tpl_url"=>$tpl_url,
+			"group"=>$group,
+			"name"=>$name
+		);
+	}
+
+	public function getProperties(){
+
+		return $this->props;
 	}
 
 	public function isMatch($url){

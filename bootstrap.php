@@ -1,14 +1,7 @@
 <?php
 
-use Strukt\Core\Registry;
-use Strukt\Event\Event;
-use Strukt\Fs;
-
 $loader = require "vendor/autoload.php";
 $loader->add('Strukt', "src/");
-
-$registry = Registry::getInstance();
-$registry->set("_staticDir", __DIR__."/public/static");
 
 $servReq = Zend\Diactoros\ServerRequestFactory::fromGlobals(
 
@@ -19,12 +12,11 @@ $servReq = Zend\Diactoros\ServerRequestFactory::fromGlobals(
     $_FILES
 );
 
-// $json = file_get_contents("php://input");
-// $body = json_decode(str_replace("'", '"', trim($json)), 1);
-
-// print_r(json_decode(new Zend\Diactoros\PhpInputStream(),1));exit;
-
 $servReq = $servReq->withParsedBody(new Zend\Diactoros\PhpInputStream());
+
+$registry = Strukt\Core\Registry::getInstance();
+$registry->set("_staticDir", __DIR__."/public/static");
+$registry->set("servReq", $servReq);
 
 //Dependency Injection
 foreach(["NotFound"=>404, 
@@ -34,11 +26,11 @@ foreach(["NotFound"=>404,
 			"Ok"=>200, 
 			"Redirected"=>302,
 			"NoContent"=>204] as $msg=>$code)
-	$registry->set(sprintf("Response.%s", $msg), new Event(function() use($code){
+	$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Event(function() use($code){
 
 		$body = "";
 		if(in_array($code, array(403,404,405,500)))
-			$body = Fs::cat(sprintf("public/errors/%d.html", $code));
+			$body = Strukt\Fs::cat(sprintf("public/errors/%d.html", $code));
 
 		$res = new Zend\Diactoros\Response();
 		$res = $res->withStatus($code);

@@ -25,7 +25,7 @@ $r->before(function(RequestInterface $req, ResponseInterface $res) use ($registr
 
 	// $path = $registry->get("servReq")->getUri()->getPath();
 
-	$req->getUri()->getPath();
+	// $path = $req->getUri()->getPath();
 
 	if($path == "/"){
 
@@ -69,7 +69,7 @@ $r->delete("/user/delete/{id:int}", function($id){
 
 }, "user_del");
 
-$r->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res){
+$r->try("GET", "/test/{id:int}", function(RequestInterface $req, ResponseInterface $res){
 
 	$id = (int) $req->getAttribute('id');
     $res->getBody()->write("You asked for blog entry {$id}.");
@@ -96,6 +96,11 @@ $r->post("/test/reqpar", function(RequestInterface $req, ResponseInterface $res)
     // echo new Zend\Diactoros\PhpInputStream();
 });
 
+$rs = $r->getRoutes();
+$ru = $rs->getRouteByUrl("/test/json");
+
+print_r($ru);
+
 // echo $r->dispatch("/hello/sam");
 // echo $r->dispatch("/");
-$r->run();
+// $r->run();
