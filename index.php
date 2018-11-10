@@ -7,6 +7,7 @@ error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require "bootstrap.php";
 
@@ -16,11 +17,13 @@ $r = new Strukt\Router\Router($allowed);
 
 $r->before(function(Request $req, Response $res) use ($registry){
 
-	if($path == "/"){
+	$path = $req->getPathInfo();
 
-		$res = $res->withStatus(200)->withHeader('Location', '/hello/friend');
+	if(trim($path) == "/"){
 
-		Strukt\Router\Router::emit($res);
+		$res = new RedirectResponse("/hello/friend");
+
+		$res->send();
 	}
 });
 
@@ -79,23 +82,9 @@ $r->try("GET", "/login/{username:alpha}", function(Request $req, Response $res){
 
 	$digest = sha1($username.$password);
 
-	// print_r(array(array($username, $password),
-	// 				$digest,
-	// 				sha1("paulp@55w0rd")));
-
     $res->setContent($digest);
 
     return $res;
 });
-
-// $rs = $r->getRoutes();
-// $ru = $rs->getRouteByUrl("/test/json");
-
-// print_r($ru);
-
-// echo $r->dispatch("/hello/sam");
-// echo $r->dispatch("/");
-
-// echo $r->dispatch('/login/paul', 'POST');
 
 $r->run();

@@ -35,10 +35,6 @@ foreach(["NotFound"=>404,
 		if(in_array($code, array(403,404,405,500)))
 			$body = Strukt\Fs::cat(sprintf("public/errors/%d.html", $code));
 
-		// $res = new Zend\Diactoros\Response();
-		// $res = $res->withStatus($code);
-		// $res->getBody()->write($body);
-
 		$res = new Response(
 
 		    $body,

@@ -67,8 +67,6 @@ class RouterTest extends TestCase{
 
 		$resp = $this->router->dispatch('/', 'GET');
 
-		// print_r($resp->getContent());exit;
-
 		$this->assertEquals("Hello World", $resp->getContent());
 	}
 

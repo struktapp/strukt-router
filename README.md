@@ -52,19 +52,25 @@ use Strukt\Core\Registry;
 use Strukt\Event\Event;
 use Strukt\Fs;
 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+
 $loader = require "vendor/autoload.php";
 $loader->add('Strukt', "src/");
 
 $registry = Registry::getInstance();
 $registry->set("_staticDir", __DIR__."/public/static");
 
-$servReq = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+$request = Request::createFromGlobals();
 
-    $_SERVER,
+$request = new Request(
+
     $_GET,
     $_POST,
+    array(),
     $_COOKIE,
-    $_FILES
+    $_FILES,
+    $_SERVER
 );
 
 //Dependency Injection
@@ -81,9 +87,12 @@ foreach(["NotFound"=>404,
         if(in_array($code, array(403,404,405,500)))
             $body = Fs::cat(sprintf("public/errors/%d.html", $code));
 
-        $res = new Zend\Diactoros\Response();
-        $res = $res->withStatus($code);
-        $res->getBody()->write($body);
+        $res = new Response(
+
+            $body,
+            $code,
+            array('content-type' => 'text/html')
+        );
 
         return $res;
     }));
@@ -103,30 +112,30 @@ require "bootstrap.php";
 
 $allowed = []; //array("user_del");
 
-$r = new Strukt\Router\Router($servReq, $allowed);
+$r = new Strukt\Router\Router($allowed, $servReq);
 
-$r->before(function(RequestInterface $req, ResponseInterface $res){
+$r->before(function(Request $req, Response $res) use ($registry){
 
-    $path = $req->getUri()->getPath();
+    $path = $req->getPathInfo();
 
-    if($path == "/"){
+    if(trim($path) == "/"){
 
-        $res = $res->withStatus(200)->withHeader('Location', '/hello/friend');
+        $res = new RedirectResponse("/hello/friend");
 
-        Strukt\Router\Router::emit($res);
+        $res->send();
     }
 });
 
 $r->get("/", function(ResponseInterface $res){
 
-    $res->getBody()->write(Strukt\Fs::cat("public/static/index.html"));
+    $res->setContent(Strukt\Fs::cat("public/static/index.html"));
 
     return $res;
 });
 
 $r->get("/hello/{to:alpha}", function($to, RequestInterface $req, ResponseInterface $res){
 
-    $res->getBody()->write("Hello $to");
+    $res->setContent("Hello $to");
 
     return $res;
 });
@@ -139,8 +148,8 @@ $r->delete("/user/delete/{id:int}", function($id){
 
 $r->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res){
 
-    $id = (int) $req->getAttribute('id');
-    $res->getBody()->write("You asked for blog entry {$id}.");
+    $id = (int) $req->query->get('id');
+    $res->setContent("You asked for blog entry {$id}.");
 
     return $res;
 });
