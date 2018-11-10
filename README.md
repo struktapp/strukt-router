@@ -105,14 +105,14 @@ This router uses `kambo/httpmessage` which is PSR-7 compliant.
 ```php
 //index.php
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\Request;
+use Psr\Http\Message\Response;
 
 require "bootstrap.php";
 
 $allowed = []; //array("user_del");
 
-$r = new Strukt\Router\Router($allowed, $servReq);
+$r = new Strukt\Router\Router($allowed, $request);
 
 $r->before(function(Request $req, Response $res) use ($registry){
 
@@ -126,14 +126,14 @@ $r->before(function(Request $req, Response $res) use ($registry){
     }
 });
 
-$r->get("/", function(ResponseInterface $res){
+$r->get("/", function(Response $res){
 
     $res->setContent(Strukt\Fs::cat("public/static/index.html"));
 
     return $res;
 });
 
-$r->get("/hello/{to:alpha}", function($to, RequestInterface $req, ResponseInterface $res){
+$r->get("/hello/{to:alpha}", function($to, Request $req, Response $res){
 
     $res->setContent("Hello $to");
 
@@ -146,7 +146,7 @@ $r->delete("/user/delete/{id:int}", function($id){
 
 }, "user_del");
 
-$r->any("/test/{id:int}", function(RequestInterface $req, ResponseInterface $res){
+$r->any("/test/{id:int}", function(Request $req, Response $res){
 
     $id = (int) $req->query->get('id');
     $res->setContent("You asked for blog entry {$id}.");
