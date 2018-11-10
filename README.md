@@ -100,13 +100,9 @@ foreach(["NotFound"=>404,
 
 ### Entry Point
 
-This router uses `kambo/httpmessage` which is PSR-7 compliant.
 
 ```php
 //index.php
-
-use Psr\Http\Message\Request;
-use Psr\Http\Message\Response;
 
 require "bootstrap.php";
 
