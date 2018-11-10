@@ -1,9 +1,11 @@
 <?php
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
-class RoutesTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class RoutesTest extends TestCase{
 
 	public function setUp(){
 
@@ -13,8 +15,8 @@ class RoutesTest extends PHPUnit_Framework_TestCase{
 			if(!$registry->exists(sprintf("Response.%s", $msg)))
 				$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Event(function() use($code){
 
-					$res = new Zend\Diactoros\Response();
-					$res = $res->withStatus($code);
+					$res = new Response();
+					$res = $res->setStatusCode($code);
 
 					return $res;
 				}));
@@ -26,137 +28,90 @@ class RoutesTest extends PHPUnit_Framework_TestCase{
 			if(!$registry->exists(sprintf("Response.%s", $msg)))
 				$registry->set(sprintf("Response.%s", $msg), new Strukt\Event\Event(function() use($code){
 
-					$res = new Zend\Diactoros\Response();
-					$res = $res->withStatus($code);
-					$res->getBody()->write(\Strukt\Fs::cat(sprintf("public/errors/%d.html", $code)));
+					$res = new Response();
+					$res = $res->setStatusCode($code);
+					$res->setContent(\Strukt\Fs::cat(sprintf("public/errors/%d.html", $code)));
 
 					return $res;
 				}));
 
-		$this->servReqMock = $this->createMock(Psr\Http\Message\ServerRequestInterface::class);
-		$this->uriMock = $this->createMock(Psr\Http\Message\UriInterface::class);
+		$this->router = new Strukt\Router\Router($allowed = array());
 
-		$this->attrBag = array();
+		$this->router->get("/", function(Response $res){
 
-		$this->servReqMock
-			->expects($this->any())
-            ->method('getUri')
-            ->will($this->returnValue($this->uriMock));
-
-        $this->servReqMock
-			->expects($this->any())
-            ->method('withAttribute')
-            ->will($this->returnCallback(function($key, $value){
-
-            	$this->attrBag[$key] = $value;
-
-            	return $this->servReqMock;
-            }));   
-
-        $this->servReqMock
-			->expects($this->any())
-            ->method('getAttribute')
-            ->will($this->returnCallback(function($key){
-
-            	return $this->attrBag[$key];
-            }));   
-
-		$this->router = new Strukt\Router\Router($this->servReqMock, $allowed = array());
-
-		$this->router->get("/", function(ResponseInterface $res){
-
-			$res->getBody()->write("Hello World!");
+			$res->setContent("Hello World!");
 
 			return $res;
 		});
 
-		$this->router->get("/hello/{to:alpha}", function($to, RequestInterface $req, 
-																ResponseInterface $res){
+		$this->router->get("/hello/{to:alpha}", function($to, Request $req, 
+																Response $res){
 
-			$res->getBody()->write("Hello $to");
+			$res->setContent("Hello $to");
 
 			return $res;
 
 		}, null, "hello_to");
 
-		$this->router->try("POST", "/role/add", function(RequestInterface $req, 
-															ResponseInterface $res){
+		$this->router->try("POST", "/role/add", function(Request $req, 
+															Response $res){
 
-			$name = $req->getAttribute('name');
-			$descr = $req->getAttribute('descr');
+			$name = $req->query->get('name');
+			$descr = $req->query->get('descr');
+
+			// print_r(array($name, $descr));
 
 			$hash = sha1(json_encode(array("name"=>$name, "descr"=>$descr)));
 
-		    $res->getBody()->write($hash);
+		    $res->setContent($hash);
 
 		    return $res;
 		});	
 	}
 
-	public function execReq($method, $path, $reqBody = null){
-
-		if(!is_null($reqBody))
-			if(!empty($reqParams = json_decode($reqBody)))
-				foreach ($reqParams as $key => $val)
-					$this->attrBag[$key] = $val;
-
-		$this->uriMock->expects($this->any())
-            ->method('getPath')
-            ->will($this->returnValue($path));
-
-		$this->servReqMock->expects($this->any())
-			->method('getMethod')
-			->will($this->returnValue($method));
-
-	}
-
 	public function testIndex(){
 
-		$this->execReq("GET", "/");
+		// $this->execReq("GET", "/");
 
 		$routes = $this->router->getRoutes();
 
 		$route = $routes->getRouteByUrl("/");
 
-		$route->setParam("res", new Zend\Diactoros\Response());
+		$route->setParam("res", new Response());
 
-		$this->assertEquals("Hello World!", (string)$route->exec()->getBody());
+		$this->assertEquals("Hello World!", (string)$route->exec()->getContent());
 	}
 
 	public function testParameterizedRoute(){
 
-		$this->execReq("GET", "/hello/pitsolu");
-
 		$routes = $this->router->getRoutes();
 
 		$route = $routes->getByName("hello_to");
+		
+		$params = $route->getParams();
 
-		$path = $this->servReqMock->getUri()->getPath();
+		$route->setParam("to", 'pitsolu');
+		$route->setParam("res", new Response());
+		$route->setParam("req", new Request());
 
-		$params = [];
-		if($route->isMatch($path))
-			$params = $route->getParams();
-
-		$route->setParam("to", $params["to"]);
-		$route->setParam("res", new Zend\Diactoros\Response());
-		$route->setParam("req", $this->servReqMock);
-
-		$this->assertEquals("Hello pitsolu", (string)$route->exec()->getBody());
+		$this->assertEquals("Hello pitsolu", (string)$route->exec()->getContent());
 	}
 
 	public function testPostReq(){
 
 		$params = json_encode(array("name"=>"admin", "descr"=>"N/A"));
 
-		$this->execReq("POST", "/role/add", $params);
-
 		$routes = $this->router->getRoutes();
 
 		$route = $routes->getRouteByUrl("/role/add");
 
-		$route->setParam("res", new Zend\Diactoros\Response());
-		$route->setParam("req", $this->servReqMock);
+		$request = new Request();
+		$request->query->set('name', 'admin');
+		$request->query->set('descr', 'N/A');
 
-		$this->assertEquals((string)$route->exec()->getBody(), sha1($params));
+		$route->setParam("res", new Response());
+		$route->setParam("req", $request);
+
+		$this->assertEquals((string)$route->exec()->getContent(), sha1($params));
 	}
 }

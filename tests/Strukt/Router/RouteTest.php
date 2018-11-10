@@ -1,6 +1,8 @@
 <?php
 
-class RouteTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class RouteTest extends TestCase{
 
 	public function setUp(){
 

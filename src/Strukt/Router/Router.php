@@ -2,9 +2,8 @@
 
 namespace Strukt\Router;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 use Strukt\Core\Registry;
 use Strukt\Event\Event;
@@ -17,17 +16,17 @@ class Router{
 	private $registry = null;
 	private $allowed = null;
 
-	public function __construct(ServerRequestInterface $servReq = null, Array $allowed = null){		
+	public function __construct(Array $allowed = null, Request $servReq = null){		
 
 		MimeTypes::register();
 
 		$this->registry = Registry::getInstance();
 
 		if(is_null($servReq))
-			if($this->registry->exist("servReq"))
+			if($this->registry->exists("servReq"))
 				$this->servReq = $this->registry->get("servReq");
 			else
-				throw new \Exception("Strukt\Router\Router requires servReq object!");
+				$this->servReq = Request::createFromGlobals();
 		else
 			$this->servReq = $servReq;
 				
@@ -51,9 +50,9 @@ class Router{
 
 		$args = [];
 		foreach($params as $name=>$type)
-			if($type == \Psr\Http\Message\ResponseInterface::class)
+			if($type == Response::class)
 				$args[$name] = $this->registry->get("Response.Ok")->exec();
-			elseif($type == \Psr\Http\Message\RequestInterface::class)
+			elseif($type == Request::class)
 				$args[$name] = $this->servReq;
 
 		if(empty($args))
@@ -86,14 +85,14 @@ class Router{
 
 	private function translateRequestBodyToAttributes(){
 
-		$body = (string)$this->servReq->getParsedBody();
+		$body = (string)$this->servReq->getContent();
 
-		if(!empty($body)){
+		parse_str($body, $arr);
 
-			$params = json_decode($body, 1);
+		if(!empty($arr)){
 
-			foreach($params as $key=>$val)
-				@$this->servReq = $this->servReq->withAttribute($key, $val);
+			foreach($arr as $key=>$val)
+				$this->servReq->query->set($key, $val);
 		}
 	}
 
@@ -108,32 +107,12 @@ class Router{
 
 			$response = $this->registry->get("Response.Ok")->exec();
 
-			$response->getBody()->write($result);
+			$response->setContent($result);
 
 			return $response;
 		}
 
 		return $result;
-	}
-
-	public static function emit(ResponseInterface $response){
-
-		$http_line = sprintf('HTTP/%s %s %s',
-	        $response->getProtocolVersion(),
-	        $response->getStatusCode(),
-	        $response->getReasonPhrase());
-
-    	header($http_line, true, $response->getStatusCode());
-
-        foreach ($response->getHeaders() as $name => $values) {
-
-            foreach ($values as $value) {
-
-                header(sprintf('%s: %s', $name, $value), false);
-            }
-        }
-
-        exit((string)$response->getBody());
 	}
 
 	/** 
@@ -168,8 +147,8 @@ class Router{
 		        	if(in_array($ext, array_keys($mimeTypes))){
 
 		        		$res = $this->registry->get("Response.Ok")->exec();
-						$res = $res->withHeader("content-type", $mimeTypes[$ext]);
-						$res->getBody()->write(Fs::cat($path));
+		        		$res->headers->set('Content-Type', 'text/plain');
+						$res->setContent(Fs::cat($path));
 		        	}
 		        	else{
 
@@ -185,10 +164,15 @@ class Router{
 		}
 	}
 
-	public function dispatch($path=null, $reqMethod="GET"){
+	public function dispatch($path=null, $rMethod="GET"){
 
-		$path = $this->servReq->getUri()->getPath();
-		$reqMethod = $this->servReq->getMethod();
+		if(is_null($path))
+			$path = $this->servReq->getPathInfo();
+
+		$reqMethod = $this->servReq->server->get('REQUEST_METHOD');
+
+		if(empty(trim($reqMethod)))
+			$reqMethod = $rMethod;
 
 		$route = $this->routes->getRouteByUrl($path);
 
@@ -214,6 +198,7 @@ class Router{
 			}
 
 			$method = $this->routes->getMethodByUrl($props["tpl_url"]);
+
 			if($method != $reqMethod)
 				return $this->registry->get("Response.MethodNotFound")->exec();
 
@@ -221,20 +206,20 @@ class Router{
 
 			if(!empty($routeParams))
 				foreach($routeParams as $key=>$rParam)
-					@$this->servReq = $this->servReq->withAttribute($key, $routeParams[$key]);
+					$this->servReq->query->set($key, $routeParams[$key]);
 
 			$routerEventParams = $route->getEvent()->getParams();
 
 			foreach($routerEventParams as $name=>$type){					
 
-				if($type == \Psr\Http\Message\ResponseInterface::class){
+				if($type == Response::class){
 
 					$res = $this->registry->get("Response.Ok")->exec();
 
 					$route->setParam($name, $res);
 				}
 
-				if($type == \Psr\Http\Message\RequestInterface::class){
+				if($type == Request::class){
 
 					$this->translateRequestBodyToAttributes();
 
@@ -250,6 +235,8 @@ class Router{
 
 	public function run(){
 
-		$this->emit($this->dispatch());
+		$res = $this->dispatch();
+
+		$res->send();
 	}
 } 

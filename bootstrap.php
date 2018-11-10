@@ -3,20 +3,23 @@
 $loader = require "vendor/autoload.php";
 $loader->add('Strukt', "src/");
 
-$servReq = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
-    $_SERVER,
+$request = Request::createFromGlobals();
+
+$request = new Request(
     $_GET,
     $_POST,
+    array(),
     $_COOKIE,
-    $_FILES
+    $_FILES,
+    $_SERVER
 );
-
-$servReq = $servReq->withParsedBody(new Zend\Diactoros\PhpInputStream());
 
 $registry = Strukt\Core\Registry::getInstance();
 $registry->set("_staticDir", __DIR__."/public/static");
-$registry->set("servReq", $servReq);
+$registry->set("servReq", $request);
 
 //Dependency Injection
 foreach(["NotFound"=>404, 
@@ -32,9 +35,16 @@ foreach(["NotFound"=>404,
 		if(in_array($code, array(403,404,405,500)))
 			$body = Strukt\Fs::cat(sprintf("public/errors/%d.html", $code));
 
-		$res = new Zend\Diactoros\Response();
-		$res = $res->withStatus($code);
-		$res->getBody()->write($body);
+		// $res = new Zend\Diactoros\Response();
+		// $res = $res->withStatus($code);
+		// $res->getBody()->write($body);
+
+		$res = new Response(
+
+		    $body,
+		    $code,
+		    array('content-type' => 'text/html')
+		);
 
 		return $res;
 	}));

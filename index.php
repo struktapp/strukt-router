@@ -5,60 +5,40 @@ ini_set("date.timezone", "Africa/Nairobi");
 
 error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 require "bootstrap.php";
 
 $allowed = array("user_del");
 
-// $registry = Strukt\Core\Registry::getInstance();
-// $registry->set("mime-types", array(
+$r = new Strukt\Router\Router($allowed);
 
-// 	"s"=>"b",
-// 	"t"=>"c"
-// ));
-
-$r = new Strukt\Router\Router($servReq, $allowed);
-
-$r->before(function(RequestInterface $req, ResponseInterface $res) use ($registry){
-
-	// $path = $registry->get("servReq")->getUri()->getPath();
-
-	// $path = $req->getUri()->getPath();
+$r->before(function(Request $req, Response $res) use ($registry){
 
 	if($path == "/"){
-
-		// $resp = $registry->get("Response.Redirected")->exec();
-
-		// $resp = $resp->withStatus(200)->withHeader('Location', '/hello/friend');
 
 		$res = $res->withStatus(200)->withHeader('Location', '/hello/friend');
 
 		Strukt\Router\Router::emit($res);
-		
-		// Strukt\Router\Router::emit($resp);
 	}
 });
 
-$r->get("/", function(ResponseInterface $res){
+$r->get("/", function(Response $res){
 
-	// return "Hello World";
-
-	// $res->getBody()->write("Hello World!");
-	$res->getBody()->write(Strukt\Fs::cat("public/static/index.html"));
+	$res->setContent(Strukt\Fs::cat("public/static/index.html"));
 
 	return $res;
 });
 
-$r->get("/hello/{to:alpha}", function($to, RequestInterface $req, ResponseInterface $res){
+$r->get("/hello/{to:alpha}", function($to, Request $req, Response $res){
 
-	$res->getBody()->write("Hello $to");
+	$res->setContent("Hello $to");
 
 	return $res;
 });
 
-$r->post("/login", function() use ($servReq){
+$r->post("/change/password", function() use ($servReq){
 
 	return "Not yet implemented!";
 });
@@ -69,38 +49,53 @@ $r->delete("/user/delete/{id:int}", function($id){
 
 }, "user_del");
 
-$r->try("GET", "/test/{id:int}", function(RequestInterface $req, ResponseInterface $res){
+$r->try("GET", "/test/{id:int}", function(Request $req, Response $res){
 
-	$id = (int) $req->getAttribute('id');
-    $res->getBody()->write("You asked for blog entry {$id}.");
+	$id = (int)$req->query->get('id');
+
+    $res->setContent("You asked for blog entry {$id}.");
 
     return $res;
-
-	// print_r($req->getUploadedFiles());
 });
 
-$r->post("/test/json", function(RequestInterface $req, ResponseInterface $res){
+$r->post("/test/json", function(Request $req, Response $res){
 
-    return json_encode($req->getParsedBody());
+    return json_encode($req->getContent());
 });
 
-$r->post("/test/reqpar", function(RequestInterface $req, ResponseInterface $res){
+$r->post("/test/reqpar", function(Request $req, Response $res){
 
-    // return json_encode($req->getParsedBody());
-
-    echo $req->getAttribute("name");
-    echo $req->getAttribute("dept");
+    echo $req->query->get("name");
+    echo " ";
+    echo $req->query->get("dept");
 
     return "";
-
-    // echo new Zend\Diactoros\PhpInputStream();
 });
 
-$rs = $r->getRoutes();
-$ru = $rs->getRouteByUrl("/test/json");
+$r->try("GET", "/login/{username:alpha}", function(Request $req, Response $res){
 
-print_r($ru);
+	$username = $req->query->get('username');
+	$password = $req->query->get('password');
+
+	$digest = sha1($username.$password);
+
+	// print_r(array(array($username, $password),
+	// 				$digest,
+	// 				sha1("paulp@55w0rd")));
+
+    $res->setContent($digest);
+
+    return $res;
+});
+
+// $rs = $r->getRoutes();
+// $ru = $rs->getRouteByUrl("/test/json");
+
+// print_r($ru);
 
 // echo $r->dispatch("/hello/sam");
 // echo $r->dispatch("/");
-// $r->run();
+
+// echo $r->dispatch('/login/paul', 'POST');
+
+$r->run();

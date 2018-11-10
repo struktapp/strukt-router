@@ -1,13 +1,15 @@
 <?php
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
-class RouteReqResTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class RouteReqResTest extends TestCase{
 
 	public function setUp(){
 
-		$this->route = new Strukt\Router\Route("/test/{id:int}", function($id, RequestInterface $req, ResponseInterface $res){
+		$this->route = new Strukt\Router\Route("/test/{id:int}", function($id, Request $req, Response $res){
 
 			return sprintf("This is an %s", $id);
 		});
@@ -20,7 +22,7 @@ class RouteReqResTest extends PHPUnit_Framework_TestCase{
 		$params = $event->getParams();
 
 		$this->assertTrue(empty($params["id"]));
-		$this->assertEquals("Psr\Http\Message\RequestInterface", $params["req"]);
-		$this->assertEquals("Psr\Http\Message\ResponseInterface", $params["res"]);
+		$this->assertEquals("Symfony\Component\HttpFoundation\Request", $params["req"]);
+		$this->assertEquals("Symfony\Component\HttpFoundation\Response", $params["res"]);
 	}
 }
