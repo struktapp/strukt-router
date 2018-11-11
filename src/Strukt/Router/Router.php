@@ -12,23 +12,23 @@ use Strukt\Fs;
 class Router{
 
 	private $routes = null;
-	private $servReq = null;
+	private $request = null;
 	private $registry = null;
 	private $allowed = null;
 
-	public function __construct(Array $allowed = null, Request $servReq = null){		
+	public function __construct(Array $allowed = null, Request $request = null){		
 
 		MimeTypes::register();
 
 		$this->registry = Registry::getInstance();
 
-		if(is_null($servReq))
-			if($this->registry->exists("servReq"))
-				$this->servReq = $this->registry->get("servReq");
+		if(is_null($request))
+			if($this->registry->exists("request"))
+				$this->request = $this->registry->get("request");
 			else
-				$this->servReq = Request::createFromGlobals();
+				$this->request = Request::createFromGlobals();
 		else
-			$this->servReq = $servReq;
+			$this->request = $request;
 				
 		$this->allowedGroup = $allowed;
 
@@ -53,7 +53,7 @@ class Router{
 			if($type == Response::class)
 				$args[$name] = $this->registry->get("Response.Ok")->exec();
 			elseif($type == Request::class)
-				$args[$name] = $this->servReq;
+				$args[$name] = $this->request;
 
 		if(empty($args))
 			throw new \Exception("Router::before requires both Psr\Http\Message\[RequestInterface, ResponseInterface]!");
@@ -85,14 +85,14 @@ class Router{
 
 	private function translateRequestBodyToAttributes(){
 
-		$body = (string)$this->servReq->getContent();
+		$body = (string)$this->request->getContent();
 
 		parse_str($body, $arr);
 
 		if(!empty($arr)){
 
 			foreach($arr as $key=>$val)
-				$this->servReq->query->set($key, $val);
+				$this->request->query->set($key, $val);
 		}
 	}
 
@@ -167,9 +167,9 @@ class Router{
 	public function dispatch($path=null, $rMethod="GET"){
 
 		if(is_null($path))
-			$path = $this->servReq->getPathInfo();
+			$path = $this->request->getPathInfo();
 
-		$reqMethod = $this->servReq->server->get('REQUEST_METHOD');
+		$reqMethod = $this->request->server->get('REQUEST_METHOD');
 
 		if(empty(trim($reqMethod)))
 			$reqMethod = $rMethod;
@@ -206,7 +206,7 @@ class Router{
 
 			if(!empty($routeParams))
 				foreach($routeParams as $key=>$rParam)
-					$this->servReq->query->set($key, $routeParams[$key]);
+					$this->request->query->set($key, $routeParams[$key]);
 
 			$routerEventParams = $route->getEvent()->getParams();
 
@@ -223,7 +223,7 @@ class Router{
 
 					$this->translateRequestBodyToAttributes();
 
-					$route->setParam($name, $this->servReq);
+					$route->setParam($name, $this->request);
 				}
 			}
 

@@ -41,7 +41,7 @@ $r->get("/hello/{to:alpha}", function($to, Request $req, Response $res){
 	return $res;
 });
 
-$r->post("/change/password", function() use ($servReq){
+$r->post("/change/password", function(){
 
 	return "Not yet implemented!";
 });

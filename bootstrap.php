@@ -19,7 +19,7 @@ $request = new Request(
 
 $registry = Strukt\Core\Registry::getInstance();
 $registry->set("_staticDir", __DIR__."/public/static");
-$registry->set("servReq", $request);
+$registry->set("request", $request);
 
 //Dependency Injection
 foreach(["NotFound"=>404, 
