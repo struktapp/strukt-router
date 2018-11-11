@@ -11,7 +11,7 @@
     ],
     "require": {
 
-    	"php": ">=7.0",
+    	"php": "^7.1.3",
         "strukt/fs": "dev-master",
 		"strukt/commons": "dev-master",
 		"symfony/http-foundation": "^4.1"
