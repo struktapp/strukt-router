@@ -147,7 +147,7 @@ class Router{
 		        	if(in_array($ext, array_keys($mimeTypes))){
 
 		        		$res = $this->registry->get("Response.Ok")->exec();
-		        		$res->headers->set('Content-Type', 'text/plain');
+		        		$res->headers->set('Content-Type', $mimeTypes[$ext]);
 						$res->setContent(Fs::cat($path));
 		        	}
 		        	else{
