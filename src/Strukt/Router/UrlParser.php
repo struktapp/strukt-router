@@ -3,18 +3,18 @@
 namespace Strukt\Router;
 
 /**
- * UrlMatcher class.
+ * UrlParser class.
  *
  * @author Moderator <pitsolu@gmail.com>
  */
-class Matcher{
+class UrlParser{
 
 	/**
-	* Url pattern
+	* Url patterns
 	*
-	* @var string 
+	* @var array 
 	*/
-	private $pattern;
+	private $patterns;
 
 	/**
 	* Url parameters
@@ -28,9 +28,9 @@ class Matcher{
      *
      * @param string $pattern url pattern
      */
-	public function __construct($pattern){
+	public function __construct(Array $patterns){
 
-		$this->pattern = trim($pattern);
+		$this->patterns = $patterns;
 
 		$this->params = [];
 	}
@@ -42,14 +42,14 @@ class Matcher{
      *
      * @return boolean
      */
-	public function isMatch($url){
+	private function isMatch($pattern, $url){
 
 		$url = trim($url);
-		if($url == $this->pattern)
+		if($url == $pattern)
 			return true;
 
 		$parts = explode("/", trim($url, "/"));
-		$pattern = explode("/", trim($this->pattern, "/"));
+		$pattern = explode("/", trim($pattern, "/"));
 
 		if(count($parts) != count($pattern))
 			return false;
@@ -94,6 +94,19 @@ class Matcher{
 		}
 
 		return (bool)preg_match(sprintf("/^%s$/", implode("\/", $regex)), trim($url, "/"));
+	}
+
+	public function whichPattern($url){
+
+		foreach($this->patterns as $pattern){
+
+			if($this->isMatch($pattern, $url)){
+
+				return $pattern;
+			}
+		}
+
+		return null;
 	}
 
 	/**

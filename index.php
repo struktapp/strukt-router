@@ -1,90 +1,55 @@
 <?php
 
-ini_set('display_errors', '1');
-ini_set("date.timezone", "Africa/Nairobi");
-
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session as CoreSession;
 
-require "bootstrap.php";
+use Strukt\Router\Middleware\ExceptionHandler;
+use Strukt\Router\Middleware\Session;
+use Strukt\Router\Middleware\StaticFileFinder;
+use Strukt\Router\Middleware\Router;
+use Strukt\Core\Registry;
 
-$allowed = array("user_del");
+$loader = require "vendor/autoload.php";
+$loader->add('App', __DIR__.'/fixtures/');
+$loader->add('Strukt', __DIR__.'/src/');
 
-$r = new Strukt\Router\Router($allowed);
+$app = new Strukt\Router\Kernel(Request::createFromGlobals());
+$app->middlewares(array(
+	
+	"execption" => new ExceptionHandler("dev"),
+	"session" => new Session(new CoreSession()),
+	"staticfinder" => new StaticFileFinder(getcwd(), "/public/static"),
+	"router" => new Router,
+));
 
-$r->before(function(Request $req, Response $res) use ($registry){
+$app->map("/", function(Request $request){
 
-	$path = $req->getPathInfo();
+	return new Response('Hello world', 200);
 
-	// if(trim($path) == "/"){
-
-	// 	$res = new RedirectResponse("/hello/friend");
-
-	// 	$res->send();
-	// }
+	// return new RedirectResponse("/tryme");
 });
 
-$r->get("/", function(Response $res){
+$app->map("/tryme", function(Request $request){
 
-	$res->setContent(Strukt\Fs::cat("public/static/index.html"));
+	// print_r($request->getSession());
 
-	return $res;
+	return new Response("You've been tried!", 200);
 });
 
-$r->get("/hello/{to:alpha}", function($to, Request $req, Response $res){
+$app->map("/yahman/{name}", function($name, Request $request){
 
-	$res->setContent("Hello $to");
-
-	return $res;
+	return new Response(sprintf("Bombo clat rasta %s!", $name), 200);
 });
 
-$r->post("/change/password", function(){
+$app->map("POST","/foo", "App\Controller\FooController@run");
+$app->map("/start/pgs", "App\Controller\StartpageController@run");
+$app->map("/check/{username:alpha}", "App\Controller\UserController@check");
 
-	return "Not yet implemented!";
-});
+$response = $app->run();
 
-$r->delete("/user/delete/{id:int}", function($id){
 
-	return "user {$id} deleted!";
+// print_r(Registry::getInstance()->get("route-collection"));
+echo $response->getContent();
 
-}, "user_del");
-
-$r->try("GET", "/test/{id:int}", function(Request $req, Response $res){
-
-	$id = (int)$req->query->get('id');
-
-    $res->setContent("You asked for blog entry {$id}.");
-
-    return $res;
-});
-
-$r->post("/test/json", function(Request $req, Response $res){
-
-    return json_encode($req->getContent());
-});
-
-$r->post("/test/reqpar", function(Request $req, Response $res){
-
-    echo $req->query->get("name");
-    echo " ";
-    echo $req->query->get("dept");
-
-    return "";
-});
-
-$r->try("GET", "/login/{username:alpha}", function(Request $req, Response $res){
-
-	$username = $req->query->get('username');
-	$password = $req->query->get('password');
-
-	$digest = sha1($username.$password);
-
-    $res->setContent($digest);
-
-    return $res;
-});
-
-$r->run();

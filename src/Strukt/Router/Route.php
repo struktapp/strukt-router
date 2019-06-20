@@ -6,41 +6,50 @@ use Strukt\Event\Event;
 
 class Route{
 
-	private $matcher;
-	private $callable;
+	private $method;
+	private $pattern;
 	private $params;
 	private $event;
-	private $props;
+	private $name;
 
-	public function __construct($tpl_url, \Closure $callable, $group = null, $name = null){
+	public function __construct($pattern, \Closure $callable, $method = "GET", $name = null){
 
-		$this->matcher = new Matcher($tpl_url);
+		$this->method = $method;
 
-		$this->event = Event::newEvent($callable);
+		$this->pattern = $pattern;
+
+		$this->name = $name;
 
 		$this->params = [];
 
-		$this->props = array(
-
-			"tpl_url"=>$tpl_url,
-			"group"=>$group,
-			"name"=>$name
-		);
+		$this->event = Event::newEvent($callable);
 	}
 
-	public function getProperties(){
+	public function getName(){
 
-		return $this->props;
+		return $this->name;
 	}
 
-	public function isMatch($url){
+	public function getMethod(){
 
-		return $this->matcher->isMatch($url);
+		return $this->method;
+	}
+
+	public function getPattern(){
+
+		return $this->pattern;
 	}
 
 	public function getEvent(){
 
 		return $this->event;
+	}
+
+	public function mergeParams(array $params){
+
+		$this->params = array_merge($params, $this->params);	
+
+		return $this;
 	}
 
 	public function setParam($name, $param){
@@ -57,17 +66,10 @@ class Route{
 		return $this;
 	}
 
-	public function getParams(){
-
-		return $this->matcher->getParams();
-	}
-
 	public function exec(){
 
-		$params = array_merge($this->matcher->getParams(), $this->params);
-
-		if(!empty($params))
-			$response = $this->event->applyArgs($params)->exec();
+		if(!empty($this->params))
+			$response = $this->event->applyArgs($this->params)->exec();
 		else
 			$response = $this->event->exec();
 

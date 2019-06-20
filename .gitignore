@@ -1,6 +1,6 @@
 vendor/
 composer.lock
 public/
-test.php
 php_errors.log
-.gitignore.save
+test.php
+..gitignore.swp
