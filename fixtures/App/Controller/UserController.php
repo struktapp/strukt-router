@@ -7,9 +7,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserController{
 
-	public function login($username, $password){
+	public function login(Request $request){
 
-		return new Response(sprintf("username: %s, password %s", $username, $password), 200);
+		$username = $request->get("username");
+		$password = $request->get("password");
+
+		return new Response(sprintf("username:%s, password:%s", $username, $password), 200);
 	}
 
 	public function check($username){

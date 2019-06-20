@@ -43,13 +43,19 @@ $app->map("/yahman/{name}", function($name, Request $request){
 	return new Response(sprintf("Bombo clat rasta %s!", $name), 200);
 });
 
+$app->map("/user", function(Request $request){
+
+	$id = $request->query->get("id");
+
+	return new Response(sprintf("User id[%s].", $id), 200);
+});
+
 $app->map("POST","/foo", "App\Controller\FooController@run");
 $app->map("/start/pgs", "App\Controller\StartpageController@run");
 $app->map("/check/{username:alpha}", "App\Controller\UserController@check");
+$app->map("POST","/login", "App\Controller\UserController@login");
 
 $response = $app->run();
 
-
-// print_r(Registry::getInstance()->get("route-collection"));
 echo $response->getContent();
 

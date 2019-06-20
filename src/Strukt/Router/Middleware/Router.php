@@ -33,7 +33,10 @@ class Router implements MiddlewareInterface{
 
 	public function __invoke(Request $request, Response $response, callable $next){
 
-	 	$uri = $request->getRequestUri();
+		$uri = $request->getRequestUri();
+		if(!is_null(parse_url($uri, PHP_URL_QUERY)))
+			list($uri, $qs) = explode("?", $uri);
+
 	 	$method = $request->getMethod();
 
 	 	try{
