@@ -19,12 +19,12 @@ $r->before(function(Request $req, Response $res) use ($registry){
 
 	$path = $req->getPathInfo();
 
-	if(trim($path) == "/"){
+	// if(trim($path) == "/"){
 
-		$res = new RedirectResponse("/hello/friend");
+	// 	$res = new RedirectResponse("/hello/friend");
 
-		$res->send();
-	}
+	// 	$res->send();
+	// }
 });
 
 $r->get("/", function(Response $res){

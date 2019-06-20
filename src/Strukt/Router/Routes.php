@@ -13,16 +13,16 @@ class Routes{
 		//
 	}
 
-	public function addRoute($method, $tpl_url, $callable, $group = null, $name = null){
+	public function addRoute($method, $pattern, $callable, $name = null){
 
-		$this->methods[$tpl_url] = $method;
+		$this->methods[$pattern] = $method;
 
 		if(is_null($name))
 			$name = sha1(rand());
 
-		$this->urls[$tpl_url] = $name;
+		$this->urls[$pattern] = $name;
 
-		$this->routes[$name] = new Route($tpl_url, $callable, $group, $name);
+		$this->routes[$name] = new Route($pattern, $callable, $name);
 	}
 
 	public function getMethodByUrl($url){
