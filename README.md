@@ -42,8 +42,6 @@ After installation run  `composer exec static` to get `public\` directory.
 
 ## Get Started
 
-### Bootstrap
-
 ```php
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
