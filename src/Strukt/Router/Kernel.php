@@ -24,6 +24,7 @@ class Kernel{
 	public function map() {
 
 		$method = "GET";
+		$name = "";
 
 		switch (func_num_args()) {
 
@@ -33,12 +34,15 @@ class Kernel{
 			case 3:
 				list($method, $path, $controller) = func_get_args();
 			break;
+			case 4:
+				list($method, $path, $controller, $name) = func_get_args();
+			break;
 			default:
-				throw new \Exception(sprintf("%s::map expects 2 or 3 arguments!", Kernel::class));
+				throw new \Exception(sprintf("%s::map expects 2, 3 or 4 arguments!", Kernel::class));
 			break;
 		}
 
-		$this->middlewares["router"]->endpoint(trim($path), $controller, trim($method));
+		$this->middlewares["router"]->endpoint(trim($path), $controller, trim($method), trim($name));
 	}
 
 	public function run() : Response{

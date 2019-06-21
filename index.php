@@ -9,7 +9,6 @@ use Strukt\Router\Middleware\ExceptionHandler;
 use Strukt\Router\Middleware\Session;
 use Strukt\Router\Middleware\StaticFileFinder;
 use Strukt\Router\Middleware\Router;
-use Strukt\Core\Registry;
 
 $loader = require "vendor/autoload.php";
 $loader->add('App', __DIR__.'/fixtures/');
@@ -24,23 +23,36 @@ $app->middlewares(array(
 	"router" => new Router,
 ));
 
-$app->map("/", function(Request $request){
+$app->map("/", function(){
 
-	return new Response('Hello world', 200);
+	$content = Strukt\Fs::cat("public/static/index.html");
 
-	// return new RedirectResponse("/tryme");
+    return new Response($content, 200, array("Content-Type"=>"text/html"));
 });
+
+$app->map("/hello/world", function(Request $request){
+
+	return new Response('Hello world!', 200);
+
+	// return new RedirectResponse("/hello/pitsolu");
+});
+
+$app->map("/hello/{to:alpha}", function($to){
+
+    return new Response("Hello $to");
+});
+
+$app->map("DELETE", "/user/{id:int}", function($id){
+
+    return "user {$id} deleted!";
+
+}, "user_del");
 
 $app->map("/tryme", function(Request $request){
 
 	// print_r($request->getSession());
 
 	return new Response("You've been tried!", 200);
-});
-
-$app->map("/yahman/{name}", function($name, Request $request){
-
-	return new Response(sprintf("Bombo clat rasta %s!", $name), 200);
 });
 
 $app->map("/user", function(Request $request){
