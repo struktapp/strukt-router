@@ -64,6 +64,11 @@ $app->middlewares(array(
 	"router" => new Router,
 ));
 
+$app->map("/", function(){
+
+    return "Strukt Works!";
+});
+
 $app->map("/user", function(Request $request){
 
     $id = $request->query->get("id");
@@ -76,16 +81,15 @@ $app->map("/hello/{to:alpha}", function($to){
     return new Response("Hello $to");
 });
 
-$app->map("POST","/login", "App\Controller\UserController@login");
-
 $response = $app->run();
 
 exit($response->getContent());
 ```
-Run with PHP in-built server:
+### Mapping Classes
 
-```sh
-php -S localhost:8080 index.php
+```php
+$app->map("POST","/login", "App\Controller\UserController@login");
+
 ```
 ### Apache
 
