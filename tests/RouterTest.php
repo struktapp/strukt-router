@@ -1,9 +1,7 @@
 <?php
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session as CoreSession;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
 
 // use Strukt\Router\Middleware\ExceptionHandler;
 // use Strukt\Router\Middleware\Session;

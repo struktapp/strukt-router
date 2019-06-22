@@ -2,8 +2,8 @@
 
 namespace Strukt\Router;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
 
 class Runner{
 

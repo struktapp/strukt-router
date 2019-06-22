@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Router\Exception;
+namespace Strukt\Http\Exception;
 
 class NotFoundException extends \Exception{
 

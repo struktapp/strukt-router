@@ -2,9 +2,9 @@
 
 namespace Strukt\Router\Middleware;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Strukt\Router\Exception\ServerErrorException;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
+use Strukt\Http\Exception\ServerErrorException;
 
 class ExceptionHandler implements MiddlewareInterface{
 

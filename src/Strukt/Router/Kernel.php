@@ -2,8 +2,8 @@
 
 namespace Strukt\Router;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
 
 class Kernel{
 
@@ -23,26 +23,42 @@ class Kernel{
 
 	public function map() {
 
-		$method = "GET";
-		$name = "";
+		$args = func_get_args();
 
-		switch (func_num_args()) {
+		$arg = current($args);
+		if(in_array(strtoupper($arg), array("PUT", "GET", "PATH", "POST", "DELETE"))){
 
-			case 2:
-				list($path, $controller) = func_get_args();
-			break;
-			case 3:
-				list($method, $path, $controller) = func_get_args();
-			break;
-			case 4:
-				list($method, $path, $controller, $name) = func_get_args();
-			break;
-			default:
-				throw new \Exception(sprintf("%s::map expects 2, 3 or 4 arguments!", Kernel::class));
-			break;
+			$method = trim(strtoupper($arg));
 		}
 
-		$this->middlewares["router"]->endpoint(trim($path), $controller, trim($method), trim($name));
+		if(isset($method)){
+
+			$path = trim(next($args));	
+		}
+		else{
+
+			$path = trim(current($args));
+			$method = "GET";
+		}
+
+		if(isset($path)){
+
+			$controller = next($args);
+			if(is_string($controller))
+				$controller = trim($controller);
+		}
+		else{
+
+			throw new \Exception("Router path must be defined for each route!");
+		}
+
+		$name = "";
+		if(next($args)){
+
+			$name = trim(current($args));
+		}
+
+		$this->middlewares["router"]->endpoint($path, $controller, $method, $name);
 	}
 
 	public function run() : Response{

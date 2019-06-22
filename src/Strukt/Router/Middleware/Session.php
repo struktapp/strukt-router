@@ -2,15 +2,15 @@
 
 namespace Strukt\Router\Middleware;
 
-use Symfony\Component\HttpFoundation\Session\Session as CoreSession;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Strukt\Http\Session as StruktSession;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
 
 class Session implements MiddlewareInterface{
 
 	private $session;
 
-	public function __construct(CoreSession $session){
+	public function __construct(StruktSession $session){
 
 		$this->session = $session;
 	}

@@ -2,7 +2,6 @@
 
 namespace Strukt\Router;
 
-use Symfony\Component\HttpFoundation\File;
 use RecursiveDirectoryIterator as RecDirItr;
 use RecursiveIteratorIterator as RecItrItr;
 

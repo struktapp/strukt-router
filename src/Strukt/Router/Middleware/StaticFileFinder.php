@@ -2,9 +2,8 @@
 
 namespace Strukt\Router\Middleware;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
 use Strukt\Router\FileFinder;
 use Strukt\Core\Registry;
 

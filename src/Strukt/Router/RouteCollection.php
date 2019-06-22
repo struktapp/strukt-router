@@ -2,7 +2,7 @@
 
 namespace Strukt\Router;
 
-use Strukt\Router\Exception\MethodNotAllowedException;
+use Strukt\Http\Exception\MethodNotAllowedException;
 
 class RouteCollection{
 
