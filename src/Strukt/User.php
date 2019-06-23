@@ -2,6 +2,8 @@
 
 namespace Strukt;
 
+use Strukt\Contract\UserInterface;
+
 class User implements UserInterface{
 
 	private $username;

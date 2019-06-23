@@ -6,8 +6,10 @@ use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Core\Registry;
 use Strukt\Event\Event;
+use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\AbstractMiddleware;
 
-class Authorization implements MiddlewareInterface{
+class Authorization extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $authorizationEvent;
 
@@ -23,7 +25,7 @@ class Authorization implements MiddlewareInterface{
 		if(!is_array($access))
 			throw new \Exception("Authorization event expects array object!");
 
-		Registry::getInstance()->set("access", $access);
+		$this->core()->set("access", $access);
 
 		return $next($request, $response);
 	}

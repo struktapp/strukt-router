@@ -13,34 +13,47 @@ use Strukt\Router\Middleware\StaticFileFinder;
 use Strukt\Router\Middleware\Router;
 
 use Strukt\Event\Event;
+use Strukt\Env;
 
 $loader = require "vendor/autoload.php";
 $loader->add('App', __DIR__.'/fixtures/');
 $loader->add('Strukt', __DIR__.'/src/');
 
+Env::set("root_dir", getcwd());
+Env::set("rel_static_dir", "/public/static");
+Env::set("is_dev", true);
+
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
+$app->inject("app.dep.author", function(){
+
+	return array(
+
+		"permissions" => array(
+
+			// "show_secrets"
+		)
+	);
+});
+$app->inject("app.dep.authetic", function(Session $session){
+
+	$user = new Strukt\User();
+	$user->setUsername($session->get("username"));
+
+	return $user;
+});
+
+$app->providers(array(
+
+	Strukt\Provider\Router::class
+));
+
 $app->middlewares(array(
 	
-	"execption" => new ExceptionHandler("dev"),
+	"execption" => new ExceptionHandler(Env::get("is_dev")),
 	"session" => new SessionMiddleware(new Session()),
-	"authorization" => new Authorization(new Event(function(){
-
-		return array(
-
-			"permissions" => array(
-
-				// "show_secrets"
-			)
-		);
-	})),
-	"authentication" => new Authentication(new Event(function(Session $session){
-
-		$user = new Strukt\User();
-		$user->setUsername($session->get("username"));
-
-		return $user;
-	})),
-	"staticfinder" => new StaticFileFinder(getcwd(), "/public/static"),
+	"authorization" => new Authorization($app->core()->get("app.dep.author")),
+	"authentication" => new Authentication($app->core()->get("app.dep.authetic")),
+	"staticfinder" => new StaticFileFinder(Env::get("root_dir"), Env::get("rel_static_dir")),
 	"router" => new Router,
 ));
 
@@ -83,4 +96,3 @@ $app->map("/startpage", "App\Controller\StartpageController@run");
 $response = $app->run();
 
 echo $response->getContent();
-

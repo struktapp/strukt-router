@@ -5,6 +5,7 @@ namespace Strukt\Router\Middleware;
 use Strukt\Http\Session as StruktSession;
 use Strukt\Http\Response;
 use Strukt\Http\Request;
+use Strukt\Contract\MiddlewareInterface;
 
 class Session implements MiddlewareInterface{
 

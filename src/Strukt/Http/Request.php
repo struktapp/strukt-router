@@ -2,7 +2,7 @@
 
 namespace Strukt\Http;
 
-use Strukt\UserInterface;
+use Strukt\Contract\UserInterface;
 
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest; 
 

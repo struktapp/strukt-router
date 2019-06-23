@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt;
+namespace Strukt\Contract;
 
 interface UserInterface{
 

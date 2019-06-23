@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Router\Middleware;
+namespace Strukt\Contract;
 
 use Strukt\Http\Response;
 use Strukt\Http\Request;

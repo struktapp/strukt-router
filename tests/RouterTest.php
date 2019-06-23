@@ -6,27 +6,39 @@ use Strukt\Http\Request;
 // use Strukt\Router\Middleware\ExceptionHandler;
 // use Strukt\Router\Middleware\Session;
 // use Strukt\Router\Middleware\StaticFileFinder;
-use Strukt\Router\Middleware\Router;
+use Strukt\Router\Middleware\Router as RouterMiddleware;
 
 class RouterTest extends PHPUnit\Framework\TestCase{
+
+	public function boot(){
+
+		$request = Request::createFromGlobals();
+		$app = new Strukt\Router\Kernel($request);
+		$app->providers(array(
+
+			Strukt\Provider\Router::class
+		));
+		$app->middlewares(array(
+			
+			"router" => new RouterMiddleware
+		));
+
+		return array($app, $request);
+	}
 
 	/**
     * @runInSeparateProcess
     */
 	public function testDefaultRoute(){
 
-		$this->app = new Strukt\Router\Kernel(Request::createFromGlobals());
-		$this->app->middlewares(array(
-			
-			"router" => new Router
-		));
+		list($app, $request) = $this->boot();
 
-		$this->app->map("/", function(Request $request){
+		$app->map("/", function(Request $request){
 
 			return new Response('Hello world', 200);
 		});
 
-		$response = $this->app->run();
+		$response = $app->run();
 
 		$this->assertEquals($response->getContent(), "Hello world");
 	}
@@ -38,18 +50,14 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		$_SERVER["REQUEST_URI"] = "/yahman/pitsolu";
 
-		$this->app = new Strukt\Router\Kernel(Request::createFromGlobals());
-		$this->app->middlewares(array(
-			
-			"router" => new Router
-		));
+		list($app, $request) = $this->boot();
 
-		$this->app->map("/yahman/{name}", function($name, Request $request){
+		$app->map("/yahman/{name}", function($name, Request $request){
 
 			return new Response(sprintf("Bombo clat rasta %s!", $name), 200);
 		});
 
-		$response = $this->app->run();
+		$response = $app->run();
 
 		$this->assertEquals($response->getContent(), "Bombo clat rasta pitsolu!");
 	}
@@ -61,15 +69,11 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		$_SERVER["REQUEST_URI"] = "/check/pItSoLu";
 
-		$this->app = new Strukt\Router\Kernel(Request::createFromGlobals());
-		$this->app->middlewares(array(
-			
-			"router" => new Router
-		));
+		list($app, $request) = $this->boot();
 
-		$this->app->map("/check/{username:alpha}", "App\Controller\UserController@check");
+		$app->map("/check/{username:alpha}", "App\Controller\UserController@check");
 
-		$response = $this->app->run();
+		$response = $app->run();
 
 		$this->assertEquals($response->getContent(), "check pItSoLu");
 	}
@@ -82,17 +86,12 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 		$_SERVER["REQUEST_URI"] = "/user/login";
 		$_SERVER["REQUEST_METHOD"] = "GET";
 
-		$request = Request::createFromGlobals();
+		list($app, $request) = $this->boot();
+
 		$request->query->set("username", "pitsolu");
 		$request->query->set("password", "p@55w0rd");
 
-		$this->app = new Strukt\Router\Kernel($request);
-		$this->app->middlewares(array(
-			
-			"router" => new Router
-		));
-
-		$this->app->map("POST", "/user/login", function(Request $request){
+		$app->map("POST", "/user/login", function(Request $request){
 
 			$username = $request->query->get("username");
 			$password = $request->query->get("password");
@@ -100,7 +99,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 			return new Response(sprintf("username: %s, password: %s", $username, $password));
 		});
 
-		$response = $this->app->run();
+		$response = $app->run();
 
 		$this->assertEquals($response->getContent(), "Method Not Allowed!");
 	}

@@ -6,8 +6,11 @@ use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Router\FileFinder;
 use Strukt\Core\Registry;
+use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\AbstractMiddleware;
 
-class StaticFileFinder implements MiddlewareInterface{
+
+class StaticFileFinder extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $finder;
 
@@ -15,7 +18,7 @@ class StaticFileFinder implements MiddlewareInterface{
 
 		$this->finder = new FileFinder($root_dir, $rel_dir);
 
-		Registry::getInstance()->set("filefinder.static", $this->finder);
+		$this->core()->set("filefinder.static", $this->finder);
 	}
 
 	public function __invoke(Request $request, Response $response, callable $next){

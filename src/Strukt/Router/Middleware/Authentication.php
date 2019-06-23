@@ -4,9 +4,10 @@ namespace Strukt\Router\Middleware;
 
 use Strukt\Http\Response;
 use Strukt\Http\Request;
-use Strukt\UserInterface;
-use Strukt\Event\Event;
 use Strukt\Http\Session;
+use Strukt\Event\Event;
+use Strukt\Contract\UserInterface;
+use Strukt\Contract\MiddlewareInterface;
 
 class Authentication implements MiddlewareInterface{
 

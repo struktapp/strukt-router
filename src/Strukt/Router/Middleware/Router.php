@@ -6,33 +6,11 @@ use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Http\Exception\NotFoundException;
 use Strukt\Http\Exception\UnauthorizedException;
-use Strukt\Router\RouteCollection;
-use Strukt\Router\Route;
 use Strukt\Core\Registry;
+use Strukt\Contract\AbstractMiddleware;
+use Strukt\Contract\MiddlewareInterface;
 
-class Router implements MiddlewareInterface{
-
-	public function __construct(){
-
-		$this->registry = Registry::getInstance();
-
-		$this->registry->set("route-collection", new RouteCollection());
-	}
-
-	public function endpoint($pattern, $route_func, $http_method, $name){
-
-		if(is_string($route_func)){
-
- 			list($class, $method) = explode("@", $route_func);
-
- 			$rClass = new \ReflectionClass($class);
- 			$route_func = $rClass->getMethod($method)->getClosure($rClass->newInstance());
- 		}
-
- 		$route = new Route($pattern, $route_func, $http_method, $name);
-
-		$this->registry->get("route-collection")->addRoute($route);
-	}
+class Router extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __invoke(Request $request, Response $response, callable $next){
 
@@ -47,13 +25,13 @@ class Router implements MiddlewareInterface{
 
 	 	try{
 	 		
-	 		$route = $this->registry->get("route-collection")->getRoute($method, $uri);
+	 		$route = $this->core()->get("app.router")->getRoute($method, $uri);
 
 	 		if(!is_null($route)){
 
-	 			if($this->registry->exists("access.permissions")){
+	 			if($this->core()->exists("access.permissions")){
 
-	 				$permissions = $this->registry->get("access.permissions");
+	 				$permissions = $this->core()->get("access.permissions");
 
 	 				$routeName = $route->getName();
 
