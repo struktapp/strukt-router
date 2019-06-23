@@ -60,7 +60,6 @@ $app->middlewares(array(
 $app->map("/", function(){
 
 	return "Strukt works!";
-
 });
 
 $app->map("GET", "/user/secrets", function(){

@@ -43,23 +43,25 @@ After installation run  `composer exec static` to get `public\` directory.
 ## Get Started
 
 ```php
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session as CoreSession;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
+use Strukt\Http\RedirectResponse;
+use Strukt\Http\Session;
 
 use Strukt\Router\Middleware\ExceptionHandler;
-use Strukt\Router\Middleware\Session;
+use Strukt\Router\Middleware\Session as SessionMiddleware;
 use Strukt\Router\Middleware\StaticFileFinder;
 use Strukt\Router\Middleware\Router;
 
 require "vendor/autoload.php";
 
+Strukt\Env::set("is_dev", true);
+
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
 $app->middlewares(array(
 	
-	"execption" => new ExceptionHandler("dev"),
-	"session" => new Session(new CoreSession()),
+	"execption" => new ExceptionHandler(Env::get("is_dev")),
+	"session" => new SessionMiddleware(new Session()),
 	"staticfinder" => new StaticFileFinder(getcwd(), "/public/static"),
 	"router" => new Router,
 ));

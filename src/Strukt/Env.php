@@ -17,6 +17,6 @@ class Env{
 			throw new \Exception(sprintf("%s::set(key,val) key and val must be strings!", 
 											get_class($this)));
 			
-		return Registry::getInstance()->set(sprintf("env.%s", $key), $val);
+		Registry::getInstance()->set(sprintf("env.%s", $key), $val);
 	}
 }
