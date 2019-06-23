@@ -58,6 +58,10 @@ require "vendor/autoload.php";
 Strukt\Env::set("is_dev", true);
 
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
+$app->providers(array(
+
+    Strukt\Provider\Router::class
+));
 $app->middlewares(array(
 	
 	"execption" => new ExceptionHandler(Env::get("is_dev")),
