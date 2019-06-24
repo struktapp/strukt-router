@@ -2,7 +2,7 @@
 
 namespace Strukt\Router;
 
-use Strukt\Http\Response;
+use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Request;
 
 class Runner{
@@ -15,7 +15,7 @@ class Runner{
  		$this->queue = $queue;
  	}
  
- 	public function __invoke(Request $request, Response $response){
+ 	public function __invoke(Request $request, ResponseInterface $response){
 
  		$middleware = array_shift($this->queue);
 

@@ -3,6 +3,7 @@
 use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Http\RedirectResponse;
+use Strukt\Http\JsonResponse;
 use Strukt\Http\Session;
 
 use Strukt\Router\Middleware\ExceptionHandler;
@@ -88,6 +89,11 @@ $app->map("/logout", function(Request $request){
 	$request->getSession()->invalidate();
 
 	return new Response("User logged out.");
+});
+
+$app->map("/test/json", function(Request $request){
+
+	return new JsonResponse(array("username"=>"pitsolu"));
 });
 
 $app->map("/startpage", "App\Controller\StartpageController@run");

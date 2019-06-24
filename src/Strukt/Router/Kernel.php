@@ -3,6 +3,7 @@
 namespace Strukt\Router;
 
 use Strukt\Http\Response;
+use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Request;
 use Strukt\Core\Registry;
 use Strukt\Event\Event;
@@ -91,7 +92,7 @@ class Kernel{
 							->exec();
 	}
 
-	public function run() : Response{
+	public function run() : ResponseInterface{
 
 		$runner = new Runner($this->middlewares);
 		$response = $runner($this->request, $this->response);
