@@ -8,7 +8,12 @@ class RouteCollection{
 
 	public function __construct(){
 
-		$this->route = [];
+		$this->routes = [];
+	}
+
+	public function getRouteList(){
+
+		return array_keys($this->routes);
 	}
 
 	public function addRoute(Route $route){
