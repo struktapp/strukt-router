@@ -11,10 +11,24 @@ class RouteCollection{
 		$this->routes = [];
 	}
 
-	public function getRouteList(){
+	public function getRoutes(){
 
-		return array_keys($this->routes);
+		$properties = [];
+
+		foreach($this->routes as $pattern=>$route){
+
+			$properties[] = array(
+
+				"pattern"=>$pattern,
+				"method"=>$route->getMethod(),
+				"permission"=>$route->getName()
+			);
+		}
+
+		return $properties;
 	}
+
+	public function
 
 	public function addRoute(Route $route){
 
