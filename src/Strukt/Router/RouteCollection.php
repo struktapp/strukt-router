@@ -28,8 +28,6 @@ class RouteCollection{
 		return $properties;
 	}
 
-	public function
-
 	public function addRoute(Route $route){
 
 		$pattern = $route->getPattern();
