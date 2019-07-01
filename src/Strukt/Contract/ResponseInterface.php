@@ -3,5 +3,6 @@
 namespace Strukt\Contract;
 
 interface ResponseInterface{
-	
+
+	//	
 }

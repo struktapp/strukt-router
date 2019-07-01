@@ -4,12 +4,7 @@ namespace Strukt\Contract;
 
 use Strukt\Core\Registry;
 
-abstract class AbstractProvider{
+abstract class AbstractProvider extends AbstractCore{
 
-	protected $registry;
-
-	public function core(){
-
-		return Registry::getInstance();
-	}
+	//
 }

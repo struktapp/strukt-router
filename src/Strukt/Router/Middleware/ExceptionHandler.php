@@ -6,15 +6,10 @@ use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Http\Exception\ServerErrorException;
 use Strukt\Contract\MiddlewareInterface;
+use Strukt\Env;
 
 class ExceptionHandler implements MiddlewareInterface{
 
-	private $is_dev = false;
-
-	public function __construct(string $is_dev){
-
-		$this->is_dev = $is_dev;
-	}
 	public function __invoke(Request $request, Response $response, callable $next){
 
 		try {
@@ -23,7 +18,7 @@ class ExceptionHandler implements MiddlewareInterface{
 		} 
 		catch (ServerErrorException $e){
 
-			if ($this->is_dev){
+			if (Env::get("is_dev")){
 
 				$response = new Response($e->getMessage(), $e->getCode());
 			} 

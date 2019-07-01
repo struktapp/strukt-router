@@ -2,13 +2,14 @@
 
 namespace Strukt\Router;
 
-use Strukt\Http\Response;
+use Strukt\Contract\AbstractCore;
 use Strukt\Contract\ResponseInterface;
+use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Core\Registry;
 use Strukt\Event\Event;
 
-class Kernel{
+class Kernel extends AbstractCore{
 
 	public function __construct(Request $request, string $env = null, bool $debug = false){
 
@@ -19,20 +20,10 @@ class Kernel{
 		$this->env = $env;
 	}
 
-	public function core(){
-
-		return Registry::getInstance();
-	}
-
 	public function inject($key, callable $val){
 
 		$this->core()->set($key, new Event($val));
 	}
-
-	// public function get($key){
-
-	// 	return $this->core->get($key)->exec();
-	// }
 
 	public function providers(array $providers){
 

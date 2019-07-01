@@ -4,12 +4,7 @@ namespace Strukt\Contract;
 
 use Strukt\Core\Registry;
 
-abstract class AbstractMiddleware{
+abstract class AbstractMiddleware extends AbstractCore{
 
-	protected $registry;
-
-	public function core(){
-
-		return Registry::getInstance();
-	}
+	//
 }
