@@ -6,7 +6,7 @@ use Strukt\Core\Registry;
 
 abstract class AbstractCore{
 
-	public function core(){
+	protected function core(){
 
 		return Registry::getInstance();
 	}
