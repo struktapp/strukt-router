@@ -46,28 +46,64 @@ After installation run  `composer exec static` to get `public\` directory.
 use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Http\RedirectResponse;
+use Strukt\Http\JsonResponse;
 use Strukt\Http\Session;
 
 use Strukt\Router\Middleware\ExceptionHandler;
-use Strukt\Router\Middleware\Session as SessionMiddleware;
+use Strukt\Router\Middleware\Authentication; 
+use Strukt\Router\Middleware\Authorization;
 use Strukt\Router\Middleware\StaticFileFinder;
-use Strukt\Router\Middleware\Router;
+use Strukt\Router\Middleware\Session as SessionMiddleware;
+use Strukt\Router\Middleware\Router as RouterMiddleware;
+
+use Strukt\Provider\Router as RouterProvider;
+
+use Strukt\Env;
 
 require "vendor/autoload.php";
 
-Strukt\Env::set("is_dev", true);
+Env::set("root_dir", getcwd());
+Env::set("rel_static_dir", "/public/static");
+Env::set("is_dev", true);
 
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
+$app->inject("app.dep.author", function(){
+
+    return array(
+
+        "permissions" => array(
+
+            // "show_secrets"
+        )
+    );
+});
+
+$app->inject("app.dep.authentic", function(Session $session){
+
+    $user = new Strukt\User();
+    $user->setUsername($session->get("username"));
+
+    return $user;
+});
+
+$app->inject("app.dep.session", function(){
+
+    return new Session;
+});
+
 $app->providers(array(
 
-    Strukt\Provider\Router::class
+    RouterProvider::class
 ));
+
 $app->middlewares(array(
-	
-	"execption" => new ExceptionHandler(Env::get("is_dev")),
-	"session" => new SessionMiddleware(new Session()),
-	"staticfinder" => new StaticFileFinder(getcwd(), "/public/static"),
-	"router" => new Router,
+
+    ExceptionHandler::class,
+    SessionMiddleware::class,
+    Authorization::class,
+    Authentication::class,
+    StaticFileFinder::class,
+    RouterMiddleware::class
 ));
 
 $app->map("/", function(){
@@ -82,7 +118,7 @@ $app->map("/user", function(Request $request){
     return new Response(sprintf("User id[%s].", $id), 200);
 });
 
-$app->map("/hello/{to:alpha}", function($to){
+$app->map("GET","/hello/{to:alpha}", function($to){
 
     return new Response("Hello $to");
 });
