@@ -91,6 +91,18 @@ $app->map("/user/check", function(Request $request){
 	return new Response(sprintf("User:%s", $request->getUser()->getUsername()), 200);
 });
 
+$app->map("/user", function(Request $req){
+
+	$id = $req->query->get("id");
+
+	return new Response(sprintf("id: %s", $id), 200);
+});
+
+$app->map("/hello/{name:alpha}", function($name, Request $request){
+
+	return "Hello ${name}!";
+});
+
 $app->map("/logout", function(Request $request){
 
 	$request->getSession()->invalidate();

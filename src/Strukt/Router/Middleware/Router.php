@@ -51,7 +51,17 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 	 				}
 	 			}
 
-		 		$response = $route->setParam("request", $request)->exec();
+	 			$params = $route->getEvent()->getParams();
+
+				foreach($params as $name=>$type){
+
+					if($type == Request::class){
+
+						$route->setParam($name, $request);
+					}
+				}
+
+		 		$response = $route->exec();
 
 		 		if(is_string($response)){
 
