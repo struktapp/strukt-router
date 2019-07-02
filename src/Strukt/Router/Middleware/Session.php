@@ -2,18 +2,18 @@
 
 namespace Strukt\Router\Middleware;
 
-use Strukt\Http\Session as StruktSession;
 use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\AbstractMiddleware;
 
-class Session implements MiddlewareInterface{
+class Session extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $session;
 
-	public function __construct(StruktSession $session){
+	public function __construct(){
 
-		$this->session = $session;
+		$this->session = $this->core()->get("app.dep.session")->exec();
 	}
 
 	public function __invoke(Request $request, Response $response, callable $next){

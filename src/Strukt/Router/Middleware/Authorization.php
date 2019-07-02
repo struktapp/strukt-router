@@ -11,16 +11,16 @@ use Strukt\Contract\AbstractMiddleware;
 
 class Authorization extends AbstractMiddleware implements MiddlewareInterface{
 
-	private $authorizationEvent;
+	private $auth_event;
 
-	public function __construct(Event $authorizationEvent){
+	public function __construct(){
 
-		$this->authorizationEvent = $authorizationEvent;
+		$this->auth_event = $this->core()->get("app.dep.author");
 	}
 
 	public function __invoke(Request $request, Response $response, callable $next){
 
-		$access = $this->authorizationEvent->exec();
+		$access = $this->auth_event->exec();
 
 		if(!is_array($access))
 			throw new \Exception("Authorization event expects array object!");

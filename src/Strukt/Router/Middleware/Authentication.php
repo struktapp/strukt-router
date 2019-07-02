@@ -8,22 +8,20 @@ use Strukt\Http\Session;
 use Strukt\Event\Event;
 use Strukt\Contract\UserInterface;
 use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\AbstractMiddleware;
 
-class Authentication implements MiddlewareInterface{
+class Authentication extends AbstractMiddleware implements MiddlewareInterface{
 
-	private $authenticationEvent;
+	private $auth_event;
 
-	public function __construct(Event $authenticationEvent){
+	public function __construct(){
 
-		$this->authenticationEvent = $authenticationEvent;
+		$this->auth_event = $this->core()->get("app.dep.authentic");
 	}
 
 	public function __invoke(Request $request, Response $response, callable $next){
 
-		if(!$this->authenticationEvent->expects(Session::class))
-			throw new \Exception(sprintf("Middleware authentication event expects %s as parameter!", Session::class));
-
-		$user = $this->authenticationEvent->apply($request->getSession())->exec();
+		$user = $this->auth_event->apply($request->getSession())->exec();
 
 		if(!($user instanceof UserInterface))
 			throw new \Exception("% must implement %s!", get_class($user), UserInterface::class);

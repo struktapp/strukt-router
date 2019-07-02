@@ -8,15 +8,18 @@ use Strukt\Router\FileFinder;
 use Strukt\Core\Registry;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Contract\AbstractMiddleware;
-
+use Strukt\Env;
 
 class StaticFileFinder extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $finder;
 
-	public function __construct(string $root_dir, string $rel_dir){
+	public function __construct(){
 
-		$this->finder = new FileFinder($root_dir, $rel_dir);
+		$root_dir = Env::get("root_dir");
+		$static_dir = Env::get("rel_static_dir");
+
+		$this->finder = new FileFinder($root_dir, $static_dir);
 
 		$this->core()->set("filefinder.static", $this->finder);
 	}

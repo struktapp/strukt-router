@@ -12,6 +12,13 @@ use Strukt\Contract\MiddlewareInterface;
 
 class Router extends AbstractMiddleware implements MiddlewareInterface{
 
+	private $route_col;
+
+	public function __construct(){
+
+		$this->route_col = $this->core()->get("app.router");
+	}
+
 	public function __invoke(Request $request, Response $response, callable $next){
 
 		$uri = $request->getRequestUri();
@@ -25,7 +32,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 
 	 	try{
 	 		
-	 		$route = $this->core()->get("app.router")->getRoute($method, $uri);
+	 		$route = $this->route_col->getRoute($method, $uri);
 
 	 		if(!is_null($route)){
 

@@ -7,11 +7,12 @@ use Strukt\Http\JsonResponse;
 use Strukt\Http\Session;
 
 use Strukt\Router\Middleware\ExceptionHandler;
-use Strukt\Router\Middleware\Session as SessionMiddleware;
 use Strukt\Router\Middleware\Authentication; 
 use Strukt\Router\Middleware\Authorization;
 use Strukt\Router\Middleware\StaticFileFinder;
-use Strukt\Router\Middleware\Router;
+use Strukt\Router\Middleware\Session as SessionMiddleware;
+use Strukt\Router\Middleware\Router as RouterMiddleware;
+use Strukt\Provider\Router as RouterProvider;
 
 use Strukt\Event\Event;
 use Strukt\Env;
@@ -35,7 +36,8 @@ $app->inject("app.dep.author", function(){
 		)
 	);
 });
-$app->inject("app.dep.authetic", function(Session $session){
+
+$app->inject("app.dep.authentic", function(Session $session){
 
 	$user = new Strukt\User();
 	$user->setUsername($session->get("username"));
@@ -43,19 +45,24 @@ $app->inject("app.dep.authetic", function(Session $session){
 	return $user;
 });
 
+$app->inject("app.dep.session", function(){
+
+	return new Session;
+});
+
 $app->providers(array(
 
-	Strukt\Provider\Router::class
+	RouterProvider::class
 ));
 
 $app->middlewares(array(
-	
-	"execption" => new ExceptionHandler(Env::get("is_dev")),
-	"session" => new SessionMiddleware(new Session()),
-	"authorization" => new Authorization($app->core()->get("app.dep.author")),
-	"authentication" => new Authentication($app->core()->get("app.dep.authetic")),
-	"staticfinder" => new StaticFileFinder(Env::get("root_dir"), Env::get("rel_static_dir")),
-	"router" => new Router,
+
+	ExceptionHandler::class,
+	SessionMiddleware::class,
+	Authorization::class,
+	Authentication::class,
+	StaticFileFinder::class,
+	RouterMiddleware::class
 ));
 
 $app->map("/", function(){

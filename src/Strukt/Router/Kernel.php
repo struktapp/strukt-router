@@ -11,6 +11,12 @@ use Strukt\Event\Event;
 
 class Kernel extends AbstractCore{
 
+	private $request;
+	private $response;
+	private $debug;
+	private $env;
+	private $middlewares;
+
 	public function __construct(Request $request, string $env = null, bool $debug = false){
 
 		$this->request = $request;
@@ -38,7 +44,11 @@ class Kernel extends AbstractCore{
 
 	public function middlewares(array $middlewares){
 
-		$this->middlewares = $middlewares;
+		foreach($middlewares as $middleware){
+
+			$rClass = new \ReflectionClass($middleware);
+ 			$this->middlewares[] = $rClass->newInstance();
+		}
 	}
 
 	public function map() {
