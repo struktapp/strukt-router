@@ -7,10 +7,14 @@ use Strukt\Contract\UserInterface;
 class User implements UserInterface{
 
 	private $username;
+	private $password;
+	private $token;
 
-	public function __construct(){
+	public function __construct($username, $password, $token){
 
-		//
+		$this->username = $username;
+		$this->password = $password;
+		$this->token = $token;
 	}
 
 	public function setUsername($username){
@@ -21,5 +25,25 @@ class User implements UserInterface{
 	public function getUsername(){
 
 		return $this->username;
+	}
+
+	public function setPassword($password){
+
+		$this->password = $password;
+	}
+
+	public function getPassword(){
+
+		return $this->password;
+	}
+
+	public function setToken($token){
+
+		$this->token = $token;
+	}
+
+	public function getToken(){
+
+		return $this->token;
 	}
 }
