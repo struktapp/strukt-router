@@ -10,7 +10,7 @@ class User implements UserInterface{
 	private $password;
 	private $token;
 
-	public function __construct($username, $password, $token){
+	public function __construct($username = null, $password = null, $token = null){
 
 		$this->username = $username;
 		$this->password = $password;
