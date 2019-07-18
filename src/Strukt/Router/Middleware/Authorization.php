@@ -20,7 +20,7 @@ class Authorization extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __invoke(Request $request, Response $response, callable $next){
 
-		$access = $this->auth_event->exec();
+		$access = $this->auth_event->apply($request->getSession())->exec();
 
 		if(!is_array($access))
 			throw new \Exception("Authorization event expects array object!");
