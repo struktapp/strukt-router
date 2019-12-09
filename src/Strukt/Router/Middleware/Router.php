@@ -2,6 +2,7 @@
 
 namespace Strukt\Router\Middleware;
 
+use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Http\Exception\NotFoundException;
@@ -19,7 +20,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 		$this->route_col = $this->core()->get("app.router");
 	}
 
-	public function __invoke(Request $request, Response $response, callable $next){
+	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
 		$uri = $request->getRequestUri();
 
@@ -61,11 +62,13 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 					}
 				}
 
+				$headers = $response->headers->all();
+
 		 		$response = $route->exec();
 
 		 		if(is_string($response)){
 
-		 			$response = new Response($response);
+		 			$response = new Response($response, 200, $headers);
 		 		}
 		 	}
 		 	else{

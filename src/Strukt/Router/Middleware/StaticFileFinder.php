@@ -2,6 +2,7 @@
 
 namespace Strukt\Router\Middleware;
 
+use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Router\FileFinder;
@@ -24,7 +25,7 @@ class StaticFileFinder extends AbstractMiddleware implements MiddlewareInterface
 		$this->core()->set("filefinder.static", $this->finder);
 	}
 
-	public function __invoke(Request $request, Response $response, callable $next){
+	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
 		$uri = $request->getRequestUri();
 
@@ -32,7 +33,9 @@ class StaticFileFinder extends AbstractMiddleware implements MiddlewareInterface
 
 			$contents = $this->finder->getContents($uri);
 
-			return new Response($contents, 200);
+			$headers = $response->headers->all();
+
+			return new Response($contents, 200, $headers);
 		}
 
 		return $next($request, $response);

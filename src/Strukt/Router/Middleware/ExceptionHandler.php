@@ -2,6 +2,7 @@
 
 namespace Strukt\Router\Middleware;
 
+use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Http\Exception\ServerErrorException;
@@ -18,7 +19,7 @@ class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface
 		$this->is_dev = Env::get("is_dev");
 	}
 
-	public function __invoke(Request $request, Response $response, callable $next){
+	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
 		try {
 			

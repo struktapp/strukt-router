@@ -2,7 +2,7 @@
 
 namespace Strukt\Router\Middleware;
 
-use Strukt\Http\Response;
+use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Request;
 use Strukt\Core\Registry;
 use Strukt\Event\Event;
@@ -18,7 +18,7 @@ class Authorization extends AbstractMiddleware implements MiddlewareInterface{
 		$this->auth_event = $this->core()->get("app.dep.author");
 	}
 
-	public function __invoke(Request $request, Response $response, callable $next){
+	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
 		$access = $this->auth_event->apply($request->getSession())->exec();
 

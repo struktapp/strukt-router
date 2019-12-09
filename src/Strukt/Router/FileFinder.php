@@ -30,8 +30,13 @@ class FileFinder{
 		return array_key_exists($filepath, $this->files);
 	}
 
+	public function getObject($filepath){
+
+		return $this->files[$filepath];
+	}
+
 	public function getContents($filepath){
 
-		return \Strukt\Fs::cat($this->files[$filepath]->getRealPath());
+		return \Strukt\Fs::cat($this->getObject($filepath)->getRealPath());
 	}
 }
