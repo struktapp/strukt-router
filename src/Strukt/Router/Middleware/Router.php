@@ -66,7 +66,11 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 
 		 		$response = $route->exec();
 
-		 		if(is_string($response)){
+		 		if($response instanceof ResponseInterface){
+
+		 			$response->headers->add($headers);
+		 		}
+		 		elseif(is_string($response)){
 
 		 			$response = new Response($response, 200, $headers);
 		 		}
