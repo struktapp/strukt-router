@@ -17,7 +17,7 @@ Strukt\Fs::mkdir("public/errors");
 Strukt\Fs::touchWrite("public/static/js/script.js",'/*javascript goes here*/');
 Strukt\Fs::touchWrite("public/static/css/style.css",'/*css goes here*/');
 
-$error = '<!DOCTYPE html>
+$tpl = '<!DOCTYPE html>
 <html>
 <head>
 	<style>
@@ -40,12 +40,12 @@ $error = '<!DOCTYPE html>
 			font-size:30px;
 		}
 	</style>
-	<title>__ERR_CODE__ | Strukt</title>
+	<title>{{error_code}} | Strukt</title>
 </head>
 <body>
 	<span class="error">
-	    <h1>Strukt</br>Error __ERR_CODE__</h1>
-	    <h3>__ERR_MSG__</h3>
+	    <h1>Strukt</br>Error {{error_code}}</h1>
+	    <h3>{{error_message}}</h3>
     </span>
 </body>
 </html>';
@@ -53,21 +53,16 @@ $error = '<!DOCTYPE html>
 foreach(array("403"=>"Forbidden",
 				"404"=>"Resource Not Found",
 				"405"=>"Method Not Allowed",
-				"500"=>"Server Error") as $code=>$msg)
-	Strukt\Fs::touchWrite(sprintf("public/errors/%d.html", $code), str_replace(
+				"500"=>"Server Error") as $code=>$msg){
 
-		array(
+	$output = Strukt\Templator::create($tpl, array(
 
-			"__ERR_CODE__", 
-			"__ERR_MSG__"
-		), 
-		array(
-
-			$code, 
-			sprintf("%s!", $msg)
-		), 
-		$error
+		"error_code"=>$code,
+		"error_message"=>sprintf("%s!", $msg)
 	));
+
+	Strukt\Fs::touchWrite(sprintf("public/errors/%d.html", $code), $output);
+}
 
 Strukt\Fs::touchWrite("public/static/index.html",'<!DOCTYPE html>
 <html>
