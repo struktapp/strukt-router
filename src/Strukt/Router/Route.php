@@ -22,7 +22,7 @@ class Route{
 
 		$this->params = [];
 
-		$this->event = Event::newEvent($callable);
+		$this->event = Event::create($callable);
 	}
 
 	public function getName(){

@@ -8,6 +8,6 @@ abstract class AbstractCore{
 
 	protected function core(){
 
-		return Registry::getInstance();
+		return Registry::getSingleton();
 	}
 }
