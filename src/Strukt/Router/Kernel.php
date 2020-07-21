@@ -7,7 +7,7 @@ use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Core\Registry;
-use Strukt\Event\Event;
+use Strukt\Event;
 
 class Kernel extends AbstractCore{
 

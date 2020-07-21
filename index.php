@@ -14,7 +14,7 @@ use Strukt\Router\Middleware\Session as SessionMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 use Strukt\Provider\Router as RouterProvider;
 
-use Strukt\Event\Event;
+use Strukt\Event;
 use Strukt\Env;
 
 $loader = require "vendor/autoload.php";

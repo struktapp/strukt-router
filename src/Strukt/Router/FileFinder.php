@@ -4,6 +4,7 @@ namespace Strukt\Router;
 
 use RecursiveDirectoryIterator as RecDirItr;
 use RecursiveIteratorIterator as RecItrItr;
+use Strukt\Fs;
 
 class FileFinder{
 
@@ -37,6 +38,6 @@ class FileFinder{
 
 	public function getContents($filepath){
 
-		return \Strukt\Fs::cat($this->getObject($filepath)->getRealPath());
+		return Fs::cat($this->getObject($filepath)->getRealPath());
 	}
 }

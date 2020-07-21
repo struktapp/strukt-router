@@ -2,10 +2,6 @@
 
 use Strukt\Http\Response;
 use Strukt\Http\Request;
-
-// use Strukt\Router\Middleware\ExceptionHandler;
-// use Strukt\Router\Middleware\Session;
-// use Strukt\Router\Middleware\StaticFileFinder;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 
 class RouterTest extends PHPUnit\Framework\TestCase{

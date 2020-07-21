@@ -4,7 +4,7 @@ namespace Strukt\Provider;
 
 use Strukt\Router\RouteCollection;
 use Strukt\Router\Route;
-use Strukt\Event\Event;
+use Strukt\Event;
 use Strukt\Contract\AbstractProvider;
 use Strukt\Contract\ProviderInterface;
 

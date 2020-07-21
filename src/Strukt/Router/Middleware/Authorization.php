@@ -4,8 +4,6 @@ namespace Strukt\Router\Middleware;
 
 use Strukt\Contract\ResponseInterface;
 use Strukt\Http\Request;
-use Strukt\Core\Registry;
-use Strukt\Event\Event;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Contract\AbstractMiddleware;
 

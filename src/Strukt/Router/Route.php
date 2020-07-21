@@ -2,7 +2,7 @@
 
 namespace Strukt\Router;
 
-use Strukt\Event\Event;
+use Strukt\Event;
 
 class Route{
 
