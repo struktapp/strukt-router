@@ -8,6 +8,8 @@ use Strukt\Http\Response;
 use Strukt\Http\Request;
 use Strukt\Core\Registry;
 use Strukt\Event;
+use Strukt\Ref;
+use Strukt\Raise;
 
 class Kernel extends AbstractCore{
 
@@ -35,20 +37,16 @@ class Kernel extends AbstractCore{
 
 		foreach($providers as $provider){
 
-			$rClass = new \ReflectionClass($provider);
- 			$rMethod = $rClass->getMethod("register");
+ 			$rClosure = Ref::create($provider)->make()->method("register")->getClosure();
 
- 			call_user_func($rMethod->getClosure($rClass->newInstance()));
+ 			call_user_func($rClosure);
 		}
 	}
 
 	public function middlewares(array $middlewares){
 
-		foreach($middlewares as $middleware){
-
-			$rClass = new \ReflectionClass($middleware);
- 			$this->middlewares[] = $rClass->newInstance();
-		}
+		foreach($middlewares as $middleware)
+ 			$this->middlewares[] = Ref::create($middleware)->make()->getInstance();
 	}
 
 	public function map() {
@@ -79,7 +77,7 @@ class Kernel extends AbstractCore{
 		}
 		else{
 
-			throw new \Exception("Router path must be defined for each route!");
+			new Raise("Router path must be defined for each route!");
 		}
 
 		$name = "";

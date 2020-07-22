@@ -16,7 +16,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 		));
 		$app->middlewares(array(
 			
-			"router" => new RouterMiddleware
+			Strukt\Router\Middleware\Router::class
 		));
 
 		return array($app, $request);
