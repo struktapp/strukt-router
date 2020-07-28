@@ -37,9 +37,9 @@ class Kernel extends AbstractCore{
 
 		foreach($providers as $provider){
 
- 			$rClosure = Ref::create($provider)->noMake()->method("register")->getClosure();
+ 			$closure = Ref::create($provider)->make()->method("register")->getClosure();
 
- 			call_user_func($rClosure);
+ 			call_user_func($closure);
 		}
 	}
 

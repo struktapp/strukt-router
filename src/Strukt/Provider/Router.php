@@ -7,6 +7,7 @@ use Strukt\Router\Route;
 use Strukt\Event;
 use Strukt\Contract\AbstractProvider;
 use Strukt\Contract\ProviderInterface;
+use Strukt\Ref;
 
 class Router extends AbstractProvider implements ProviderInterface{
 
@@ -25,8 +26,10 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 		 			list($class, $method) = explode("@", $route_func);
 
-		 			$rClass = new \ReflectionClass($class);
-		 			$route_func = $rClass->getMethod($method)->getClosure($rClass->newInstance());
+		 			$route_func = Ref::create($class)
+		 				->make()
+		 				->method($method)
+		 				->getClosure();
 		 		}
 
 		 		$route = new Route($pattern, $route_func, $http_method, $name);

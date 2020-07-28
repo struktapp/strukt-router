@@ -10,6 +10,10 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		$request = Request::createFromGlobals();
 		$app = new Strukt\Router\Kernel($request);
+		// $app->inject("app.dep.author", function(){
+
+		// 	return [];
+		// });
 		$app->providers(array(
 
 			Strukt\Provider\Router::class
