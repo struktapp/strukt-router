@@ -7,6 +7,11 @@ use Strukt\Http\Request;
 
 class UserController{
 
+	public function __construct(){
+
+		//
+	}
+
 	public function login(Request $request){
 
 		$username = $request->get("username");
