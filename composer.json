@@ -14,7 +14,7 @@
         "php": "^7.1.3",
         "strukt/fs": "1.0.0",
         "strukt/generator": "1.0.0-alpha",
-        "strukt/commons": "1.0.1-alpha",
+        "strukt/commons": "1.0.2-alpha",
         "symfony/http-foundation": "^4.1"
     },
     "require-dev": {
