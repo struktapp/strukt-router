@@ -27,5 +27,6 @@
             "Strukt\\": "src/"
         }
     },
-    "bin":["bin/static"]
+    "bin":["bin/static"],
+    "minimum-stability":"dev"
 }
