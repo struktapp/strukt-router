@@ -14,8 +14,14 @@ Strukt\Fs::mkdir("public/static/css");
 Strukt\Fs::mkdir("public/static/js");
 Strukt\Fs::mkdir("public/errors");
 
-Strukt\Fs::touchWrite("public/static/js/script.js",'/*javascript goes here*/');
-Strukt\Fs::touchWrite("public/static/css/style.css",'/*css goes here*/');
+Strukt\Fs::touchWrite("public/static/js/script.js",'/*javascript goes here*/
+console.log("Strukt Framework")');
+
+Strukt\Fs::touchWrite("public/static/css/style.css",'/*css goes here*/
+.hello-world{
+
+	font-weight: bold;
+}');
 
 $tpl = '<!DOCTYPE html>
 <html>
@@ -67,12 +73,6 @@ foreach(array("403"=>"Forbidden",
 Strukt\Fs::touchWrite("public/static/index.html",'<!DOCTYPE html>
 <html>
 <head>
-	<style>
-		.hello-world{
-
-			font-weight: bold;
-		}
-	</style>
 	<title>Strukt Framework</title>
 	<script type="text/javascript" src="/js/script.js"></script>
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
