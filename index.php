@@ -9,7 +9,7 @@ use Strukt\Http\Session;
 use Strukt\Router\Middleware\ExceptionHandler;
 use Strukt\Router\Middleware\Authentication; 
 use Strukt\Router\Middleware\Authorization;
-use Strukt\Router\Middleware\StaticFileFinder;
+use Strukt\Middleware\Asset as AssetMiddleware;
 use Strukt\Router\Middleware\Session as SessionMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 use Strukt\Provider\Router as RouterProvider;
@@ -17,13 +17,17 @@ use Strukt\Provider\Router as RouterProvider;
 use Strukt\Event;
 use Strukt\Env;
 
+use Strukt\Core\Registry;
+
 $loader = require "vendor/autoload.php";
 $loader->add('App', __DIR__.'/fixtures/');
 $loader->add('Strukt', __DIR__.'/src/');
 
 Env::set("root_dir", getcwd());
-Env::set("rel_static_dir", "/public/static");
+Env::set("rel_static_dir", "public/static");
 Env::set("is_dev", true);
+
+$registry = Registry::getSingleton();
 
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
 $app->inject("app.dep.author", function(){
@@ -61,7 +65,7 @@ $app->middlewares(array(
 	SessionMiddleware::class,
 	Authorization::class,
 	Authentication::class,
-	StaticFileFinder::class,
+	AssetMiddleware::class,
 	RouterMiddleware::class
 ));
 
@@ -113,6 +117,13 @@ $app->map("/logout", function(Request $request){
 $app->map("/test/json", function(Request $request){
 
 	return new JsonResponse(array("username"=>"pitsolu"));
+});
+
+$app->map("/test/htmlfile", function(Request $request) use($registry){
+
+	$assets = $registry->get("assets");
+
+	return new Response($assets->get("/index.html"));
 });
 
 $app->map("/startpage", "App\Controller\StartpageController@run");
