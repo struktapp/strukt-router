@@ -52,7 +52,7 @@ use Strukt\Http\Session;
 use Strukt\Router\Middleware\ExceptionHandler;
 use Strukt\Router\Middleware\Authentication; 
 use Strukt\Router\Middleware\Authorization;
-use Strukt\Router\Middleware\StaticFileFinder;
+use Strukt\Middleware\Asset::class;
 use Strukt\Router\Middleware\Session as SessionMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 
@@ -102,7 +102,7 @@ $app->middlewares(array(
     SessionMiddleware::class,
     Authorization::class,
     Authentication::class,
-    StaticFileFinder::class,
+    Asset::class,
     RouterMiddleware::class
 ));
 
