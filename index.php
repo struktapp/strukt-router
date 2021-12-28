@@ -9,7 +9,7 @@ use Strukt\Http\Session;
 use Strukt\Router\Middleware\ExceptionHandler;
 use Strukt\Router\Middleware\Authentication; 
 use Strukt\Router\Middleware\Authorization;
-use Strukt\Middleware\Asset as AssetMiddleware;
+// use Strukt\Middleware\Asset as AssetMiddleware;
 use Strukt\Router\Middleware\Session as SessionMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 use Strukt\Provider\Router as RouterProvider;
@@ -65,7 +65,7 @@ $app->middlewares(array(
 	SessionMiddleware::class,
 	Authorization::class,
 	Authentication::class,
-	AssetMiddleware::class,
+	// AssetMiddleware::class,
 	RouterMiddleware::class
 ));
 
@@ -119,11 +119,13 @@ $app->map("/test/json", function(Request $request){
 	return new JsonResponse(array("username"=>"pitsolu"));
 });
 
-$app->map("/test/htmlfile", function(Request $request) use($registry){
+$app->map("/test/htmlfile", function(Request $request){// use($registry){
 
-	$assets = $registry->get("assets");
+	// $assets = $registry->get("assets");
 
-	return new Response($assets->get("/index.html"));
+	// return new Response($assets->get("/index.html"));
+
+	return new Response(\Strukt\Fs::cat("public/static/index.html"));
 });
 
 $app->map("/startpage", "App\Controller\StartpageController@run");
