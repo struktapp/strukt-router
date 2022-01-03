@@ -19,6 +19,8 @@ use Strukt\Env;
 
 use Strukt\Core\Registry;
 
+session_save_path("/tmp");
+
 $loader = require "vendor/autoload.php";
 $loader->add('App', __DIR__.'/fixtures/');
 $loader->add('Strukt', __DIR__.'/src/');

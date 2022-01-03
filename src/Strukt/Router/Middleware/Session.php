@@ -18,7 +18,8 @@ class Session extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
-		$this->session->start();
+		if(!$this->session->isStarted())
+			$this->session->start();
 
 		$request->setSession($this->session);
 
