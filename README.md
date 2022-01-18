@@ -7,9 +7,9 @@ Strukt Router
 [![Latest Unstable Version](https://poser.pugx.org/strukt/router/v/unstable)](https://packagist.org/packages/strukt/router)
 [![License](https://poser.pugx.org/strukt/router/license)](https://packagist.org/packages/strukt/router)
 
-## Usage
+## Getting Started
 
-### Composer
+### Quick Start 
 
 Create `composer.json` script with contents below then run `composer update`
 
@@ -21,6 +21,141 @@ Create `composer.json` script with contents below then run `composer update`
     },
     "minimum-stability":"dev"
 }
+```
+
+You `index.php` file.
+
+```php
+require "vendor/autoload.php";
+
+$app = new Strukt\Router\Kernel(Strukt\Http\Request::createFromGlobals());
+
+$app->providers(array(
+
+    Strukt\Provider\Router::class
+));
+
+$app->middlewares(array(
+
+    Strukt\Router\Middleware\Router::class
+));
+
+$app->map("/", function(){
+
+    return "Strukt Works!";
+});
+
+$app->map("/hello/{something:alpha}", function($something){
+
+    return sprintf("Hello %s!", $something);
+});
+
+exit($app->run()->getContent());
+```
+
+## Permissions
+
+```php
+$app->inject("app.dep.author", function(){
+
+    return array(
+
+        "permissions" => array(
+
+            //"show_secrets"
+        )
+    );
+});
+
+$app->providers(array(
+
+    Strukt\Provider\Router::class
+));
+
+$app->middlewares(array(
+
+    Strukt\Router\Middleware\Authorization::class,
+    Strukt\Router\Middleware\Router::class
+));
+
+$app->map("GET", "/user/secrets", function(){
+
+    return "Shh!";
+
+},"show_secrets");
+```
+
+## Authentication
+
+```php
+$app->inject("app.dep.author", function(){
+
+    return [];
+});
+
+$app->inject("app.dep.session", function(){
+
+    return new Strukt\Http\Session;
+});
+
+$app->inject("app.dep.authentic", function(Strukt\Http\Session $session){
+
+    $user = new Strukt\User();
+    $user->setUsername($session->get("username"));
+
+    return $user;
+});
+
+$app->providers(array(
+
+    Strukt\Provider\Router::class
+));
+
+$app->middlewares(array(
+
+    Strukt\Router\Middleware\Session::class,
+    Strukt\Router\Middleware\Authentication::class,
+    Strukt\Router\Middleware\Authorization::class,
+    Strukt\Router\Middleware\Router::class
+));
+
+$app->map("POST", "/login", function(Strukt\Http\Request $request){
+
+    $username = $request->get("username");
+    $password = $request->get("password");
+
+    $request->getSession()->set("username", $username);
+
+    return new Strukt\Http\Response(sprintf("User %s logged in.", $username));
+});
+
+$app->map("/current/user", function(Strukt\Http\Request $request){
+
+    return $request->getSession()->get("username");
+});
+
+$app->map("/logout", function(Strukt\Http\Request $request){
+
+    $request->getSession()->invalidate();
+
+    return new Strukt\Http\Response("User logged out.");
+});
+```
+
+## Environment
+
+```php
+Strukt\Env::set("root_dir", getcwd());
+Strukt\Env::set("rel_static_dir", "/public/static");
+Strukt\Env::set("is_dev", true);
+```
+
+## Exception Handler
+
+You can add exception handler middleware (as the first middleware)
+
+```php
+Strukt\Router\Middleware\ExceptionHandler::class
 ```
 
 After installation run  `composer exec static` to get `public\` directory.
@@ -40,100 +175,13 @@ After installation run  `composer exec static` to get `public\` directory.
             └── script.js
 ```
 
-## Get Started
-
-```php
-use Strukt\Http\Response;
-use Strukt\Http\Request;
-use Strukt\Http\RedirectResponse;
-use Strukt\Http\JsonResponse;
-use Strukt\Http\Session;
-
-use Strukt\Router\Middleware\ExceptionHandler;
-use Strukt\Router\Middleware\Authentication; 
-use Strukt\Router\Middleware\Authorization;
-//use Strukt\Middleware\Asset as AssetMiddleware;
-use Strukt\Router\Middleware\Session as SessionMiddleware;
-use Strukt\Router\Middleware\Router as RouterMiddleware;
-
-use Strukt\Provider\Router as RouterProvider;
-
-use Strukt\Env;
-
-require "vendor/autoload.php";
-
-Env::set("root_dir", getcwd());
-Env::set("rel_static_dir", "/public/static");
-Env::set("is_dev", true);
-
-$app = new Strukt\Router\Kernel(Request::createFromGlobals());
-$app->inject("app.dep.author", function(){
-
-    return array(
-
-        "permissions" => array(
-
-            // "show_secrets"
-        )
-    );
-});
-
-$app->inject("app.dep.authentic", function(Session $session){
-
-    $user = new Strukt\User();
-    $user->setUsername($session->get("username"));
-
-    return $user;
-});
-
-$app->inject("app.dep.session", function(){
-
-    return new Session;
-});
-
-$app->providers(array(
-
-    RouterProvider::class
-));
-
-$app->middlewares(array(
-
-    ExceptionHandler::class,
-    SessionMiddleware::class,
-    Authorization::class,
-    Authentication::class,
-    //AssetMiddleware::class,
-    RouterMiddleware::class
-));
-
-$app->map("/", function(){
-
-    return "Strukt Works!";
-});
-
-$app->map("/user", function(Request $request){
-
-    $id = $request->query->get("id");
-
-    return new Response(sprintf("User id[%s].", $id), 200);
-});
-
-$app->map("GET","/hello/{to:alpha}", function($to){
-
-    return new Response("Hello $to");
-});
-
-$response = $app->run();
-
-exit($response->getContent());
-```
-### Mapping Classes
+## Mapping Classes
 
 ```php
 $app->map("POST","/login", "App\Controller\UserController@login");
 
 ```
-### Apache
+## Apache
 
 `.htaccess` file:
 

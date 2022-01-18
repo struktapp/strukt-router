@@ -53,7 +53,7 @@ $app->inject("app.dep.authentic", function(Session $session){
 
 $app->inject("app.dep.session", function(){
 
-	return new Session;
+	return new Strukt\Http\Session;
 });
 
 $app->providers(array(
