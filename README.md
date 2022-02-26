@@ -135,6 +135,8 @@ $app->map("/logout", function(Strukt\Http\Request $request){
 
 ### Environment
 
+Setting your environment in your `index.php` file.
+
 ```php
 Strukt\Env::set("root_dir", getcwd());
 Strukt\Env::set("rel_static_dir", "/public/static");
