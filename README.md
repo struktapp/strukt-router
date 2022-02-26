@@ -193,4 +193,17 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . index.php [L]
 ```
 
+## DB Tip...
+
+[Adminer](adminer.org) is a really neat tool! It is a single file dba and can be placed 
+under a router easily! Download the adminer.php file and place in root folder.
+
+```
+$app->map("ANY", "/dba", function(Request $request){
+
+    include "./adminer-x.x.x.php";
+
+    return new Strukt\Http\Response();
+});
+```
 Cheers!

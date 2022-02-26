@@ -45,8 +45,10 @@ class RouteCollection{
 
 			$route = $this->routes[$pattern];
 
-			if($route->getMethod() != $method)
-				throw new MethodNotAllowedException();
+			$http_method = $route->getMethod();
+			if($http_method != "ANY")
+				if($http_method != $method)
+					throw new MethodNotAllowedException();
 
 			$params = $parser->getParams();
 
