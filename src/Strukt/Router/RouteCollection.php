@@ -51,7 +51,6 @@ class RouteCollection{
 					throw new MethodNotAllowedException();
 
 			$params = $parser->getParams();
-
 			if(!empty($params))
 				$route->mergeParams($params);
 

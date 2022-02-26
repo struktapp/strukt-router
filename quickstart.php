@@ -2,59 +2,42 @@
 
 require "vendor/autoload.php";
 
-$app = new Strukt\Router\Kernel(Strukt\Http\Request::createFromGlobals());
+use Strukt\Http\Request;
+use Strukt\Http\Response;
 
-$app->inject("app.dep.author", function(){
+$app = new Strukt\Router\QuickStart(["permissions"=>"user_add"]);
 
-	return [];
+$app->get("/", function(Request $request){
+
+	return "Hello World!";
 });
 
-$app->inject("app.dep.session", function(){
-
-	return new Strukt\Http\Session;
-});
-
-$app->inject("app.dep.authentic", function(Strukt\Http\Session $session){
-
-	$user = new Strukt\User();
-	$user->setUsername($session->get("username"));
-
-	return $user;
-});
-
-$app->providers(array(
-
-	Strukt\Provider\Router::class
-));
-
-$app->middlewares(array(
-
-	Strukt\Router\Middleware\Session::class,
-	Strukt\Router\Middleware\Authentication::class,
-	Strukt\Router\Middleware\Authorization::class,
-	Strukt\Router\Middleware\Router::class
-));
-
-$app->map("POST", "/login", function(Strukt\Http\Request $request){
+$app->post("/login", function(Request $request){
 
 	$username = $request->get("username");
 	$password = $request->get("password");
 
 	$request->getSession()->set("username", $username);
 
-	return new Strukt\Http\Response(sprintf("User %s logged in.", $username));
+	return new Response(sprintf("User %s logged in.", $username));
 });
 
-$app->map("/current/user", function(Strukt\Http\Request $request){
+$app->get("/current/user", function(Request $request){
 
-	return new Strukt\Http\Response($request->getSession()->get("username"));
+	return new Response($request->getSession()->get("username"));
 });
 
-$app->map("/logout", function(Strukt\Http\Request $request){
+$app->get("/logout", function(Request $request){
 
 	$request->getSession()->invalidate();
 
-	return new Strukt\Http\Response("User logged out.");
+	return new Response("User logged out.");
 });
 
-exit($app->run()->getContent());
+$app->get("/user/add", function(Request $request){
+
+	return "Not Implemented!";
+
+},"user_add");
+
+$app->run();

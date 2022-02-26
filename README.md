@@ -7,9 +7,9 @@ Strukt Router
 [![Latest Unstable Version](https://poser.pugx.org/strukt/router/v/unstable)](https://packagist.org/packages/strukt/router)
 [![License](https://poser.pugx.org/strukt/router/license)](https://packagist.org/packages/strukt/router)
 
-## Getting Started
+# Getting Started
 
-### Quick Start 
+## Quick Start 
 
 Create `composer.json` script with contents below then run `composer update`
 
@@ -28,32 +28,23 @@ Your `index.php` file.
 ```php
 require "vendor/autoload.php";
 
-$app = new Strukt\Router\Kernel(Strukt\Http\Request::createFromGlobals());
+use Strukt\Http\Request;
+use Strukt\Http\Response;
 
-$app->providers(array(
+$app = new Strukt\Router\QuickStart();
 
-    Strukt\Provider\Router::class
-));
+$app->get("/", function(Request $request){
 
-$app->middlewares(array(
-
-    Strukt\Router\Middleware\Router::class
-));
-
-$app->map("/", function(){
-
-    return "Strukt Works!";
+    // return new Response("Hello World!");
+    return "Hello World!";
 });
 
-$app->map("/hello/{something:alpha}", function($something){
-
-    return sprintf("Hello %s!", $something);
-});
-
-exit($app->run()->getContent());
+$app->run();
 ```
 
-## Permissions
+## Advanced Router (The Nitty Gritty)
+
+### Permissions
 
 ```php
 $app->inject("app.dep.author", function(){
@@ -85,7 +76,7 @@ $app->map("GET", "/user/secrets", function(){
 },"show_secrets");
 ```
 
-## Authentication
+### Authentication
 
 ```php
 $app->inject("app.dep.author", function(){
@@ -142,7 +133,7 @@ $app->map("/logout", function(Strukt\Http\Request $request){
 });
 ```
 
-## Environment
+### Environment
 
 ```php
 Strukt\Env::set("root_dir", getcwd());
@@ -150,7 +141,7 @@ Strukt\Env::set("rel_static_dir", "/public/static");
 Strukt\Env::set("is_dev", true);
 ```
 
-## Exception Handler
+### Exception Handler
 
 You can add exception handler middleware (as the first middleware)
 
@@ -175,13 +166,13 @@ After installation run  `composer exec static` to get `public\` directory.
             └── script.js
 ```
 
-## Mapping Classes
+### Mapping Classes
 
 ```php
 $app->map("POST","/login", "App\Controller\UserController@login");
 
 ```
-## Apache
+### Apache
 
 `.htaccess` file:
 
@@ -193,7 +184,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . index.php [L]
 ```
 
-## DB Tip...
+# BTW, DB Tip...
 
 [Adminer](adminer.org) is a really neat tool! It is a single file dba and can be placed 
 under a router easily! Download the adminer.php file and place in root folder.

@@ -54,7 +54,17 @@ class Kernel extends AbstractCore{
 		$args = func_get_args();
 
 		$arg = current($args);
-		if(in_array(strtoupper($arg), array("ANY","PUT", "GET", "PATH", "POST", "DELETE"))){
+		if(in_array(strtoupper($arg), array(
+
+			"ANY",
+			"PUT", 
+			"GET", 
+			"PATH", 
+			"POST", 
+			"DELETE",
+			"PATCH"
+
+		))){
 
 			$method = trim(strtoupper($arg));
 		}

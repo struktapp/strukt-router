@@ -54,8 +54,6 @@ class UrlParser{
 		if(count($parts) != count($pattern))
 			return false;
 
-		// print_r($pattern);
-
 		$regex = array();
 		foreach($pattern as $key=>$url_item){
 

@@ -68,13 +68,9 @@ class Route{
 
 	public function exec(){
 
-		// print_r($this->params);
-
 		if(!empty($this->params))
-			$response = $this->event->applyArgs($this->params)->exec();
-		else
-			$response = $this->event->exec();
-
-		return $response;
+			return $this->event->applyArgs($this->params)->exec();
+		
+		return $this->event->exec();
 	}
 }
