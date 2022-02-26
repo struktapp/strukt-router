@@ -23,7 +23,7 @@ Create `composer.json` script with contents below then run `composer update`
 }
 ```
 
-You `index.php` file.
+Your `index.php` file.
 
 ```php
 require "vendor/autoload.php";
