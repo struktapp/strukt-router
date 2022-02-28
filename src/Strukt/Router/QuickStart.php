@@ -53,8 +53,14 @@ class QuickStart{
 
 		$this->router->inject("app.dep.authentic", function(Session $session){
 
-			$user = new \Strukt\User();
-			$user->setUsername($session->get("username"));
+			$user = null;
+
+			if($session->has("username")){
+
+				$user = new \Strukt\User();
+				$user->setUsername($session->get("username"));
+				$user->setToken($session->get("token"));
+			}
 
 			return $user;
 		});

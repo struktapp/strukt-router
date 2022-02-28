@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class Request extends SymfonyRequest{
 
-	private $user;
+	private $user = null;
 
-	public function setUser(UserInterface $user){
+	public function setUser(UserInterface $user = null){
 
 		$this->user = $user;
 	}
