@@ -59,7 +59,7 @@ class QuickStart{
 
 				$user = new \Strukt\User();
 				$user->setUsername($session->get("username"));
-				$user->setToken($session->get("token"));
+				$user->setToken($session->get("user.token"));
 			}
 
 			return $user;

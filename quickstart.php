@@ -5,6 +5,7 @@ require "vendor/autoload.php";
 use Strukt\Http\Request;
 use Strukt\Http\Response;
 use Strukt\User;
+use Strukt\Auth;
 
 $app = new Strukt\Router\QuickStart(["permissions"=>"user_add"]);
 
@@ -18,7 +19,8 @@ $app->post("/login", function(Request $request){
 	$username = $request->get("username");
 	$password = $request->get("password");
 
-	$request->getSession()->set("username", $username);
+	new Auth($username);
+	// new Auth($username, "user_type:admin");
 
 	return new Response(sprintf("User %s logged in.", $username));
 });
@@ -30,6 +32,7 @@ $app->get("/current/user", function(Request $request){
 		return new Response("No one is logged in!");
 
 	return new Response($user->getUsername());
+	// return new Response(sprintf("%s %s", $user->getUsername(), $user->getToken()));
 });
 
 $app->get("/logout", function(Request $request){
