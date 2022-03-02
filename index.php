@@ -32,7 +32,7 @@ Env::set("is_dev", true);
 $registry = Registry::getSingleton();
 
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
-$app->inject("app.dep.author", function(){
+$app->inject("@inject.permissions", function(){
 
 	return array(
 
@@ -43,7 +43,7 @@ $app->inject("app.dep.author", function(){
 	);
 });
 
-$app->inject("app.dep.authentic", function(Session $session){
+$app->inject("@inject.verify", function(Session $session){
 
 	$user = new Strukt\User();
 	$user->setUsername($session->get("username"));
@@ -51,7 +51,7 @@ $app->inject("app.dep.authentic", function(Session $session){
 	return $user;
 });
 
-$app->inject("app.dep.session", function(){
+$app->inject("@inject.session", function(){
 
 	return new Strukt\Http\Session;
 });

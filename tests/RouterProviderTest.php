@@ -17,7 +17,7 @@ class RouterProviderTest extends PHPUnit\Framework\TestCase{
 
 	public function testProvider(){
 
-		$service = $this->registry->get("app.service.router");
+		$service = $this->registry->get("strukt.service.router");
 
 		$routes = array(
 
@@ -44,15 +44,12 @@ class RouterProviderTest extends PHPUnit\Framework\TestCase{
 		foreach($routes as $item)
 			$service->apply($item["path"], $item["func"], $item["method"],"")->exec();
 
-		$route = $this->registry->get("app.router")->getRoute("POST", "/hello/pitsolu");
+		$route = $this->registry->get("strukt.router")->getRoute("POST", "/hello/pitsolu");
 		$params = $route->getEvent()->getParams();
 
 		foreach($params as $name=>$param)
 			if($param == Request::class)
 				$route->setParam($name, new Request);
-
-		// $route->addParam(new Request());
-		// $route->mergeParams([new Request()]);
 
 		$this->assertEquals($route->exec(), "Hello pitsolu");
 	}

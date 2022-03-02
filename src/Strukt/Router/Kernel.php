@@ -96,7 +96,7 @@ class Kernel extends AbstractCore{
 			$name = trim(current($args));
 		}
 
-		$this->core()->get("app.service.router")
+		$this->core()->get("strukt.service.router")
 							->apply($path, $controller, $method, $name)
 							->exec();
 	}

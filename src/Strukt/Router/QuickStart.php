@@ -38,7 +38,7 @@ class QuickStart{
 		$options = array_merge($defaults, $options);
 
 		$this->router = new Router(Request::createFromGlobals());
-		$this->router->inject("app.dep.author", function() use ($options){
+		$this->router->inject("@inject.permissions", function() use ($options){
 
 			return array(
 
@@ -46,12 +46,12 @@ class QuickStart{
 			);
 		});
 
-		$this->router->inject("app.dep.session", function(){
+		$this->router->inject("@inject.session", function(){
 
 			return new Session;
 		});
 
-		$this->router->inject("app.dep.authentic", function(Session $session){
+		$this->router->inject("@inject.verify", function(Session $session){
 
 			$user = null;
 
@@ -99,8 +99,13 @@ class QuickStart{
 		$this->router->map("ANY", $route, $func, $perm);
 	}
 
+	public function getResponse(){
+
+		return $this->router->run();
+	}
+
 	public function run(){
 
-		exit($this->router->run()->getContent());
+		exit($this->getResponse()->getContent());
 	}
 }

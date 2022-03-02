@@ -12,31 +12,23 @@ use Strukt\Contract\AbstractMiddleware;
 
 class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface{
 
-	private $is_dev;
-
 	public function __construct(){
 
-		$this->is_dev = Env::get("is_dev");
+		//
 	}
 
 	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
 		try {
 			
-			$response = $next($request, $response);
+			return $next($request, $response);
 		} 
 		catch (ServerErrorException $e){
 
-			if ($this->is_dev){
-
-				$response = new Response($e->getMessage(), $e->getCode());
-			} 
-			else{
+			if (Env::get("is_dev"))
+				return new Response($e->getMessage(), $e->getCode());
 			
-				$response = new Response('Im sorry, try again later.', $e->getCode());
-			}
+			return new Response('Im sorry, try again later.', $e->getCode());
 		}
-
-		return $response;
 	}
 }

@@ -13,81 +13,55 @@ use Strukt\Contract\MiddlewareInterface;
 
 class Router extends AbstractMiddleware implements MiddlewareInterface{
 
-	private $route_col;
+	private $router;
 
 	public function __construct(){
 
-		$this->route_col = $this->core()->get("app.router");
+		$this->router = $this->core()->get("strukt.router");
 	}
 
 	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
 		$uri = $request->getRequestUri();
-
-		if(!is_null(parse_url($uri, PHP_URL_QUERY))){
-
+		if(!is_null(parse_url($uri, PHP_URL_QUERY)))
 			list($uri, $qs) = explode("?", $uri);
-		}
 
 	 	$method = $request->getMethod();
 
 	 	try{
 	 		
-	 		$route = $this->route_col->getRoute($method, $uri);
+	 		$route = $this->router->getRoute($method, $uri);
+	 		if(is_null($route))
+	 			throw new NotFoundException();
 
-	 		if(!is_null($route)){
+ 			$permissions = [];
+ 			if($this->core()->exists("@strukt.permissions"))
+ 				$permissions = $this->core()->get("@strukt.permissions");
 
-	 			if($this->core()->exists("access.permissions")){
+			$routeName = $route->getName();
+			if(!empty($routeName))
+				if(!in_array($routeName, $permissions))
+					throw new UnauthorizedException();
 
-	 				$permissions = $this->core()->get("access.permissions");
+ 			$params = $route->getEvent()->getParams();
+			foreach($params as $name=>$type)
+				if($type == Request::class)
+					$route->setParam($name, $request);
 
-	 				$routeName = $route->getName();
+			$headers = $response->headers->all();
 
-	 				if(!empty($routeName)){
-
-	 					if(!in_array($routeName, $permissions)){
-
-	 						throw new UnauthorizedException();
-	 					}
-	 				}
-	 			}
-
-	 			$params = $route->getEvent()->getParams();
-
-				foreach($params as $name=>$type){
-
-					if($type == Request::class){
-
-						$route->setParam($name, $request);
-					}
-				}
-
-				$headers = $response->headers->all();
-
-		 		$response = $route->exec();
-
-		 		if($response instanceof ResponseInterface){
-
-		 			$response->headers->add($headers);
-		 		}
-		 		elseif(is_string($response)){
-
-		 			$response = new Response($response, 200, $headers);
-		 		}
-		 	}
-		 	else{
-
-		 		throw new NotFoundException();
-		 	}
+	 		$response = $route->exec();
+	 		if($response instanceof ResponseInterface)
+	 			$response->headers->add($headers);
+	 		
+	 		if(is_string($response))
+	 			$response = new Response($response, 200, $headers);		 
 	 	}
 	 	catch(\Exception $e){
 
 	 		$code = 500;
-	 		
-	 		if($e->getCode() > 1){
-
+	 		if($e->getCode() > 1)
 	 			$code = $e->getCode();
-	 		}
 
 	 		$response = new Response($e->getMessage(), $code);
 	 	}

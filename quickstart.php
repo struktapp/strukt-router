@@ -7,7 +7,8 @@ use Strukt\Http\Response;
 use Strukt\User;
 use Strukt\Auth;
 
-$app = new Strukt\Router\QuickStart(["permissions"=>"user_add"]);
+// $app = new Strukt\Router\QuickStart(["permissions"=>"user_add"]);
+$app = new Strukt\Router\QuickStart();
 
 $app->get("/", function(Request $request){
 

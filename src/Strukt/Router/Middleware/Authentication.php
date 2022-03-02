@@ -10,16 +10,16 @@ use Strukt\Contract\AbstractMiddleware;
 
 class Authentication extends AbstractMiddleware implements MiddlewareInterface{
 
-	private $auth_event;
+	private $event;
 
 	public function __construct(){
 
-		$this->auth_event = $this->core()->get("app.dep.authentic");
+		$this->event = $this->core()->get("@inject.verify");
 	}
 
 	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
-		$user = $this->auth_event->apply($request->getSession())->exec();
+		$user = $this->event->apply($request->getSession())->exec();
 
 		if(!($user instanceof UserInterface) && !is_null($user))
 			throw new \Exception(sprintf("%s must implement %s!", get_class($user), UserInterface::class));
