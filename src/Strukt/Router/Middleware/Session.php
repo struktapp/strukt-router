@@ -13,10 +13,12 @@ class Session extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __construct(){
 
-		$this->session = $this->core()->get("@inject.session")->exec();
+		//
 	}
 
 	public function __invoke(Request $request, ResponseInterface $response, callable $next){
+
+		$this->session = $this->core()->get("@inject.session")->exec();
 
 		if(!$this->session->isStarted())
 			$this->session->start();
