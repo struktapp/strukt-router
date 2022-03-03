@@ -13,11 +13,15 @@ use Strukt\Router\Middleware\Authentication as AuthenticationMiddleware;
 use Strukt\Router\Middleware\Authorization as AuthorizationMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 class QuickStart{
 
 	protected $router;
 
-	public function __construct(array $options = []){
+	public function __construct(array $options = [], 
+								ServerRequestInterface $request = null){
 
 		$defaults = array(
 
@@ -37,7 +41,10 @@ class QuickStart{
 
 		$options = array_merge($defaults, $options);
 
-		$this->router = new Router(Request::createFromGlobals());
+		if(is_null($request))
+			$request = Request::createFromGlobals();
+
+		$this->router = new Router($request);
 		$this->router->inject("@inject.permissions", function() use ($options){
 
 			return array(
