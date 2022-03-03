@@ -106,13 +106,15 @@ class QuickStart{
 		$this->router->map("ANY", $route, $func, $perm);
 	}
 
-	public function getResponse(){
+	public function getRouter(){
 
-		return $this->router->run();
+		return $this->router;
 	}
 
 	public function run(){
 
-		exit($this->getResponse()->getContent());
+		$response = $this->getRouter()->run();
+
+		exit($response->getContent());
 	}
 }
