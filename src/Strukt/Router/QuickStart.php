@@ -13,43 +13,48 @@ use Strukt\Router\Middleware\Authentication as AuthenticationMiddleware;
 use Strukt\Router\Middleware\Authorization as AuthorizationMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 class QuickStart{
 
 	protected $router;
 
-	public function __construct(array $options = [], 
-								ServerRequestInterface $request = null){
+	public function __construct(array $options = [], Request $request = null){
 
-		$defaults = array(
+		$permissions = array(
 
-			"permissions"=>[],
-			"providers"=>array(
+			"permissions"=>[]
+		);
+			
+		$providers = array(
 
-				RouterProvider::class
-			),
-			"middlewares"=>array(
-
-				SessionMiddleware::class,
-				AuthenticationMiddleware::class,
-				AuthorizationMiddleware::class,
-				RouterMiddleware::class
-			)
+			RouterProvider::class
 		);
 
-		$options = array_merge_recursive($defaults, $options);
+		$middlewares = array(
+
+			SessionMiddleware::class,
+			AuthenticationMiddleware::class,
+			AuthorizationMiddleware::class,
+			RouterMiddleware::class
+		);
+
+		if(array_key_exists("middlewares", $options))
+			$middlewares = $options["middlewares"];
+
+		if(array_key_exists("providers", $options))
+			$providers = $options["providers"];
+
+		if(array_key_exists("permissions", $options))
+			$permissions = array_merge($permissions, $options["permissions"]);
 
 		if(is_null($request))
 			$request = Request::createFromGlobals();
 
 		$this->router = new Router($request);
-		$this->router->inject("@inject.permissions", function() use ($options){
+		$this->router->inject("@inject.permissions", function() use ($permissions){
 
 			return array(
 
-				"permissions"=>$options["permissions"]
+				"permissions"=>$permissions["permissions"]
 			);
 		});
 
@@ -72,8 +77,8 @@ class QuickStart{
 			return $user;
 		});
 
-		$this->router->providers($options["providers"]);
-		$this->router->middlewares($options["middlewares"]);
+		$this->router->providers($providers);
+		$this->router->middlewares($middlewares);
 	}
 
 	public function get(string $route, callable $func, string $perm = null){
