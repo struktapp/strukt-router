@@ -101,6 +101,37 @@ class Kernel extends AbstractCore{
 							->exec();
 	}
 
+	public function reMake(array $components){
+
+		return new class($components, $this->middlewares){
+
+			private $request;
+			private $response;
+
+			private $middlewares;
+
+			public function __construct($components, $middlewares){
+
+				$this->middlewares = $middlewares;
+
+				$this->request = $components["request"];
+
+				if(!array_key_exists("response", $components))
+					$components["response"] = new Response;
+				
+				$this->response = $components["response"];
+			}
+
+			public function run(){
+
+				$runner = new Runner($this->middlewares);
+				$response = $runner($this->request, $this->response);
+
+				return $response;
+			}
+		};
+	}
+
 	public function run() : ResponseInterface{
 
 		$runner = new Runner($this->middlewares);
