@@ -39,7 +39,7 @@ class QuickStart{
 			)
 		);
 
-		$options = array_merge($defaults, $options);
+		$options = array_merge_recursive($defaults, $options);
 
 		if(is_null($request))
 			$request = Request::createFromGlobals();
