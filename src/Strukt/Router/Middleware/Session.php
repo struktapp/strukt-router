@@ -20,8 +20,8 @@ class Session extends AbstractMiddleware implements MiddlewareInterface{
 
 		$this->session = $this->core()->get("@inject.session")->exec();
 
-		if(!$this->session->isStarted())
-			$this->session->start();
+		// if(!$this->session->isStarted())
+			// $this->session->start();
 
 		$request->setSession($this->session);
 
