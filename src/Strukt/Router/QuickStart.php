@@ -49,6 +49,10 @@ class QuickStart{
 		if(is_null($request))
 			$request = Request::createFromGlobals();
 
+		$use_session = true;
+		if(array_key_exists("session", $options))
+			$use_session = $options["session"];
+
 		$this->router = new Router($request);
 		$this->router->inject("@inject.permissions", function() use ($permissions){
 
@@ -58,10 +62,13 @@ class QuickStart{
 			);
 		});
 
-		$this->router->inject("@inject.session", function(){
+		if($use_session){
 
-			return new Session;
-		});
+			$this->router->inject("@inject.session", function(){
+
+				return new Session;
+			});
+		}
 
 		$this->router->inject("@inject.verify", function(Session $session){
 
