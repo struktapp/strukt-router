@@ -13,6 +13,8 @@ use Strukt\Router\Middleware\Authentication as AuthenticationMiddleware;
 use Strukt\Router\Middleware\Authorization as AuthorizationMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 
+use Strukt\Core\Registry;
+
 class QuickStart{
 
 	protected $router;
@@ -53,36 +55,48 @@ class QuickStart{
 		if(array_key_exists("session", $options))
 			$use_session = $options["session"];
 
+		$registry = Registry::getSingleton();
+
 		$this->router = new Router($request);
-		$this->router->inject("@inject.permissions", function() use ($permissions){
 
-			return array(
+		if(!$registry->exists("@inject.permissions")){
 
-				"permissions"=>$permissions["permissions"]
-			);
-		});
+			$this->router->inject("@inject.permissions", function() use ($permissions){
 
-		if($use_session){
+				return array(
 
-			$this->router->inject("@inject.session", function(){
-
-				return new Session;
+					"permissions"=>$permissions["permissions"]
+				);
 			});
 		}
 
-		$this->router->inject("@inject.verify", function(Session $session){
+		if($use_session){
 
-			$user = null;
+			if(!$registry->exists("@inject.session")){
 
-			if($session->has("username")){
+				$this->router->inject("@inject.session", function(){
 
-				$user = new \Strukt\User();
-				$user->setUsername($session->get("username"));
-				$user->setToken($session->get("user.token"));
+					return new Session;
+				});
 			}
+		}
 
-			return $user;
-		});
+		if(!$registry->exists("@inject.verify")){
+			
+			$this->router->inject("@inject.verify", function(Session $session){
+
+				$user = null;
+
+				if($session->has("username")){
+
+					$user = new \Strukt\User();
+					$user->setUsername($session->get("username"));
+					$user->setToken($session->get("user.token"));
+				}
+
+				return $user;
+			});
+		}
 
 		$this->router->providers($providers);
 		$this->router->middlewares($middlewares);
