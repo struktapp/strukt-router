@@ -23,7 +23,9 @@ class Authorization extends AbstractMiddleware implements MiddlewareInterface{
 		if(!is_array($permissions))
 			throw new \Exception("Authorization event expects an array!");
 
-		$this->core()->set("@strukt", $permissions);
+		$core = $this->core();
+		if(!$core->exists("@strukt"))
+			$this->core()->set("@strukt", $permissions);
 
 		return $next($request, $response);
 	}
