@@ -2,7 +2,9 @@
 
 namespace Strukt\Http\Exception;
 
-class NotFoundException extends \Exception{
+use Strukt\Contract\AbstractHttpException;
+
+class NotFound extends AbstractHttpException{
 
 	public function __construct($message="Not Found!"){
 

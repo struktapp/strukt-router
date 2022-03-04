@@ -4,9 +4,8 @@ namespace Strukt\Router;
 
 use Strukt\Contract\AbstractCore;
 use Strukt\Contract\ResponseInterface;
-use Strukt\Http\Response;
-use Strukt\Http\Request;
-use Strukt\Core\Registry;
+use Strukt\Contract\RequestInterface;
+use Strukt\Http\Response\Plain as Response;
 use Strukt\Event;
 use Strukt\Ref;
 use Strukt\Raise;
@@ -19,7 +18,9 @@ class Kernel extends AbstractCore{
 	private $env;
 	private $middlewares;
 
-	public function __construct(Request $request, string $env = null, bool $debug = false){
+	public function __construct(RequestInterface $request, 
+								string $env = null, 
+								bool $debug = false){
 
 		$this->request = $request;
 		$this->response = new Response();

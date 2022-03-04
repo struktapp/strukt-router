@@ -12,7 +12,10 @@ class Route{
 	private $event;
 	private $name;
 
-	public function __construct($pattern, \Closure $callable, $method = "GET", $name = null){
+	public function __construct(string $pattern, 
+								\Closure $callable, 
+								string $method = "GET", 
+								string $name = null){
 
 		$this->method = $method;
 

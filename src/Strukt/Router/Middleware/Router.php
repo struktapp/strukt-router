@@ -2,14 +2,16 @@
 
 namespace Strukt\Router\Middleware;
 
+use Strukt\Http\Response\Plain as Response;
+
+use Strukt\Contract\RequestInterface;
 use Strukt\Contract\ResponseInterface;
-use Strukt\Http\Response;
-use Strukt\Http\Request;
-use Strukt\Http\Exception\NotFoundException;
-use Strukt\Http\Exception\UnauthorizedException;
-use Strukt\Core\Registry;
 use Strukt\Contract\AbstractMiddleware;
 use Strukt\Contract\MiddlewareInterface;
+
+use Strukt\Http\Exception\NotFound as NotFoundException;
+use Strukt\Http\Exception\Unauthorized as UnauthorizedException;
+use Strukt\Contract\HttpExceptionInterface;
 
 class Router extends AbstractMiddleware implements MiddlewareInterface{
 
@@ -20,7 +22,8 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 		$this->router = $this->core()->get("strukt.router");
 	}
 
-	public function __invoke(Request $request, ResponseInterface $response, callable $next){
+	public function __invoke(RequestInterface $request, 
+								ResponseInterface $response, callable $next){
 
 		$uri = $request->getRequestUri();
 		if(!is_null(parse_url($uri, PHP_URL_QUERY)))
@@ -44,9 +47,16 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 					throw new UnauthorizedException();
 
  			$params = $route->getEvent()->getParams();
-			foreach($params as $name=>$type)
-				if($type == Request::class)
-					$route->setParam($name, $request);
+ 			
+			foreach($params as $name=>$type){
+
+				if(class_exists($type)){
+
+					$interface = @reset(class_implements($type));
+					if($interface == RequestInterface::class)
+						$route->setParam($name, $request);
+				}
+			}
 
 			$headers = $response->headers->all();
 
@@ -55,12 +65,12 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 	 			$response->headers->add($headers);
 	 		
 	 		if(is_string($response))
-	 			$response = new Response($response, 200, $headers);		 
+	 			$response = new Response($response, 200, $headers);
 	 	}
 	 	catch(\Exception $e){
 
 	 		$code = 500;
-	 		if($e->getCode() > 1)
+	 		if($e instanceof HttpExceptionInterface)
 	 			$code = $e->getCode();
 
 	 		$response = new Response($e->getMessage(), $code);

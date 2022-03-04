@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 use Strukt\Http\Request;
 
 class FooController{

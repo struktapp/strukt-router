@@ -1,11 +1,11 @@
 <?php
 
-namespace Strukt\Http;
+namespace Strukt\Http\Response;
 
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 use Strukt\Contract\ResponseInterface; 
 
-class RedirectResponse extends SymfonyRedirectResponse implements ResponseInterface{
+class Redirect extends SymfonyRedirectResponse implements ResponseInterface{
 
 	//
 }

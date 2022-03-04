@@ -2,7 +2,9 @@
 
 namespace Strukt\Http\Exception;
 
-class ServerErrorException extends \Exception{
+use Strukt\Contract\AbstractHttpException;
+
+class ServerError extends AbstractHttpException{
 
 	public function __construct($message="Server Error!"){
 

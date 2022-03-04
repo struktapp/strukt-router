@@ -1,6 +1,6 @@
 <?php
 
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 use Strukt\Http\Request;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 

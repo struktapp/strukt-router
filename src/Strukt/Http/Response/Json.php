@@ -1,11 +1,11 @@
 <?php
 
-namespace Strukt\Http;
+namespace Strukt\Http\Response;
 
 use Symfony\Component\HttpFoundation\JsonResponse as SymfonyJsonResponse;
 use Strukt\Contract\ResponseInterface; 
 
-class JsonResponse extends SymfonyJsonResponse implements ResponseInterface{
+class Json extends SymfonyJsonResponse implements ResponseInterface{
 
 	//
 }

@@ -2,12 +2,12 @@
 
 namespace Strukt\Router\Middleware;
 
+use Strukt\Env;
+use Strukt\Http\Response\Plain as Response;
+use Strukt\Contract\RequestInterface;
 use Strukt\Contract\ResponseInterface;
-use Strukt\Http\Response;
-use Strukt\Http\Request;
 use Strukt\Http\Exception\ServerErrorException;
 use Strukt\Contract\MiddlewareInterface;
-use Strukt\Env;
 use Strukt\Contract\AbstractMiddleware;
 
 class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface{
@@ -17,7 +17,8 @@ class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface
 		//
 	}
 
-	public function __invoke(Request $request, ResponseInterface $response, callable $next){
+	public function __invoke(RequestInterface $request, 
+								ResponseInterface $response, callable $next){
 
 		try {
 			

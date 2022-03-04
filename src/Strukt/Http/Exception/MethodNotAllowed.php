@@ -2,7 +2,9 @@
 
 namespace Strukt\Http\Exception;
 
-class MethodNotAllowedException extends \Exception{
+use Strukt\Contract\AbstractHttpException;
+
+class MethodNotAllowed extends AbstractHttpException{
 
 	public function __construct($message="Method Not Allowed!"){
 

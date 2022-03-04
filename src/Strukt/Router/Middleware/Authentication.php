@@ -2,8 +2,8 @@
 
 namespace Strukt\Router\Middleware;
 
+use Strukt\Contract\RequestInterface;
 use Strukt\Contract\ResponseInterface;
-use Strukt\Http\Request;
 use Strukt\Contract\UserInterface;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Contract\AbstractMiddleware;
@@ -17,7 +17,8 @@ class Authentication extends AbstractMiddleware implements MiddlewareInterface{
 		$this->event = $this->core()->get("@inject.verify");
 	}
 
-	public function __invoke(Request $request, ResponseInterface $response, callable $next){
+	public function __invoke(RequestInterface $request, 
+								ResponseInterface $response, callable $next){
 
 		$user = $this->event->apply($request->getSession())->exec();
 

@@ -4,6 +4,8 @@ namespace Strukt\Router;
 
 use Strukt\Router\Kernel as Router;
 use Strukt\Http\Request;
+use Strukt\Contract\RequestInterface;
+use Strukt\Contract\SessionInterface;
 use Strukt\Http\Session;
 
 use Strukt\Provider\Router as RouterProvider;
@@ -19,7 +21,7 @@ class QuickStart{
 
 	protected $router;
 
-	public function __construct(array $options = [], Request $request = null){
+	public function __construct(array $options = [], RequestInterface $request = null){
 
 		$permissions = array(
 
@@ -83,7 +85,7 @@ class QuickStart{
 
 		if(!$registry->exists("@inject.verify")){
 			
-			$this->router->inject("@inject.verify", function(Session $session){
+			$this->router->inject("@inject.verify", function(SessionInterface $session){
 
 				$user = null;
 
