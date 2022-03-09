@@ -2,8 +2,8 @@
 
 namespace Strukt\Router;
 
-use Strukt\Contract\ResponseInterface;
-use Strukt\Contract\RequestInterface;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
 
 class Runner{
 

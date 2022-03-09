@@ -2,10 +2,10 @@
 
 namespace Strukt\Http\Session;
 
-use Symfony\Component\HttpFoundation\Session\Session as SymfonySession;
-use Strukt\Contract\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session as NativeSession;
+use Strukt\Contract\Http\SessionInterface;
 
-class Native extends SymfonySession implements SessionInterface{
+class Native extends NativeSession implements SessionInterface{
 
 	//
 }

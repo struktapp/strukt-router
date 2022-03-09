@@ -4,14 +4,14 @@ namespace Strukt\Router\Middleware;
 
 use Strukt\Http\Response\Plain as Response;
 
-use Strukt\Contract\RequestInterface;
-use Strukt\Contract\ResponseInterface;
-use Strukt\Contract\AbstractMiddleware;
-use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\Http\RequestInterface;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Middleware\AbstractMiddleware;
+use Strukt\Contract\Middleware\MiddlewareInterface;
 
 use Strukt\Http\Exception\NotFound as NotFoundException;
 use Strukt\Http\Exception\Unauthorized as UnauthorizedException;
-use Strukt\Contract\HttpExceptionInterface;
+use Strukt\Contract\Http\Exception\HttpExceptionInterface;
 
 class Router extends AbstractMiddleware implements MiddlewareInterface{
 

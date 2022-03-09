@@ -2,10 +2,10 @@
 
 namespace Strukt\Http\Response;
 
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse; 
-use Strukt\Contract\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response as NativeResponse; 
+use Strukt\Contract\Http\ResponseInterface;
 
-class Plain extends SymfonyResponse implements ResponseInterface{
+class Plain extends NativeResponse implements ResponseInterface{
 
 	//
 }

@@ -5,8 +5,8 @@ namespace Strukt\Provider;
 use Strukt\Router\RouteCollection;
 use Strukt\Router\Route;
 use Strukt\Event;
-use Strukt\Contract\AbstractProvider;
-use Strukt\Contract\ProviderInterface;
+use Strukt\Contract\Provider\AbstractProvider;
+use Strukt\Contract\Provider\ProviderInterface;
 use Strukt\Ref;
 
 class Router extends AbstractProvider implements ProviderInterface{

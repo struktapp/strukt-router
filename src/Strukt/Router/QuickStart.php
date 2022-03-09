@@ -4,9 +4,9 @@ namespace Strukt\Router;
 
 use Strukt\Router\Kernel as Router;
 use Strukt\Http\Request;
-use Strukt\Contract\RequestInterface;
-use Strukt\Contract\SessionInterface;
-use Strukt\Http\Session;
+use Strukt\Contract\Http\RequestInterface;
+use Strukt\Contract\Http\SessionInterface;
+use Strukt\Http\Session\Native as Session;
 
 use Strukt\Provider\Router as RouterProvider;
 
@@ -15,7 +15,7 @@ use Strukt\Router\Middleware\Authentication as AuthenticationMiddleware;
 use Strukt\Router\Middleware\Authorization as AuthorizationMiddleware;
 use Strukt\Router\Middleware\Router as RouterMiddleware;
 
-use Strukt\Core\Registry;
+use Strukt\Reg;
 
 class QuickStart{
 
@@ -25,7 +25,7 @@ class QuickStart{
 
 		$permissions = array(
 
-			"permissions"=>[]
+			//
 		);
 			
 		$providers = array(
@@ -57,24 +57,22 @@ class QuickStart{
 		if(array_key_exists("session", $options))
 			$use_session = $options["session"];
 
-		$registry = Registry::getSingleton();
-
 		$this->router = new Router($request);
 
-		if(!$registry->exists("@inject.permissions")){
+		if(!Reg::exists("@inject.permissions")){
 
 			$this->router->inject("@inject.permissions", function() use ($permissions){
 
 				return array(
 
-					"permissions"=>$permissions["permissions"]
+					"permissions"=>$permissions
 				);
 			});
 		}
 
 		if($use_session){
 
-			if(!$registry->exists("@inject.session")){
+			if(!Reg::exists("@inject.session")){
 
 				$this->router->inject("@inject.session", function(){
 
@@ -83,7 +81,7 @@ class QuickStart{
 			}
 		}
 
-		if(!$registry->exists("@inject.verify")){
+		if(!Reg::exists("@inject.verify")){
 			
 			$this->router->inject("@inject.verify", function(SessionInterface $session){
 

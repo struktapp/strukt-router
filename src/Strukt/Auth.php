@@ -4,13 +4,13 @@ namespace Strukt;
 
 use Strukt\Http\Session;
 use Strukt\Core\Registry;
+use Strukt\Reg;
 
 class Auth{
 
 	public function __construct(string $username, string $token = null){
 
-		$registry = Registry::getSingleton();
-		$session = $registry->get("@inject.session");
+		$session = Reg::get("@inject.session")->exec();
 
 		$session->set("username", $username);
 

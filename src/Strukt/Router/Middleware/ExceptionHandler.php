@@ -4,11 +4,11 @@ namespace Strukt\Router\Middleware;
 
 use Strukt\Env;
 use Strukt\Http\Response\Plain as Response;
-use Strukt\Contract\RequestInterface;
-use Strukt\Contract\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
+use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Http\Exception\ServerErrorException;
-use Strukt\Contract\MiddlewareInterface;
-use Strukt\Contract\AbstractMiddleware;
+use Strukt\Contract\Middleware\MiddlewareInterface;
+use Strukt\Contract\Middleware\AbstractMiddleware;
 
 class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface{
 

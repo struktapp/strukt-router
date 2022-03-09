@@ -2,7 +2,7 @@
 
 namespace Strukt\Http\Exception;
 
-use Strukt\Contract\AbstractHttpException;
+use Strukt\Contract\Http\Exception\AbstractHttpException;
 
 class Unauthorized extends AbstractHttpException{
 

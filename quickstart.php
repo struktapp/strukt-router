@@ -3,11 +3,11 @@
 require "vendor/autoload.php";
 
 use Strukt\Http\Request;
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 use Strukt\User;
 use Strukt\Auth;
 
-// $app = new Strukt\Router\QuickStart(["permissions"=>"user_add"]);
+// $app = new Strukt\Router\QuickStart(["permissions"=>["user_add"]]);
 $app = new Strukt\Router\QuickStart();
 
 $app->get("/", function(Request $request){

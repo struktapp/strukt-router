@@ -2,10 +2,10 @@
 
 namespace Strukt\Router\Middleware;
 
-use Strukt\Contract\RequestInterface;
-use Strukt\Contract\ResponseInterface;
-use Strukt\Contract\MiddlewareInterface;
-use Strukt\Contract\AbstractMiddleware;
+use Strukt\Contract\Http\RequestInterface;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Middleware\MiddlewareInterface;
+use Strukt\Contract\Middleware\AbstractMiddleware;
 
 class Authorization extends AbstractMiddleware implements MiddlewareInterface{
 

@@ -3,8 +3,8 @@
 namespace Strukt\Router;
 
 use Strukt\Contract\AbstractCore;
-use Strukt\Contract\ResponseInterface;
-use Strukt\Contract\RequestInterface;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
 use Strukt\Http\Response\Plain as Response;
 use Strukt\Event;
 use Strukt\Ref;

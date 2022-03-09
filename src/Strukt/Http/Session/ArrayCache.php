@@ -2,7 +2,7 @@
 
 namespace Strukt\Http\Session;
 
-use Strukt\Contract\SessionInterface;
+use Strukt\Contract\Http\SessionInterface;
 
 class ArrayCache implements SessionInterface{
 

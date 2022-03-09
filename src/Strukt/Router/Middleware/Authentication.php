@@ -2,11 +2,11 @@
 
 namespace Strukt\Router\Middleware;
 
-use Strukt\Contract\RequestInterface;
-use Strukt\Contract\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
+use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\UserInterface;
-use Strukt\Contract\MiddlewareInterface;
-use Strukt\Contract\AbstractMiddleware;
+use Strukt\Contract\Middleware\MiddlewareInterface;
+use Strukt\Contract\Middleware\AbstractMiddleware;
 
 class Authentication extends AbstractMiddleware implements MiddlewareInterface{
 

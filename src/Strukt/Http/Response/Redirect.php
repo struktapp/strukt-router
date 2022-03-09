@@ -2,10 +2,10 @@
 
 namespace Strukt\Http\Response;
 
-use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
-use Strukt\Contract\ResponseInterface; 
+use Symfony\Component\HttpFoundation\RedirectResponse as NativeRedirectResponse;
+use Strukt\Contract\Http\ResponseInterface; 
 
-class Redirect extends SymfonyRedirectResponse implements ResponseInterface{
+class Redirect extends NativeRedirectResponse implements ResponseInterface{
 
 	//
 }

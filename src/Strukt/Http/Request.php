@@ -3,15 +3,15 @@
 namespace Strukt\Http;
 
 use Strukt\Contract\UserInterface;
-use Strukt\Contract\RequestInterface;
+use Strukt\Contract\Http\RequestInterface;
 
-use Symfony\Component\HttpFoundation\Request as SymfonyRequest; 
+use Symfony\Component\HttpFoundation\Request as NativeRequest; 
 
-class Request extends SymfonyRequest implements RequestInterface{
+class Request extends NativeRequest implements RequestInterface{
 
 	private $user = null;
 
-	public function setUser(UserInterface $user){
+	public function setUser(UserInterface $user = null){
 
 		$this->user = $user;
 	}

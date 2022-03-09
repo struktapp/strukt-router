@@ -2,10 +2,10 @@
 
 namespace Strukt\Http\Response;
 
-use Symfony\Component\HttpFoundation\JsonResponse as SymfonyJsonResponse;
-use Strukt\Contract\ResponseInterface; 
+use Symfony\Component\HttpFoundation\JsonResponse as NativeJsonResponse;
+use Strukt\Contract\Http\ResponseInterface; 
 
-class Json extends SymfonyJsonResponse implements ResponseInterface{
+class Json extends NativeJsonResponse implements ResponseInterface{
 
 	//
 }
