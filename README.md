@@ -17,7 +17,7 @@ Create `composer.json` script with contents below then run `composer update`
 {
     "require":{
 
-        "strukt/router":"dev-master"
+        "strukt/router":"v1.1.1-alpha"
     },
     "minimum-stability":"dev"
 }
@@ -29,7 +29,7 @@ Your `index.php` file.
 require "vendor/autoload.php";
 
 use Strukt\Http\Request;
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 
 $app = new Strukt\Router\QuickStart();
 
@@ -86,10 +86,10 @@ $app->inject("app.dep.author", function(){
 
 $app->inject("app.dep.session", function(){
 
-    return new Strukt\Http\Session;
+    return new Strukt\Http\Session\Native;
 });
 
-$app->inject("app.dep.authentic", function(Strukt\Http\Session $session){
+$app->inject("app.dep.authentic", function(Strukt\Http\Session\Native $session){
 
     $user = new Strukt\User();
     $user->setUsername($session->get("username"));
@@ -117,7 +117,7 @@ $app->map("POST", "/login", function(Strukt\Http\Request $request){
 
     $request->getSession()->set("username", $username);
 
-    return new Strukt\Http\Response(sprintf("User %s logged in.", $username));
+    return new Strukt\Http\Response\Plain(sprintf("User %s logged in.", $username));
 });
 
 $app->map("/current/user", function(Strukt\Http\Request $request){
@@ -129,7 +129,7 @@ $app->map("/logout", function(Strukt\Http\Request $request){
 
     $request->getSession()->invalidate();
 
-    return new Strukt\Http\Response("User logged out.");
+    return new Strukt\Http\Response\Plain("User logged out.");
 });
 ```
 
@@ -196,7 +196,7 @@ $app->map("ANY", "/dba", function(Request $request){
 
     include "./adminer-x.x.x.php";
 
-    return new Strukt\Http\Response();
+    return new Strukt\Http\Response\Plain();
 });
 ```
 Cheers!

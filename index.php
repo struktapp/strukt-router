@@ -1,10 +1,10 @@
 <?php
 
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 use Strukt\Http\Request;
-use Strukt\Http\RedirectResponse;
-use Strukt\Http\JsonResponse;
-use Strukt\Http\Session;
+use Strukt\Http\Response\Redirect as RedirectResponse;
+use Strukt\Http\Response\Json as JsonResponse;
+use Strukt\Http\Session\Native as Session;
 
 use Strukt\Router\Middleware\ExceptionHandler;
 use Strukt\Router\Middleware\Authentication; 
@@ -53,7 +53,7 @@ $app->inject("@inject.verify", function(Session $session){
 
 $app->inject("@inject.session", function(){
 
-	return new Strukt\Http\Session;
+	return new Strukt\Http\Session\Native;
 });
 
 $app->providers(array(
