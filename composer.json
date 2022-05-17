@@ -12,10 +12,8 @@
     "require": {
 
         "php": "^7.4",
-        "strukt/generator": "v1.0.0-alpha",
-        "strukt/contract": "v1.0.2-alpha",
-        "symfony/http-foundation": "^4.1",
-        "symfony/polyfill-php80": "1.23.x-dev"
+        "strukt/contract": "dev-master",
+        "symfony/http-foundation": "^4.1"
     },
     "require-dev": {
 
