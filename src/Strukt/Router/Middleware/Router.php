@@ -55,6 +55,9 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 					$interface = @reset(class_implements($type));
 					if($interface == RequestInterface::class)
 						$route->setParam($name, $request);
+
+					if($interface == ResponseInterface::class)
+						$route->setParam($name, $response);
 				}
 			}
 

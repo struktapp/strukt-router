@@ -80,7 +80,7 @@ $app->map("GET", "/user/secrets", function(){
 
 	return "Shh!";
 
-},"show_secrets");
+},"show_secrets", ["@index","@user:1"]);
 
 $app->map("POST", "/login", function(Request $request){
 
@@ -128,6 +128,16 @@ $app->map("/test/htmlfile", function(Request $request){// use($registry){
 	// return new Response($assets->get("/index.html"));
 
 	return new Response(\Strukt\Fs::cat("public/static/index.html"));
+});
+
+
+$app->map("/test/resp", function(Request $request, Response $response){// use($registry){
+
+	// $assets = $registry->get("assets");
+
+	// return new Response($assets->get("/index.html"));
+
+	return $response->setContent("Hi Response!");
 });
 
 $app->map("/startpage", "App\Controller\StartpageController@run");

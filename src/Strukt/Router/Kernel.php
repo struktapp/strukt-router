@@ -97,8 +97,14 @@ class Kernel extends AbstractCore{
 			$name = trim(current($args));
 		}
 
+		$tokens = [];
+		if(count($args) > 4)
+			$tokens = @$args[4];
+
+		// print_r($tokens);
+
 		$this->core()->get("strukt.service.router")
-							->apply($path, $controller, $method, $name)
+							->apply($path, $controller, $method, $name, $tokens)
 							->exec();
 	}
 

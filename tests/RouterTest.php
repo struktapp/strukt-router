@@ -29,6 +29,29 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 	/**
     * @runInSeparateProcess
     */
+	public function testTokens(){
+
+		$tokens = ["@user", "@view"];
+
+		list($app, $request) = $this->boot();
+
+		$app->map("GET", "/user/{id:int}", function(Request $request){
+
+			return new Response('Hello world', 200);
+
+		}, "user_id", $tokens);
+
+		$registry = Strukt\Core\Registry::getSingleton();
+		$router = $registry->get("strukt.router");
+		$route = $router->getByName("user_id");
+		$route_tokens = $route->getTokens();
+
+		$this->assertEquals($tokens, $route_tokens);
+	}
+
+	/**
+    * @runInSeparateProcess
+    */
 	public function testDefaultRoute(){
 
 		list($app, $request) = $this->boot();

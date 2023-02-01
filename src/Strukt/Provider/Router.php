@@ -22,7 +22,7 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 		$core->set("strukt.service.router", new Event(
 			
-			function($pattern, $route_func, $http_method, $name) use($core){
+			function($pattern, $route_func, $http_method, $name, $tokens) use($core){
 
 				if(is_string($route_func)){
 
@@ -34,7 +34,7 @@ class Router extends AbstractProvider implements ProviderInterface{
 		 				->getClosure();
 		 		}
 
-		 		$route = new Route($pattern, $route_func, $http_method, $name);
+		 		$route = new Route($pattern, $route_func, $http_method, $name, $tokens);
 
 				$core->get("strukt.router")->addRoute($route);
 			}

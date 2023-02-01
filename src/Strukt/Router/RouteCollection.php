@@ -8,14 +8,14 @@ class RouteCollection{
 
 	public function __construct(){
 
-		$this->routes = [];
+		$this->route_patterns = [];
 	}
 
 	public function getRoutes(){
 
 		$properties = [];
 
-		foreach($this->routes as $pattern=>$route){
+		foreach($this->route_patterns as $pattern=>$route){
 
 			$properties[] = array(
 
@@ -32,18 +32,41 @@ class RouteCollection{
 
 		$pattern = $route->getPattern();
 
-		$this->routes[$pattern] = $route;
+		$this->route_patterns[$pattern] = $route;
+
+		$name = $route->getName();
+		if(!empty($name))
+			$this->route_names[$name] = $route;
+	}
+
+	public function getByName(string $name){
+
+		if(array_key_exists($name, $this->route_names))
+			return $this->route_names[$name];
+
+		throw new \Exception(sprintf("Route:[name:%s] does not exist!", $name));
+	}
+
+	public function matchToken(string $like){
+
+		foreach($this->route_patterns as $pattern=>$route)
+			if($route->isMatch($like))
+				$routes[$pattern] = $route;
+
+		$this->route_patterns = $routes;
+
+		return $this;
 	}
 
 	public function getRoute($method, $uri){
 
-		$parser = new UrlParser(array_keys($this->routes));
+		$parser = new UrlParser(array_keys($this->route_patterns));
 
 		$pattern = $parser->whichPattern($uri);
 
 		if(!is_null($pattern)){
 
-			$route = $this->routes[$pattern];
+			$route = $this->route_patterns[$pattern];
 
 			$http_method = $route->getMethod();
 			if($http_method != "ANY")

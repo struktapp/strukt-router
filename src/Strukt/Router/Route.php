@@ -11,11 +11,13 @@ class Route{
 	private $params;
 	private $event;
 	private $name;
+	private $tokens;
 
 	public function __construct(string $pattern, 
 								\Closure $callable, 
 								string $method = "GET", 
-								string $name = null){
+								string $name = null,
+								array $tokens = []){
 
 		$this->method = $method;
 
@@ -26,6 +28,11 @@ class Route{
 		$this->params = [];
 
 		$this->event = Event::create($callable);
+
+		if(!array_product(array_map("is_string", $tokens)))
+			throw new \Exception("Tokens must be list of strings!");
+			
+		$this->tokens = $tokens;
 	}
 
 	public function getName(){
@@ -48,6 +55,32 @@ class Route{
 		return $this->event;
 	}
 
+	public function getTokens(){
+
+		return $this->tokens;
+	}
+
+	public function hasToken($token){
+
+		return in_array($token, $this->tokens);
+	}
+
+	/**
+	* Partial token matcher
+	*/
+	public function isMatch(string $like){
+
+		return !empty(array_filter($this->tokens, function($v) use($like){
+
+			return preg_match("/^".$like."/", $v);
+		}));
+	}
+
+	/**
+	* Merge request params
+	* 
+	* Example: /user/{id:int}/group/{gid:int} will merge params [id, gid]
+	*/
 	public function mergeParams(array $params){
 
 		$this->params = array_merge($params, $this->params);	
@@ -55,6 +88,11 @@ class Route{
 		return $this;
 	}
 
+	/**
+	* Merge request params
+	* 
+	* Example: For (Request $request) will set [param as Object:$request and name:'request']
+	*/
 	public function setParam($name, $param){
 
 		$this->params[$name] = $param;
@@ -62,6 +100,11 @@ class Route{
 		return $this;
 	}
 
+	/**
+	* Add request param
+	* 
+	* Example: /user/{id:int} will add param [id]
+	*/
 	public function addParam($param){
 
 		$this->params[] = $param;
