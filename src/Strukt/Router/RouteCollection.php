@@ -9,6 +9,7 @@ class RouteCollection{
 	public function __construct(){
 
 		$this->route_patterns = [];
+		$this->route_matches = [];
 	}
 
 	public function getRoutes(){
@@ -53,20 +54,28 @@ class RouteCollection{
 			if($route->isMatch($like))
 				$routes[$pattern] = $route;
 
-		$this->route_patterns = $routes;
+		$this->route_matches = $routes;
 
 		return $this;
 	}
 
 	public function getRoute($method, $uri){
 
-		$parser = new UrlParser(array_keys($this->route_patterns));
+		$routes = $this->route_patterns;
+
+		if(!empty($this->route_matches)){
+
+			$routes = $this->route_matches;
+			$this->route_matches = [];
+		}
+
+		$parser = new UrlParser(array_keys($routes));
 
 		$pattern = $parser->whichPattern($uri);
 
 		if(!is_null($pattern)){
 
-			$route = $this->route_patterns[$pattern];
+			$route = $routes[$pattern];
 
 			$http_method = $route->getMethod();
 			if($http_method != "ANY")
