@@ -30,6 +30,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 			list($uri, $qs) = explode("?", $uri);
 
 	 	$method = $request->getMethod();
+	 	$headers = $response->headers->all();
 
 	 	try{
 	 		
@@ -61,8 +62,6 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 				}
 			}
 
-			$headers = $response->headers->all();
-
 	 		$response = $route->exec();
 	 		if($response instanceof ResponseInterface)
 	 			$response->headers->add($headers);
@@ -76,7 +75,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 	 		if($e instanceof HttpExceptionInterface)
 	 			$code = $e->getCode();
 
-	 		$response = new Response($e->getMessage(), $code);
+	 		$response = new Response($e->getMessage(), $code, $headers);
 	 	}
 
 		return $next($request, $response);

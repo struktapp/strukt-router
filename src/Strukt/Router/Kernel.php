@@ -108,36 +108,36 @@ class Kernel extends AbstractCore{
 							->exec();
 	}
 
-	public function reMake(array $components){
+	// public function reMake(array $components){
 
-		return new class($components, $this->middlewares){
+	// 	return new class($components, $this->middlewares){
 
-			private $request;
-			private $response;
+	// 		private $request;
+	// 		private $response;
 
-			private $middlewares;
+	// 		private $middlewares;
 
-			public function __construct($components, $middlewares){
+	// 		public function __construct($components, $middlewares){
 
-				$this->middlewares = $middlewares;
+	// 			$this->middlewares = $middlewares;
 
-				$this->request = $components["request"];
+	// 			$this->request = $components["request"];
 
-				if(!array_key_exists("response", $components))
-					$components["response"] = new Response;
+	// 			if(!array_key_exists("response", $components))
+	// 				$components["response"] = new Response;
 				
-				$this->response = $components["response"];
-			}
+	// 			$this->response = $components["response"];
+	// 		}
 
-			public function run(){
+	// 		public function run(){
 
-				$runner = new Runner($this->middlewares);
-				$response = $runner($this->request, $this->response);
+	// 			$runner = new Runner($this->middlewares);
+	// 			$response = $runner($this->request, $this->response);
 
-				return $response;
-			}
-		};
-	}
+	// 			return $response;
+	// 		}
+	// 	};
+	// }
 
 	public function run() : ResponseInterface{
 
