@@ -132,6 +132,11 @@ class QuickStart{
 		$this->router->map("ANY", $route, $func, $perm);
 	}
 
+	public function options(string $route, callable $func, string $perm = null){
+
+		$this->router->map("OPTIONS", $route, $func, $perm);
+	}
+
 	public function getRouter(){
 
 		return $this->router;

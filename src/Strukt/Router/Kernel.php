@@ -63,7 +63,8 @@ class Kernel extends AbstractCore{
 			"PATH", 
 			"POST", 
 			"DELETE",
-			"PATCH"
+			"PATCH",
+			"OPTIONS"
 
 		))){
 
