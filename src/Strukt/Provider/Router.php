@@ -9,6 +9,10 @@ use Strukt\Contract\Provider\AbstractProvider;
 use Strukt\Contract\Provider\ProviderInterface;
 use Strukt\Ref;
 
+/**
+* @Name(strukt.router)
+* @Require(must)
+*/
 class Router extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){
