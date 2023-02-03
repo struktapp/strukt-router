@@ -13,6 +13,9 @@ use Strukt\Http\Exception\NotFound as NotFoundException;
 use Strukt\Http\Exception\Unauthorized as UnauthorizedException;
 use Strukt\Contract\Http\Exception\HttpExceptionInterface;
 
+/**
+* Name(router)
+*/
 class Router extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $router;
