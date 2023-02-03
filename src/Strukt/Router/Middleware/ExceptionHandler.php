@@ -12,6 +12,7 @@ use Strukt\Contract\Middleware\AbstractMiddleware;
 
 /**
 * @Name(except)
+* @Require(default)
 */
 class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface{
 

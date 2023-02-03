@@ -14,7 +14,8 @@ use Strukt\Http\Exception\Unauthorized as UnauthorizedException;
 use Strukt\Contract\Http\Exception\HttpExceptionInterface;
 
 /**
-* Name(router)
+* @Name(router)
+* 
 */
 class Router extends AbstractMiddleware implements MiddlewareInterface{
 
