@@ -8,6 +8,10 @@ use Strukt\Contract\UserInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
 
+/**
+* @Name(auth)
+* @Inject(verify)
+*/
 class Authentication extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $event;

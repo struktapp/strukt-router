@@ -7,6 +7,10 @@ use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
 
+/**
+* @Name(authz)
+* @Inject(permissions)
+*/
 class Authorization extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $event;

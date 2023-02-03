@@ -10,6 +10,9 @@ use Strukt\Http\Exception\ServerErrorException;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
 
+/**
+* @Name(except)
+*/
 class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __construct(){

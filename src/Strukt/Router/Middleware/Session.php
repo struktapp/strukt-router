@@ -7,6 +7,10 @@ use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
 
+/**
+* @Name(sess)
+* @Inject(session)
+*/
 class Session extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $session;
