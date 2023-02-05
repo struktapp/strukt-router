@@ -11,7 +11,7 @@ use Strukt\Ref;
 
 /**
 * @Name(strukt.router)
-* @Require(must)
+* @Required
 */
 class Router extends AbstractProvider implements ProviderInterface{
 

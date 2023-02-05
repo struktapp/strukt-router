@@ -15,7 +15,7 @@ use Strukt\Contract\Http\Exception\HttpExceptionInterface;
 
 /**
 * @Name(router)
-* @Require(must)
+* @Required
 */
 class Router extends AbstractMiddleware implements MiddlewareInterface{
 
