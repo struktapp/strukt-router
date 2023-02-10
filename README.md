@@ -191,7 +191,7 @@ RewriteRule . index.php [L]
 [Adminer](adminer.org) is a really neat tool! It is a single file dba and can be placed 
 under a router easily! Download the adminer.php file and place in root folder.
 
-```
+```php
 $app->map("ANY", "/dba", function(Request $request){
 
     include "./adminer-x.x.x.php";
