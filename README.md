@@ -47,7 +47,7 @@ $app->run();
 ### Permissions
 
 ```php
-$app->inject("app.dep.author", function(){
+$app->inject("@inject.permissions", function(){
 
     return array(
 
@@ -79,17 +79,17 @@ $app->map("GET", "/user/secrets", function(){
 ### Authentication
 
 ```php
-$app->inject("app.dep.author", function(){
+$app->inject("@inject.permissions", function(){
 
     return [];
 });
 
-$app->inject("app.dep.session", function(){
+$app->inject("@inject.session", function(){
 
     return new Strukt\Http\Session\Native;
 });
 
-$app->inject("app.dep.authentic", function(Strukt\Http\Session\Native $session){
+$app->inject("@inject.verify", function(Strukt\Http\Session\Native $session){
 
     $user = new Strukt\User();
     $user->setUsername($session->get("username"));
