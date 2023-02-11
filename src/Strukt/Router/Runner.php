@@ -24,6 +24,8 @@ class Runner{
             return $middleware($request, $response, $this);
         }
 
+        // $response->sendHeaders();
+
         return $response;
  	}
 }

@@ -3,15 +3,18 @@
 namespace Strukt\Router\Middleware;
 
 use Strukt\Http\Response\Plain as Response;
+// use Strukt\Http\Response\Json as JsonResponse;
 
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 
-use Strukt\Http\Exception\NotFound as NotFoundException;
-use Strukt\Http\Exception\Unauthorized as UnauthorizedException;
-use Strukt\Contract\Http\Exception\HttpExceptionInterface;
+use Strukt\Http\Error\NotFound;
+use Strukt\Http\Error\Unauthorized;
+use Strukt\Http\Error\ServerError;
+use Strukt\Http\Error\HttpError;
+use Strukt\Http\Exec;
 
 /**
 * @Name(router)
@@ -40,7 +43,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 	 		
 	 		$route = $this->router->getRoute($method, $uri);
 	 		if(is_null($route))
-	 			throw new NotFoundException();
+	 			Exec::make(new NotFound)->withHeaders()->run();
 
  			$permissions = [];
  			if($this->core()->exists("@strukt.permissions"))
@@ -49,7 +52,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 			$routeName = $route->getName();
 			if(!empty($routeName))
 				if(!in_array($routeName, $permissions))
-					throw new UnauthorizedException();
+					Exec::make(new Unauthorized)->withHeaders()->run();
 
  			$params = $route->getEvent()->getParams();
  			
@@ -69,18 +72,17 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 	 		$response = $route->exec();
 	 		if($response instanceof ResponseInterface)
 	 			$response->headers->add($headers);
-	 		
+
 	 		if(is_string($response))
 	 			$response = new Response($response, 200, $headers);
 	 	}
 	 	catch(\Exception $e){
 
-	 		$code = 500;
-	 		if($e instanceof HttpExceptionInterface)
-	 			$code = $e->getCode();
-
-	 		$response = new Response($e->getMessage(), $code, $headers);
+	 		$response = new ServerError($e->getMessage());
 	 	}
+
+	 	if($response instanceof HttpError)
+	 		Exec::make($response)->withHeaders()->run();
 
 		return $next($request, $response);
 	}

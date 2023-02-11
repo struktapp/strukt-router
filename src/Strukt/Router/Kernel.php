@@ -109,42 +109,49 @@ class Kernel extends AbstractCore{
 							->exec();
 	}
 
-	// public function reMake(array $components){
+	public function make(){
 
-	// 	return new class($components, $this->middlewares){
+		return new class($this->middlewares,
+						$this->request,
+						$this->response){
 
-	// 		private $request;
-	// 		private $response;
+			private $middlewares;
+			private $request;
+			private $response;
 
-	// 		private $middlewares;
+			private $send_headers = false;
 
-	// 		public function __construct($components, $middlewares){
+			public function __construct($middlewares, $request, $response){
 
-	// 			$this->middlewares = $middlewares;
+				$this->middlewares = $middlewares;
+				$this->request = $request;
+				$this->response = $response;
+			}
 
-	// 			$this->request = $components["request"];
+			public function withHeaders(){
 
-	// 			if(!array_key_exists("response", $components))
-	// 				$components["response"] = new Response;
+				$this->send_headers = true;
+
+				return $this;
+			}
+
+			public function run():ResponseInterface{
+
+				$runner = new \Strukt\Router\Runner($this->middlewares);
+				$response = $runner($this->request, $this->response);
+
+				if($this->send_headers)
+					$response->sendHeaders();
+
+				return $response;
+			}
+
+			public function exec(){
+
+				$response = $this->run();
 				
-	// 			$this->response = $components["response"];
-	// 		}
-
-	// 		public function run(){
-
-	// 			$runner = new Runner($this->middlewares);
-	// 			$response = $runner($this->request, $this->response);
-
-	// 			return $response;
-	// 		}
-	// 	};
-	// }
-
-	public function run() : ResponseInterface{
-
-		$runner = new Runner($this->middlewares);
-		$response = $runner($this->request, $this->response);
-			
-		return $response;
+				exit($response->getContent());
+			}
+		};
 	}
 }

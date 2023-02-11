@@ -25,6 +25,8 @@ $loader = require "vendor/autoload.php";
 $loader->add('App', __DIR__.'/fixtures/');
 $loader->add('Strukt', __DIR__.'/src/');
 
+Strukt\Http\Exec::withJsonError();
+
 Env::set("root_dir", getcwd());
 Env::set("rel_static_dir", "public/static");
 Env::set("is_dev", true);
@@ -140,8 +142,21 @@ $app->map("/test/resp", function(Request $request, Response $response){// use($r
 	return $response->setContent("Hi Response!");
 });
 
+$app->map("/except", function(){
+
+	// return new Strukt\Http\Error\NotFound();
+	// return new Strukt\Http\Error\ServerError();
+	return new Strukt\Http\Error\BadRequest;
+	// throw new Exception("Error Processing Request", 1);
+	
+	
+	// new \Strukt\Http\Response\Json()
+});
+
 $app->map("/startpage", "App\Controller\StartpageController@run");
 
-$response = $app->run();
+$app->make()->withHeaders()->exec();
+// $response = $app->make()->withHeaders()->run();
 
-echo $response->getContent();
+// exit($response->getContent());
+// echo $response->getContent();
