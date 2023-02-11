@@ -4,7 +4,7 @@ namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
 
-class ServerError extends Plain implements HttpError{
+class ServerError extends Any{
 
 	public function __construct(string $message="Server Error!", array $headers = []){
 

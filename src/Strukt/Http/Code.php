@@ -44,4 +44,9 @@ class Code{
 	    504 => 'Gateway Time-out',
 	    505 => 'HTTP Version not supported',
 	);
+
+	public static isCode(int $code):bool{
+
+		return array_key_exists($code, static::$codes);
+	}
 }

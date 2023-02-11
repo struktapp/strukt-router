@@ -2,42 +2,42 @@
 
 namespace Strukt\Http;
 
-use Strukt\Http\Error\HttpError;
+use Strukt\Http\Error\HttpErrorInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Http\Response\Json as JsonResponse;
 
 class Exec{
 
-	private static $use_jsonerr = false;
+	private static $useJson = false;
 
-	public static function withJsonError(bool $use_jsonerr = true){
+	public static function withJsonError(bool $json = true){
 
-		static::$use_jsonerr = $use_jsonerr;
+		static::$useJson = $json;
 	}
 
 	public static function make(ResponseInterface $response){
 
-		return new class($response, static::$use_jsonerr){
+		return new class($response, static::$useJson){
 
 			private $response;
-			private $send_headers = false;
+			private $sendHeaders = false;
 
-			public function __construct($response, $use_jsonerr){
+			public function __construct($response, $json){
 
 				$this->response = $response;
-				$this->use_jsonerr = $use_jsonerr;
+				$this->useJson = $json;
 			}
 
 			public function withHeaders(){
 
-				$this->send_headers = true;
+				$this->sendHeaders = true;
 
 				return $this;
 			}
 
 			public function useJsonError(){
 
-				if($this->response instanceof HttpError){
+				if($this->response instanceof HttpErrorInterface){
 
 		 			$headers = $this->response->headers->all();
 		 			$code = $this->response->getStatusCode();
@@ -57,10 +57,10 @@ class Exec{
 
 			public function run(){
 
-				if($this->use_jsonerr)
+				if($this->useJson)
 					$this->useJsonError();
 
-				if($this->send_headers)
+				if($this->sendHeaders)
 					$this->response->sendHeaders();
 
 				exit($this->response->getContent());

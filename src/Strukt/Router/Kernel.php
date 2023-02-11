@@ -55,18 +55,8 @@ class Kernel extends AbstractCore{
 		$args = func_get_args();
 
 		$arg = current($args);
-		if(in_array(strtoupper($arg), array(
 
-			"ANY",
-			"PUT", 
-			"GET", 
-			"PATH", 
-			"POST", 
-			"DELETE",
-			"PATCH",
-			"OPTIONS"
-
-		))){
+		if(\Strukt\Http\Method::isAllowed($arg)){
 
 			$method = trim(strtoupper($arg));
 		}
@@ -119,7 +109,7 @@ class Kernel extends AbstractCore{
 			private $request;
 			private $response;
 
-			private $send_headers = false;
+			private $sendHeaders = false;
 
 			public function __construct($middlewares, $request, $response){
 
@@ -130,7 +120,7 @@ class Kernel extends AbstractCore{
 
 			public function withHeaders(){
 
-				$this->send_headers = true;
+				$this->sendHeaders = true;
 
 				return $this;
 			}
@@ -140,7 +130,7 @@ class Kernel extends AbstractCore{
 				$runner = new \Strukt\Router\Runner($this->middlewares);
 				$response = $runner($this->request, $this->response);
 
-				if($this->send_headers)
+				if($this->sendHeaders)
 					$response->sendHeaders();
 
 				return $response;

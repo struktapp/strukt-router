@@ -2,7 +2,7 @@
 
 namespace Strukt\Http\Error;
 
-Interface HttpError{
+Interface HttpErrorInterface{
 
 	//
 }

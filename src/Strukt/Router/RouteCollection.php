@@ -2,8 +2,7 @@
 
 namespace Strukt\Router;
 
-use Strukt\Http\Error\MethodNotAllowed;
-use Strukt\Http\Exec as HttpExec;
+use Strukt\Http\Exception\MethodNotAllowed as MethodNotAllowedException;
 
 class RouteCollection{
 
@@ -81,9 +80,7 @@ class RouteCollection{
 			$http_method = $route->getMethod();
 			if($http_method != "ANY")
 				if($http_method != $method)
-					throw new \Exception("Method Not Allowed!");
-					// HttpExec::make(new MethodNotAllowed)->withHeaders()->run();
-					// throw new MethodNotAllowedException();
+					throw new MethodNotAllowedException();
 
 			$params = $parser->getParams();
 			if(!empty($params))

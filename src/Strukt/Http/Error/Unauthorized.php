@@ -4,7 +4,7 @@ namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
 
-class Unauthorized extends Plain implements HttpError{
+class Unauthorized extends Any{
 
 	public function __construct(string $message="Unathorized Access!", array $headers = []){
 

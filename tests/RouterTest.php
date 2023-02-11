@@ -106,6 +106,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 	/**
 	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
      */
 	public function testRouteMethod(){
 
@@ -125,9 +126,8 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 			return new Response(sprintf("username: %s, password: %s", $username, $password));
 		});
 
-		// $response = $app->run();
 		$response = $app->make()->run();
 
-		$this->assertEquals($response->getContent(), "Method Not Allowed!");
+		$this->assertEquals($response->getStatusCode(), 405);
 	}
 }

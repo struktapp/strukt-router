@@ -3,7 +3,6 @@
 namespace Strukt\Router\Middleware;
 
 use Strukt\Http\Response\Plain as Response;
-// use Strukt\Http\Response\Json as JsonResponse;
 
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
@@ -13,8 +12,9 @@ use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Http\Error\NotFound;
 use Strukt\Http\Error\Unauthorized;
 use Strukt\Http\Error\ServerError;
-use Strukt\Http\Error\HttpError;
-use Strukt\Http\Exec;
+use Strukt\Http\Error\HttpErrorInterface;
+use Strukt\Http\Error\Any as HttpError;
+use Strukt\Http\Exec as HttpExec;
 
 /**
 * @Name(router)
@@ -43,7 +43,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 	 		
 	 		$route = $this->router->getRoute($method, $uri);
 	 		if(is_null($route))
-	 			Exec::make(new NotFound)->withHeaders()->run();
+	 			HttpExec::make(new NotFound)->withHeaders()->run();
 
  			$permissions = [];
  			if($this->core()->exists("@strukt.permissions"))
@@ -52,7 +52,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 			$routeName = $route->getName();
 			if(!empty($routeName))
 				if(!in_array($routeName, $permissions))
-					Exec::make(new Unauthorized)->withHeaders()->run();
+					HttpExec::make(new Unauthorized)->withHeaders()->run();
 
  			$params = $route->getEvent()->getParams();
  			
@@ -78,11 +78,15 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 	 	}
 	 	catch(\Exception $e){
 
-	 		$response = new ServerError($e->getMessage());
+	 		$code = 500;
+	 		if(HttpError::isCode($e->getCode()))
+	 			$code = $e->getCode();
+
+	 		$response = new HttpError($e->getMessage(), $code);
 	 	}
 
-	 	if($response instanceof HttpError)
-	 		Exec::make($response)->withHeaders()->run();
+	 	if($response instanceof HttpErrorInterface)
+	 		HttpExec::make($response)->withHeaders()->run();
 
 		return $next($request, $response);
 	}

@@ -144,8 +144,6 @@ class QuickStart{
 
 	public function run(){
 
-		$response = $this->getRouter()->run();
-
-		exit($response->getContent());
+		$this->getRouter()->make()->withHeaders()->exec();
 	}
 }

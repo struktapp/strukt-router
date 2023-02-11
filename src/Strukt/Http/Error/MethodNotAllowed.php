@@ -4,7 +4,7 @@ namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
 
-class MethodNotAllowed extends Plain implements HttpError{
+class MethodNotAllowed extends Any{
 
 	public function __construct(string $message="Method Not Allowed!", array $headers = []){
 
