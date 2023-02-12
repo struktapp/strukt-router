@@ -17,7 +17,7 @@ use Strukt\Provider\Router as RouterProvider;
 use Strukt\Event;
 use Strukt\Env;
 
-use Strukt\Core\Registry;
+// use Strukt\Core\Registry;
 
 session_save_path("/tmp");
 
@@ -25,13 +25,15 @@ $loader = require "vendor/autoload.php";
 $loader->add('App', __DIR__.'/fixtures/');
 $loader->add('Strukt', __DIR__.'/src/');
 
-Strukt\Http\Exec::withJsonError();
+// Strukt\Http\Exec::withJsonError();
 
 Env::set("root_dir", getcwd());
 Env::set("rel_static_dir", "public/static");
 Env::set("is_dev", true);
 
-$registry = Registry::getSingleton();
+// $registry = Registry::getSingleton();
+
+Strukt\Reg::set("strukt.useJsonError", true);
 
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
 $app->inject("@inject.permissions", function(){
