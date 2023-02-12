@@ -40,17 +40,20 @@ class Exec{
 
 		 			$headers = $this->response->headers->all();
 		 			$code = $this->response->getStatusCode();
-		 			$content = $this->response->getContent();
-		 			
-		 			if(!Json::isJson($content)){
 
+		 			$content = $this->response->getContent();
+		 			$isJson = Json::isJson($content);
+		 			
+		 			if($isJson)
+		 				$content = Json::decode($content);
+		 			
+		 			if(!$isJson)
 			 			$content = array(
 
 			 				"message"=>$content,
 			 				"success"=>false,
 			 				"code"=>$code
 			 			);
-			 		}
 
 		 			$this->response = new JsonResponse($content, $code, $headers);
 		 		}
