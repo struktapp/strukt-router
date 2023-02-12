@@ -5,6 +5,7 @@ namespace Strukt\Http;
 use Strukt\Contract\Http\Error\HttpErrorInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Http\Response\Json as JsonResponse;
+use Strukt\Type\Json;
 
 class Exec{
 
@@ -39,13 +40,17 @@ class Exec{
 
 		 			$headers = $this->response->headers->all();
 		 			$code = $this->response->getStatusCode();
+		 			$content = $this->response->getContent();
 		 			
-		 			$content = array(
+		 			if(!Json::isJson($content)){
 
-		 				"message"=>$this->response->getContent(),
-		 				"success"=>false,
-		 				"code"=>$code
-		 			);
+			 			$content = array(
+
+			 				"message"=>$content,
+			 				"success"=>false,
+			 				"code"=>$code
+			 			);
+			 		}
 
 		 			$this->response = new JsonResponse($content, $code, $headers);
 		 		}
