@@ -12,7 +12,7 @@ use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Http\Error\NotFound;
 use Strukt\Http\Error\Unauthorized;
 use Strukt\Http\Error\ServerError;
-use Strukt\Http\Error\HttpErrorInterface;
+use Strukt\Contract\Http\Error\HttpErrorInterface;
 use Strukt\Http\Error\Any as HttpError;
 use Strukt\Http\Exec as HttpExec;
 

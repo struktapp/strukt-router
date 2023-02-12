@@ -3,6 +3,7 @@
 namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
+use Strukt\Contract\Http\Error\HttpErrorInterface;
 
 class Any extends Plain implements HttpErrorInterface{
 
