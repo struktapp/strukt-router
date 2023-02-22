@@ -22,4 +22,14 @@ class ArrayCache implements SessionInterface{
 
 		$this->bag[$key] = $val;
 	}
+
+	public function start():bool{
+
+		return true;
+	}
+
+	public function has($name):bool{
+
+		return array_key_exists($name, $this->bag);
+	}
 }
