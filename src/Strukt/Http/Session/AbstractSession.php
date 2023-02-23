@@ -2,20 +2,21 @@
 
 namespace Strukt\Http\Session;
 
+use Strukt\Contract\Http\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface as SymfonySessionInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
-use Strukt\Contract\Http\SessionInterface;
 
-abstract class AbstractSession implements SessionInterface{
+abstract class AbstractSession implements SessionInterface, SymfonySessionInterface{
 
-	public function get(string $key){
+	public function get(/*string*/ $name, $default = null){
 
-		return $this->bag[$key];
+		return $this->bag[$name];
 	}
 
-	public function set(string $key, $val){
+	public function set(/*string*/ $name, $value){
 
-		$this->bag[$key] = $val;
+		$this->bag[$name] = $value;
 	}
 
 	public function start():bool{
@@ -33,7 +34,7 @@ abstract class AbstractSession implements SessionInterface{
     	return "";
     }
 
-    public function setId(string $id):void{
+    public function setId(/*string*/ $id):void{
 
     	//
     }
@@ -43,7 +44,7 @@ abstract class AbstractSession implements SessionInterface{
     	return "";
     }
 
-    public function setName(string $name):void{
+    public function setName(/*string*/ $name):void{
 
     	//
     }
@@ -90,7 +91,7 @@ abstract class AbstractSession implements SessionInterface{
     	//
     }
 
-    public function remove(string $name):mixed{
+    public function remove(/*string*/ $name):mixed{
 
     	$val = $this->bag[$name];
     	unset($this->bag);
@@ -114,7 +115,7 @@ abstract class AbstractSession implements SessionInterface{
     	//
     }
 
-    public function getBag(string $name):SessionBagInterface{
+    public function getBag(/*string*/ $name):SessionBagInterface{
 
     	return null;
     }

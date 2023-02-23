@@ -13,14 +13,14 @@ class ArrayCache extends AbstractSession{
 		$this->bag = [];
 	}
 
-	public function get(string $key){
+	public function get(/*string*/ $name, $default = null){
 
-		return $this->bag[$key];
+		return $this->bag[$name];
 	}
 
-	public function set(string $key, $val){
+	public function set(/*string*/ $name, $value){
 
-		$this->bag[$key] = $val;
+		$this->bag[$name] = $value;
 	}
 
 	public function start():bool{
