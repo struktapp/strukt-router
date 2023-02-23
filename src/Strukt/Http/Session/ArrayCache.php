@@ -4,7 +4,7 @@ namespace Strukt\Http\Session;
 
 use Strukt\Contract\Http\SessionInterface;
 
-class ArrayCache implements SessionInterface{
+class ArrayCache extends AbstractSession{
 
 	private $bag;
 
