@@ -3,6 +3,7 @@
 namespace Strukt\Router;
 
 use Strukt\Event;
+use Strukt\Core\TokenQuery as TokQ;
 
 class Route{
 
@@ -13,11 +14,16 @@ class Route{
 	private $name;
 	private $tokens;
 
+	// public function __construct(string $pattern, 
+	// 							\Closure $callable, 
+	// 							string $method = "GET", 
+	// 							string $name = null,
+	// 							array $tokens = []){
 	public function __construct(string $pattern, 
 								\Closure $callable, 
 								string $method = "GET", 
 								string $name = null,
-								array $tokens = []){
+								string $tokens = null){
 
 		$this->method = $method;
 
@@ -29,8 +35,8 @@ class Route{
 
 		$this->event = Event::create($callable);
 
-		if(!array_product(array_map("is_string", $tokens)))
-			throw new \Exception("Tokens must be list of strings!");
+		// if(!array_product(array_map("is_string", $tokens)))
+			// throw new \Exception("Tokens must be list of strings!");
 			
 		$this->tokens = $tokens;
 	}
@@ -55,26 +61,34 @@ class Route{
 		return $this->event;
 	}
 
-	public function getTokens(){
+	// public function getTokens(){
 
-		return $this->tokens;
+	// 	return $this->tokens;
+	// }
+
+	public function getTokenQuery(){
+
+		if(!is_null($this->tokens))
+			return new TokQ($this->tokens);
+
+		return null;
 	}
 
-	public function hasToken($token){
+	// public function hasToken($token){
 
-		return in_array($token, $this->tokens);
-	}
+	// 	return in_array($token, $this->tokens);
+	// }
 
 	/**
 	* Partial token matcher
 	*/
-	public function isMatch(string $like){
+	// public function isMatch(string $like){
 
-		return !empty(array_filter($this->tokens, function($v) use($like){
+	// 	return !empty(array_filter($this->tokens, function($v) use($like){
 
-			return preg_match("/^".$like."/", $v);
-		}));
-	}
+	// 		return preg_match("/^".$like."/", $v);
+	// 	}));
+	// }
 
 	/**
 	* Merge request params

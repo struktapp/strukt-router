@@ -88,7 +88,8 @@ class Kernel extends AbstractCore{
 			$name = trim(current($args));
 		}
 
-		$tokens = [];
+		// $tokens = [];
+		$tokens = "";
 		if(count($args) > 4)
 			$tokens = @$args[4];
 

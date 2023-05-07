@@ -28,7 +28,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
     */
 	public function testTokens(){
 
-		$tokens = ["@user", "@view"];
+		$tokens = "form:user|middlewares:gverify,oauth";
 
 		list($app, $request) = $this->boot();
 
@@ -41,9 +41,12 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 		$registry = Strukt\Core\Registry::getSingleton();
 		$router = $registry->get("strukt.router");
 		$route = $router->getByName("user_id");
-		$route_tokens = $route->getTokens();
+		$tokq = $route->getTokenQuery();
 
-		$this->assertEquals($tokens, $route_tokens);
+		$mdls = $tokq->get("middlewares");
+
+		$this->assertEquals("user", $tokq->get("form"));
+		$this->assertEquals(["gverify","oauth"], $tokq->get("middlewares"));
 	}
 
 	/**

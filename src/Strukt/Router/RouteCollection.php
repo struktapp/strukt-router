@@ -48,13 +48,20 @@ class RouteCollection{
 		throw new \Exception(sprintf("Route:[name:%s] does not exist!", $name));
 	}
 
-	public function matchToken(string $like){
+	public function withToken(string $token){
 
-		foreach($this->route_patterns as $pattern=>$route)
-			if($route->isMatch($like))
-				$routes[$pattern] = $route;
+		list($key, $val) = explode(":", $token);
 
-		$this->route_matches = $routes;
+		$tokq = $route->getTokenQuery();
+
+		if(!is_null($tokq)){
+
+			foreach($this->route_patterns as $pattern=>$route)
+				if($route->has(sprintf("%s:%s", $key, $val)))
+					$routes[$pattern] = $route;
+
+			$this->route_matches = $routes;
+		}
 
 		return $this;
 	}
