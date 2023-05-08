@@ -6,7 +6,7 @@ use Strukt\Env;
 use Strukt\Http\Response\Plain as Response;
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
-use Strukt\Http\Exception\ServerErrorException;
+// use Strukt\Http\Exception\ServerErrorException;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
 
@@ -27,7 +27,8 @@ class ExceptionHandler extends AbstractMiddleware implements MiddlewareInterface
 			
 			return $next($request, $response);
 		} 
-		catch (ServerErrorException $e){
+		// catch (ServerErrorException $e){
+		catch (\Exception $e){
 
 			if (Env::get("is_dev"))
 				return new Response($e->getMessage(), $e->getCode());
