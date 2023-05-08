@@ -5,7 +5,7 @@ use Strukt\Provider\Router as RouterProvider;
 use Strukt\Ref;
 use Strukt\Core\Registry;
 
-class RouterProviderTest extends PHPUnit\Framework\TestCase{
+class RouterCollectionTest extends PHPUnit\Framework\TestCase{
 
 	public function setUp():void{
 
@@ -14,7 +14,7 @@ class RouterProviderTest extends PHPUnit\Framework\TestCase{
 		$this->provider->register();
 	}
 
-	public function testProvider(){
+	public function testTokens(){
 
 		$service = $this->registry->get("strukt.service.router");
 
@@ -23,11 +23,12 @@ class RouterProviderTest extends PHPUnit\Framework\TestCase{
 			array(
 
 				"method"=>"POST",
-				"path"=>"/hello/world", 
+				"path"=>"/login", 
 				"func"=>function(Request $req){
 
-					return "Hello World.";
-				}
+					return "Not yet implemented";
+				},
+				"token"=>"type:form|form:auth|middlewares:gverify,oauth"
 			),
 			array(
 
@@ -36,20 +37,22 @@ class RouterProviderTest extends PHPUnit\Framework\TestCase{
 				"func"=>function($name, Request $req){
 
 					return sprintf("Hello %s", $name);
-				}
+				},
+				"token"=>"middlewares:gverify"
 			),
 		);
 
 		foreach($routes as $item)
-			$service->apply($item["path"], $item["func"], $item["method"],"","")->exec();
+			$service->apply($item["path"], 
+							$item["func"], 
+							$item["method"],
+							"",
+							$item["token"])->exec();
 
-		$route = $this->registry->get("strukt.router")->getRoute("POST", "/hello/pitsolu");
-		$params = $route->getEvent()->getParams();
-
-		foreach($params as $name=>$param)
-			if($param == Request::class)
-				$route->setParam($name, new Request);
-
-		$this->assertEquals($route->exec(), "Hello pitsolu");
+		$router = $this->registry->get("strukt.router");
+		$router = $router->withToken("middlewares:gverify");
+		$this->assertEquals(count($router->getMatches()), 2);
+		$router = $router->withToken("type:form");
+		$this->assertEquals(count($router->getMatches()), 1);
 	}
 }

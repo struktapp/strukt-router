@@ -61,10 +61,10 @@ class Route{
 		return $this->event;
 	}
 
-	// public function getTokens(){
+	public function getTokens(){
 
-	// 	return $this->tokens;
-	// }
+		return $this->tokens;
+	}
 
 	public function getTokenQuery(){
 

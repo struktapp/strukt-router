@@ -1,4 +1,4 @@
-<phpunit bootstrap="bootstrap-phpunit.php">
+<phpunit bootstrap="bootstrap-phpunit.php" processIsolation="true">
   <testsuites>
     <testsuite name="Strukt Router">
       <directory>./tests</directory>

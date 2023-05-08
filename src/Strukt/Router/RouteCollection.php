@@ -3,8 +3,12 @@
 namespace Strukt\Router;
 
 use Strukt\Http\Exception\MethodNotAllowed as MethodNotAllowedException;
+use Strukt\Core\TokenQuery as TokQ;
 
 class RouteCollection{
+
+	private $route_patterns;
+	private $route_matches;
 
 	public function __construct(){
 
@@ -52,18 +56,51 @@ class RouteCollection{
 
 		list($key, $val) = explode(":", $token);
 
-		$tokq = $route->getTokenQuery();
+		$routes = [];
+		foreach($this->route_patterns as $pattern=>$route){
 
-		if(!is_null($tokq)){
+			$tokq = $route->getTokenQuery();
+			if(!is_null($tokq)){
 
-			foreach($this->route_patterns as $pattern=>$route)
-				if($route->has(sprintf("%s:%s", $key, $val)))
-					$routes[$pattern] = $route;
+				if($tokq->has($key)){
 
-			$this->route_matches = $routes;
+					$found = false;
+					$item = $tokq->get($key);
+					if(is_array($item))
+						if(in_array($val, $item))
+							$found = true;
+
+					if(is_string($item))
+						if($item == $val)
+							$found = true;
+
+					if($found)
+						$routes[$pattern] = $route;
+				}
+			}
 		}
 
+		$this->route_matches = $routes;
+
 		return $this;
+	}
+
+	public function getMatches(){
+
+		$properties = [];
+
+		foreach($this->route_matches as $pattern=>$route){
+
+			$properties[] = array(
+
+				"pattern"=>$pattern,
+				"method"=>$route->getMethod(),
+				"permission"=>$route->getName(),
+				"tokens"=>$route->getTokens()
+			);
+		}
+
+		return $properties;
 	}
 
 	public function getRoute($method, $uri){
