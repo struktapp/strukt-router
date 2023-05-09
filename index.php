@@ -6,12 +6,12 @@ use Strukt\Http\Response\Redirect as RedirectResponse;
 use Strukt\Http\Response\Json as JsonResponse;
 use Strukt\Http\Session\Native as Session;
 
-use Strukt\Router\Middleware\ExceptionHandler;
-use Strukt\Router\Middleware\Authentication; 
-use Strukt\Router\Middleware\Authorization;
+use Strukt\Middleware\ExceptionHandler;
+use Strukt\Middleware\Authentication; 
+use Strukt\Middleware\Authorization;
 // use Strukt\Middleware\Asset as AssetMiddleware;
-use Strukt\Router\Middleware\Session as SessionMiddleware;
-use Strukt\Router\Middleware\Router as RouterMiddleware;
+use Strukt\Middleware\Session as SessionMiddleware;
+use Strukt\Middleware\Router as RouterMiddleware;
 use Strukt\Provider\Router as RouterProvider;
 
 use Strukt\Event;

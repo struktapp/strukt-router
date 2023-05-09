@@ -10,10 +10,10 @@ use Strukt\Http\Session\Native as Session;
 
 use Strukt\Provider\Router as RouterProvider;
 
-use Strukt\Router\Middleware\Session as SessionMiddleware;
-use Strukt\Router\Middleware\Authentication as AuthenticationMiddleware;
-use Strukt\Router\Middleware\Authorization as AuthorizationMiddleware;
-use Strukt\Router\Middleware\Router as RouterMiddleware;
+use Strukt\Middleware\Session as SessionMiddleware;
+use Strukt\Middleware\Authentication as AuthenticationMiddleware;
+use Strukt\Middleware\Authorization as AuthorizationMiddleware;
+use Strukt\Middleware\Router as RouterMiddleware;
 
 use Strukt\Reg;
 

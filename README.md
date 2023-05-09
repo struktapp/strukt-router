@@ -65,8 +65,8 @@ $app->providers(array(
 
 $app->middlewares(array(
 
-    Strukt\Router\Middleware\Authorization::class,
-    Strukt\Router\Middleware\Router::class
+    Strukt\Middleware\Authorization::class,
+    Strukt\Middleware\Router::class
 ));
 
 $app->map("GET", "/user/secrets", function(){
@@ -104,10 +104,10 @@ $app->providers(array(
 
 $app->middlewares(array(
 
-    Strukt\Router\Middleware\Session::class,
-    Strukt\Router\Middleware\Authentication::class,
-    Strukt\Router\Middleware\Authorization::class,
-    Strukt\Router\Middleware\Router::class
+    Strukt\Middleware\Session::class,
+    Strukt\Middleware\Authentication::class,
+    Strukt\Middleware\Authorization::class,
+    Strukt\Middleware\Router::class
 ));
 
 $app->map("POST", "/login", function(Strukt\Http\Request $request){
@@ -148,7 +148,7 @@ Strukt\Env::set("is_dev", true);
 You can add exception handler middleware (as the first middleware)
 
 ```php
-Strukt\Router\Middleware\ExceptionHandler::class
+Strukt\Middleware\ExceptionHandler::class
 ```
 
 After installation run  `composer exec static` to get `public\` directory.

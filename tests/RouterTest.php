@@ -2,7 +2,7 @@
 
 use Strukt\Http\Response\Plain as Response;
 use Strukt\Http\Request;
-use Strukt\Router\Middleware\Router as RouterMiddleware;
+use Strukt\Middleware\Router as RouterMiddleware;
 
 class RouterTest extends PHPUnit\Framework\TestCase{
 
@@ -17,7 +17,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 		));
 		$app->middlewares(array(
 			
-			Strukt\Router\Middleware\Router::class
+			Strukt\Middleware\Router::class
 		));
 
 		return array($app, $request);

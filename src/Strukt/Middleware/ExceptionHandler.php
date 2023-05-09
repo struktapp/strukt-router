@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Router\Middleware;
+namespace Strukt\Middleware;
 
 use Strukt\Env;
 use Strukt\Http\Response\Plain as Response;
