@@ -84,7 +84,7 @@ $app->map("GET", "/user/secrets", function(){
 
 	return "Shh!";
 
-},"show_secrets", ["@index","@user:1"]);
+},"show_secrets");
 
 $app->map("POST", "/login", function(Request $request){
 

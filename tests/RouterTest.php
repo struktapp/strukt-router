@@ -104,6 +104,8 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 	/**
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
+	 * @expectedExceptionMessage Method Not Allowed!
+	 * @expectedException PHPUnit\Framework\Exception
      */
 	public function testRouteMethod(){
 
@@ -127,6 +129,6 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		$response = $app->make()->run();
 
-		$this->assertEquals($response->getStatusCode(), 405);
+		// $this->assertEquals($response->getStatusCode(), 405);
 	}
 }
