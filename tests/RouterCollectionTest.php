@@ -1,7 +1,7 @@
 <?php
 
 use Strukt\Http\Request;
-use Strukt\Provider\Router as RouterProvider;
+use Strukt\Provider\XRouter as RouterProvider;
 use Strukt\Ref;
 use Strukt\Core\Registry;
 

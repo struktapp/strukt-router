@@ -8,7 +8,7 @@ use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\SessionInterface;
 use Strukt\Http\Session\Native as Session;
 
-use Strukt\Provider\Router as RouterProvider;
+use Strukt\Provider\XRouter as RouterProvider;
 
 use Strukt\Middleware\Session as SessionMiddleware;
 use Strukt\Middleware\Authentication as AuthenticationMiddleware;

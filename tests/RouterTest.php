@@ -13,7 +13,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		$app->providers(array(
 
-			Strukt\Provider\Router::class
+			Strukt\Provider\XRouter::class
 		));
 		$app->middlewares(array(
 			

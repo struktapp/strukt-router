@@ -12,7 +12,7 @@ use Strukt\Middleware\Authorization;
 // use Strukt\Middleware\Asset as AssetMiddleware;
 use Strukt\Middleware\Session as SessionMiddleware;
 use Strukt\Middleware\Router as RouterMiddleware;
-use Strukt\Provider\Router as RouterProvider;
+use Strukt\Provider\XRouter as RouterProvider;
 
 use Strukt\Event;
 use Strukt\Env;

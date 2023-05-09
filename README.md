@@ -60,7 +60,7 @@ $app->inject("@inject.permissions", function(){
 
 $app->providers(array(
 
-    Strukt\Provider\Router::class
+    Strukt\Provider\XRouter::class
 ));
 
 $app->middlewares(array(
@@ -99,7 +99,7 @@ $app->inject("@inject.verify", function(Strukt\Http\Session\Native $session){
 
 $app->providers(array(
 
-    Strukt\Provider\Router::class
+    Strukt\Provider\XRouter::class
 ));
 
 $app->middlewares(array(

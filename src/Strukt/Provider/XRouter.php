@@ -13,7 +13,7 @@ use Strukt\Ref;
 * @Name(strukt.router)
 * @Required()
 */
-class Router extends AbstractProvider implements ProviderInterface{
+class XRouter extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){
 
