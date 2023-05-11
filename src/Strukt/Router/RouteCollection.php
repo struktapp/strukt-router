@@ -2,35 +2,20 @@
 
 namespace Strukt\Router;
 
-use Strukt\Http\Exception\MethodNotAllowed as MethodNotAllowedException;
+use Strukt\Http\Exception\MethodNotAllowed as HttpException405;
 use Strukt\Core\TokenQuery as TokQ;
 
 class RouteCollection{
 
 	private $route_patterns;
 	private $route_matches;
+	private $http_method;
 
-	public function __construct(){
+	public function __construct(string $http_method = "GET"){
 
 		$this->route_patterns = [];
 		$this->route_matches = [];
-	}
-
-	public function getRoutes(){
-
-		$properties = [];
-
-		foreach($this->route_patterns as $pattern=>$route){
-
-			$properties[] = array(
-
-				"pattern"=>$pattern,
-				"method"=>$route->getMethod(),
-				"permission"=>$route->getName()
-			);
-		}
-
-		return $properties;
+		$this->http_method = $http_method;
 	}
 
 	public function addRoute(Route $route){
@@ -50,6 +35,23 @@ class RouteCollection{
 			return $this->route_names[$name];
 
 		throw new \Exception(sprintf("Route:[name:%s] does not exist!", $name));
+	}
+
+	public function getRoutes(){
+
+		$properties = [];
+
+		foreach($this->route_patterns as $pattern=>$route){
+
+			$properties[] = array(
+
+				"pattern"=>$pattern,
+				"method"=>$route->getMethod(),
+				"permission"=>$route->getName()
+			);
+		}
+
+		return $properties;
 	}
 
 	public function withToken(string $token){
@@ -85,6 +87,13 @@ class RouteCollection{
 		return $this;
 	}
 
+	public function withMethod(string $method){
+
+		$this->http_method = $method;
+
+		return $this;
+	}
+
 	public function getMatches(){
 
 		$properties = [];
@@ -103,7 +112,7 @@ class RouteCollection{
 		return $properties;
 	}
 
-	public function getRoute($method, $uri){
+	private function resetFilter(){
 
 		$routes = $this->route_patterns;
 
@@ -112,6 +121,32 @@ class RouteCollection{
 			$routes = $this->route_matches;
 			$this->route_matches = [];
 		}
+
+		return $routes;
+	}
+
+	public function hasRoute(string $uri){
+
+		$routes = $this->resetFilter();
+
+		$parser = new UrlParser(array_keys($routes));
+
+		$pattern = $parser->whichPattern($uri);
+
+		$route = null;
+		if(!is_null($pattern))
+			$route = $routes[$pattern];
+
+		if(!is_null($route))
+			if($route->getMethod() == $this->http_method)
+				return true;
+
+		return false;
+	}
+
+	public function getRoute(string $uri){
+
+		$routes = $this->resetFilter();
 
 		$parser = new UrlParser(array_keys($routes));
 
@@ -123,8 +158,8 @@ class RouteCollection{
 
 			$http_method = $route->getMethod();
 			if($http_method != "ANY")
-				if($http_method != $method)
-					throw new MethodNotAllowedException();
+				if($http_method != $this->http_method)
+					throw new HttpException405();
 
 			$params = $parser->getParams();
 			if(!empty($params))

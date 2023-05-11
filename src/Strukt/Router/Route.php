@@ -67,17 +67,6 @@ class Route{
 	}
 
 	/**
-	* Partial token matcher
-	*/
-	/**public function isMatch(string $like){
-
-		return !empty(array_filter($this->tokens, function($v) use($like){
-
-			return preg_match("/^".$like."/", $v);
-		}));
-	}*/
-
-	/**
 	* Merge request params
 	* 
 	* Example: /user/{id:int}/group/{gid:int} will merge params [id, gid]
@@ -120,4 +109,15 @@ class Route{
 		
 		return $this->event->exec();
 	}
+
+	/**
+	* Partial token matcher
+	*/
+	/**public function isMatch(string $like){
+
+		return !empty(array_filter($this->tokens, function($v) use($like){
+
+			return preg_match("/^".$like."/", $v);
+		}));
+	}*/
 }

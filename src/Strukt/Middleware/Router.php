@@ -41,7 +41,7 @@ class Router extends AbstractMiddleware implements MiddlewareInterface{
 
 	 	try{
 	 		
-	 		$route = $this->router->getRoute($method, $uri);
+	 		$route = $this->router->withMethod($method)->getRoute($uri);
 	 		if(is_null($route))
 	 			HttpExec::make(new NotFound)->withHeaders()->run();
 

@@ -43,7 +43,10 @@ class RouterProviderTest extends PHPUnit\Framework\TestCase{
 		foreach($routes as $item)
 			$service->apply($item["path"], $item["func"], $item["method"],"","")->exec();
 
-		$route = $this->registry->get("strukt.router")->getRoute("POST", "/hello/pitsolu");
+		$route = $this->registry->get("strukt.router")
+									->withMethod("POST")
+									->getRoute("/hello/pitsolu");
+									
 		$params = $route->getEvent()->getParams();
 
 		foreach($params as $name=>$param)
