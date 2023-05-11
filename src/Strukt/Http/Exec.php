@@ -12,8 +12,8 @@ class Exec{
 	public static function make(ResponseInterface $response){
 
 		$useJson = false;
-		if(\Strukt\Reg::exists("strukt.useJsonError"))
-			$useJson = \Strukt\Reg::get("strukt.useJsonError");
+		if(\Strukt\Reg::exists("strukt.json_err"))
+			$useJson = \Strukt\Reg::get("strukt.json_err");
 
 		return new class($response, $useJson){
 
