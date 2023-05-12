@@ -14,7 +14,8 @@ class Any extends Plain implements HttpErrorInterface{
 		403 => "Forbidden",
 		404 => "Not Found",
 		405 => "Method Not Allowed",
-		500 => "Server Error"
+		500 => "Server Error",
+		503 => "Service Unavailable"
 	);
 
 	public function __construct(string $message, int $code, array $headers = []){
