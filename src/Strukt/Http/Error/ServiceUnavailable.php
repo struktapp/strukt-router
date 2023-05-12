@@ -6,7 +6,7 @@ use Strukt\Http\Response\Plain;
 
 class ServiceUnavailable extends Any{
 
-	public function __construct(string $message="Server Unavailable!", array $headers = []){
+	public function __construct(string $message="Service Unavailable!", array $headers = []){
 
 		parent::__construct($message, 503, $headers);
 	}
