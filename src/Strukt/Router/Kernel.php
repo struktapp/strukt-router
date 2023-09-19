@@ -44,8 +44,9 @@ class Kernel{
 
 		if(!is_null($allow)){
 
-			if(!in_array($allow, $this->permissions))
-				new Raise(sprintf("Single permissions for single route only!Failed@[%s:%s]", $path, $allow));
+			if(!empty($this->permissions))
+				if(!in_array($allow, $this->permissions))
+					new Raise(sprintf("Repeated permission!Failed@[%s:%s]", $path, $allow));
 
 			$this->permissions[$name] = $allow;
 		}

@@ -17,6 +17,7 @@ $app->inject("session", function(){
 });
 $app->inject("permissions", function(){
 
+	// return ["admin_only"];
 	return [];
 });
 $app->inject("verify", function(Session $session){
@@ -35,13 +36,28 @@ $app->get("/hello/{name}", function($name, Request $request){
 
 	return sprintf("Hello %s!", $name);
 });
-
 $app->post("/login", function(Request $request){
 
 	$username = $request->get("username");
 	$password = $request->get("password");
 
-	return sprintf("Username: %s| Password: %s", $username, $password);
+	$request->getSession()->set("username", $username);
+
+	return response()->body(sprintf("User %s logged in.", $username));
 });
+$app->post("/user/current", function(Request $request){
+
+	return response()->body(sprintf("User:%s", $request->getUser()->getUsername()));
+});
+$app->post("/logout", function(Request $request){
+
+	$request->getSession()->invalidate();
+
+	return rsponse()->body("User logged out.");
+});
+$app->get("/secret", function(Request $request){
+
+	return "secret accessed!";
+},"admin_only");
 
 $app->run();

@@ -14,10 +14,12 @@ use Strukt\Http\Error\Forbidden;
 class Authorization implements MiddlewareInterface{
 
 	private $event;
+	private $permissions;
 
 	public function __construct(){
 
 		$this->event = reg("@inject.permissions");
+		$this->permissions = reg("@strukt.permissions");
 	}
 
 	public function __invoke(RequestInterface $request, 
@@ -31,8 +33,8 @@ class Authorization implements MiddlewareInterface{
 		/**
 		* Forbid if permssions disallow
 		*/
-		if(!empty($permissions))
-			if(empty(array_intersect(reg("@strukt.permissions"), $permissions)))
+		if(is_array($permissions))
+			if(empty(array_intersect($this->permissions, $permissions)))
 				return new Forbidden();
 
 		return $next($request, $response);
