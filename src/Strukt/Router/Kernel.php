@@ -2,147 +2,74 @@
 
 namespace Strukt\Router;
 
-use Strukt\Contract\AbstractCore;
-use Strukt\Contract\Http\ResponseInterface;
+// use Strukt\Cmd;
+use Strukt\Http\Response\Plain as PlainResponse;
 use Strukt\Contract\Http\RequestInterface;
-use Strukt\Http\Response\Plain as Response;
-use Strukt\Event;
-use Strukt\Ref;
 use Strukt\Raise;
+use Strukt\Event;
 
-class Kernel extends AbstractCore{
+class Kernel{
 
-	private $request;
-	private $response;
-	private $debug;
-	private $env;
-	private $middlewares;
+	protected $middlewares;
+	protected $request;
+	protected $permissions;
 
-	public function __construct(RequestInterface $request, 
-								string $env = null, 
-								bool $debug = false){
+	public function __construct(RequestInterface $request){
 
 		$this->request = $request;
-		$this->response = new Response();
+		$this->permissions = [];
 
-		$this->debug = $debug;
-		$this->env = $env;
-	}
-
-	public function inject($key, callable $val){
-
-		$this->core()->set($key, new Event($val));
-	}
-
-	public function providers(array $providers){
-
-		foreach($providers as $provider){
-
- 			$closure = Ref::create($provider)->make()->method("register")->getClosure();
-
- 			call_user_func($closure);
-		}
+		// reg()->set("@inject", []);
 	}
 
 	public function middlewares(array $middlewares){
 
-		foreach($middlewares as $middleware)
- 			$this->middlewares[] = Ref::create($middleware)->make()->getInstance();
+		$this->middlewares = $middlewares;
 	}
 
-	public function map() {
+	public function inject(string $name, callable $func){
 
-		$args = func_get_args();
-
-		$arg = current($args);
-
-		if(\Strukt\Http\Method::isAllowed($arg)){
-
-			$method = trim(strtoupper($arg));
-		}
-
-		if(isset($method)){
-
-			$path = trim(next($args));	
-		}
-		else{
-
-			$path = trim(current($args));
-			$method = "GET";
-		}
-
-		if(isset($path)){
-
-			$controller = next($args);
-			if(is_string($controller))
-				$controller = trim($controller);
-		}
-		else{
-
-			new Raise("Router path must be defined for each route!");
-		}
-
-		$name = "";
-		if(next($args)){
-
-			$name = trim(current($args));
-		}
-
-		// $tokens = [];
-		$tokens = "";
-		if(count($args) > 4)
-			$tokens = @$args[4];
-
-		// print_r($tokens);
-
-		$this->core()->get("strukt.service.router")
-							->apply($path, $controller, $method, $name, $tokens)
-							->exec();
+		reg(sprintf("@inject.%s", $name), new Event($func));		
 	}
 
-	public function make(){
+	/**
+	* @param $path uri pattern
+	* @param $func callable
+	* @param $action HTTP method
+	* @param $allow[] list of permissions
+	*/
+	public function add(string $path, callable $func, string $action="GET", string $allow = null){
 
-		return new class($this->middlewares,
-						$this->request,
-						$this->response){
+		$name = arr(["path"=>$path, "action"=>$action])->tokenize();
 
-			private $middlewares;
-			private $request;
-			private $response;
+		if(!is_null($allow)){
 
-			private $sendHeaders = false;
+			if(!in_array($allow, $this->permissions))
+				new Raise(sprintf("Single permissions for single route only!Failed@[%s:%s]", $path, $allow));
 
-			public function __construct($middlewares, $request, $response){
+			$this->permissions[$name] = $allow;
+		}
 
-				$this->middlewares = $middlewares;
-				$this->request = $request;
-				$this->response = $response;
-			}
+		event($name, $func);
+	}
 
-			public function withHeaders(){
+	public function get(string $path, callable $func, string $allow = null){
 
-				$this->sendHeaders = true;
+		$this->add(action: "GET", path:$path, func:$func, allow:$allow);
+	}
 
-				return $this;
-			}
+	public function post(string $path, callable $func, string $allow = null){
 
-			public function run():ResponseInterface{
+		$this->add(action: "POST", path:$path, func:$func, allow:$allow);
+	}
 
-				$runner = new \Strukt\Router\Runner($this->middlewares);
-				$response = $runner($this->request, $this->response);
+	public function run(){
 
-				if($this->sendHeaders)
-					$response->sendHeaders();
+		reg("@strukt.permissions", $this->permissions);
 
-				return $response;
-			}
+		$runner = new Runner($this->middlewares);
+		$response = $runner($this->request, new PlainResponse);
 
-			public function exec(){
-
-				$response = $this->run();
-				
-				exit($response->getContent());
-			}
-		};
+		exit($response->getContent());
 	}
 }

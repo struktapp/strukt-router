@@ -5,3 +5,4 @@ php_errors.log
 test.php
 ..gitignore.swp
 .phpunit.result.cache
+.bak/

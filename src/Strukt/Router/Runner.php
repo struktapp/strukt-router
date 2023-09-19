@@ -7,7 +7,9 @@ use Strukt\Contract\Http\RequestInterface;
 
 class Runner{
 
- 	/** @var callable[] */
+	/**
+	* @param $queue callable middlewares
+	*/
  	private $queue;
  
  	public function __construct(array $queue){
@@ -19,12 +21,8 @@ class Runner{
 
  		$middleware = array_shift($this->queue);
 
- 		if ($middleware) {
-
-            return $middleware($request, $response, $this);
-        }
-
-        // $response->sendHeaders();
+ 		if ($middleware)
+            return (new $middleware())($request, $response, $this);
 
         return $response;
  	}

@@ -1,34 +1,28 @@
 <?php
 
-namespace Strukt\Middleware;
+namespace Strukt\Router\Middleware;
 
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
-use Strukt\Contract\Middleware\AbstractMiddleware;
 
 /**
 * @Name(sess)
 * @Inject(session)
 */
-class Session extends AbstractMiddleware implements MiddlewareInterface{
+class Session implements MiddlewareInterface{
 
-	private $session;
+	private $event;
 
 	public function __construct(){
 
-		//
+		$this->event = reg("@inject.session");
 	}
 
 	public function __invoke(RequestInterface $request, 
 								ResponseInterface $response, callable $next){
 
-		$this->session = $this->core()->get("@inject.session")->exec();
-
-		// if(!$this->session->isStarted())
-			// $this->session->start();
-
-		$request->setSession($this->session);
+		$request->setSession($this->event->exec());
 
 		return $next($request, $response);
 	}

@@ -6,19 +6,18 @@ use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\UserInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
-use Strukt\Contract\Middleware\AbstractMiddleware;
 
 /**
 * @Name(auth)
 * @Inject(verify)
 */
-class Authentication extends AbstractMiddleware implements MiddlewareInterface{
+class Authentication implements MiddlewareInterface{
 
 	private $event;
 
 	public function __construct(){
 
-		$this->event = $this->core()->get("@inject.verify");
+		$this->event = reg("@inject.verify");
 	}
 
 	public function __invoke(RequestInterface $request, 

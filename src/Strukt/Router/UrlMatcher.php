@@ -7,7 +7,7 @@ namespace Strukt\Router;
  *
  * @author Moderator <pitsolu@gmail.com>
  */
-class UrlParser{
+class UrlMatcher{
 
 	/**
 	* Url patterns
