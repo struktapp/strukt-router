@@ -1,15 +1,16 @@
 <?php
 
 use Strukt\Http\Request;
+use Strukt\Http\Session\Native as Session;
 
 require "vendor/autoload.php";
 
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
 $app->middlewares([
 
-	Strukt\Router\Middleware\Authorization::class,
 	Strukt\Router\Middleware\Session::class,
-	Strukt\Router\Middleware\Router::class,
+	Strukt\Router\Middleware\Authentication::class,
+	Strukt\Router\Middleware\Authorization::class,
 ]);
 $app->inject("session", function(){
 
@@ -31,7 +32,6 @@ $app->get("/", function(){
 
 	return "Hello World!";
 });
-
 $app->get("/hello/{name}", function($name, Request $request){
 
 	return sprintf("Hello %s!", $name);
@@ -53,7 +53,7 @@ $app->post("/logout", function(Request $request){
 
 	$request->getSession()->invalidate();
 
-	return rsponse()->body("User logged out.");
+	return response()->body("User logged out.");
 });
 $app->get("/secret", function(Request $request){
 

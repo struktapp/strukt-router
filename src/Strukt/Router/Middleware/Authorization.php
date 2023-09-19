@@ -18,24 +18,11 @@ class Authorization implements MiddlewareInterface{
 
 	public function __construct(){
 
-		$this->event = reg("@inject.permissions");
-		$this->permissions = reg("@strukt.permissions");
+		env("acl", true);
 	}
 
 	public function __invoke(RequestInterface $request, 
 								ResponseInterface $response, callable $next){
-
-		$permissions = $this->event->exec();
-
-		if(!is_array($permissions))
-			throw new \Exception("Middleware\Authorization an array returned!");
-
-		/**
-		* Forbid if permssions disallow
-		*/
-		if(is_array($permissions))
-			if(empty(array_intersect($this->permissions, $permissions)))
-				return new Forbidden();
 
 		return $next($request, $response);
 	}
