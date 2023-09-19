@@ -20,11 +20,13 @@ class Kernel{
 	protected $middlewares;
 	protected $request;
 	protected $permissions;
+	protected $configs;
 
 	public function __construct(RequestInterface $request){
 
 		$this->request = $request;
 		$this->permissions = [];
+		$this->configs = [];
 
 		env("acl", false);
 	}
@@ -43,32 +45,41 @@ class Kernel{
 	* @param $path uri pattern
 	* @param $func callable
 	* @param $action HTTP method
-	* @param $allow permission
+	* @param $config permission|token
 	*/
-	public function add(string $path, callable $func, string $action="GET", string $allow = null){
+	public function add(string $path, callable $func, string $action="GET", string $config = null){
 
 		$name = arr(["path"=>$path, "action"=>$action])->tokenize();
+		$this->permissions[$name] = [];
 
-		if(!is_null($allow)){
+		$allows = [];
+		if(!is_null($config)){
 
-			if(!empty($this->permissions))
-				if(!in_array($allow, $this->permissions))
-					new Raise(sprintf("Repeated permission!Failed@[%s:%s]", $path, $allow));
+			if(str($config)->contains("allows:")){
 
-			$this->permissions[$name] = $allow;
+				$allows = token($config)->get("allows");
+				if(!is_string($allows))
+					$allows = [$allows];
+			}
+
+			if(empty($allows))
+				$allows[] = $config;
+
+			$this->permissions[$name] = array_merge($this->permissions[$name], $allows);
+			$this->configs[$name] = $config;
 		}
 
 		event($name, $func);
 	}
 
-	public function get(string $path, callable $func, string $allow = null){
+	public function get(string $path, callable $func, string $config = null){
 
-		$this->add(action: "GET", path:$path, func:$func, allow:$allow);
+		$this->add(action: "GET", path:$path, func:$func, config:$config);
 	}
 
-	public function post(string $path, callable $func, string $allow = null){
+	public function post(string $path, callable $func, string $config = null){
 
-		$this->add(action: "POST", path:$path, func:$func, allow:$allow);
+		$this->add(action: "POST", path:$path, func:$func, config:$config);
 	}
 
 	public function run(){
@@ -104,9 +115,9 @@ class Kernel{
 
 					$permissions = reg("@inject.permissions")->exec();
 
-					$permission = $this->permissions[$name];
-					if(!empty($permission))
-						if(!in_array($permission, $permissions))
+					$allows = $this->permissions[$name];
+					if(!empty($allows))
+						if(empty(array_intersect($allows, $permissions)))
 							$response = new Unauthorized;
 				}
 
