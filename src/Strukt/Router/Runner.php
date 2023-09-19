@@ -8,7 +8,7 @@ use Strukt\Contract\Http\RequestInterface;
 class Runner{
 
 	/**
-	* @param $queue callable middlewares
+	* @param $queue[] callable middlewares
 	*/
  	private $queue;
  

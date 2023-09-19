@@ -43,7 +43,7 @@ class Kernel{
 	* @param $path uri pattern
 	* @param $func callable
 	* @param $action HTTP method
-	* @param $allow[] list of permissions
+	* @param $allow permission
 	*/
 	public function add(string $path, callable $func, string $action="GET", string $allow = null){
 
