@@ -16,7 +16,7 @@ if(!function_exists("matcher")){
 
 			public function __construct(){
 
-				$patterns = arr(Cmd::ls())->each(function($k, $v){
+				$patterns = arr(Cmd::ls("^type:route"))->each(function($k, $v){
 
 					return token($v)->get("path");
 				});
