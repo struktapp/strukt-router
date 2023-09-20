@@ -4,6 +4,7 @@ use Strukt\Cmd;
 use Strukt\Router\UrlMatcher;
 use Strukt\Http\Response\Json as JsonResponse;
 use Strukt\Http\Response\Plain as PlainResponse;
+use Strukt\Http\Response\Redirect as RedirectResponse;
 
 if(!function_exists("matcher")){
 
@@ -55,6 +56,8 @@ if(!function_exists("response")){
 			public function headers(array $headers){
 
 				$this->headers = array_merge($this->headers, $headers);
+
+				return $this;
 			}
 
 			public function json(array $content){
@@ -65,6 +68,11 @@ if(!function_exists("response")){
 			public function body(string $content){
 
 				return new PlainResponse($content, $this->code, $this->headers);
+			}
+
+			public function redirect(string $content){
+
+				return new RedirectResponse($content, 302, $this->headers);	
 			}
 		};
 	}

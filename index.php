@@ -31,6 +31,7 @@ $app->inject("verify", function(Session $session){
 $app->get("/", function(){
 
 	return "Hello World!";
+	// return response()->redirect("/hello/world");
 });
 $app->get("/hello/{name}", function($name, Request $request){
 

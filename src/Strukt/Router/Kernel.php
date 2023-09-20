@@ -50,6 +50,7 @@ class Kernel{
 	public function add(string $path, callable $func, string $action="GET", string $config = null){
 
 		$name = arr(["path"=>$path, "action"=>$action])->tokenize();
+		$name = sprintf("type:route|%s", $name);
 		$this->permissions[$name] = [];
 
 		$allows = [];
@@ -98,8 +99,11 @@ class Kernel{
 
 		if(!$response instanceof HttpErrorInterface){
 
+			reg("route.current", $match);
+
 			$method = $this->request->getMethod();
 			$name = arr(["path"=>$match, "action"=>$method])->tokenize();
+			$name = sprintf("type:route|%s", $name);
 
 			$event = event($name);
 			if(is_null($event))
