@@ -4,8 +4,7 @@ namespace Strukt\Router\Middleware;
 
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
-use Strukt\Contract\Middleware\MiddlewareInterface;
-use Strukt\Http\Error\Forbidden;
+use Strukt\Contract\MiddlewareInterface;
 
 /**
 * @Name(authz)

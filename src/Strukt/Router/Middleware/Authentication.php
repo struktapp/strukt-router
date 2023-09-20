@@ -5,7 +5,7 @@ namespace Strukt\Router\Middleware;
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\UserInterface;
-use Strukt\Contract\Middleware\MiddlewareInterface;
+use Strukt\Contract\MiddlewareInterface;
 
 /**
 * @Name(auth)
