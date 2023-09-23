@@ -6,12 +6,6 @@ use Strukt\Http\Session\Native as Session;
 require "vendor/autoload.php";
 
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
-$app->middlewares([
-
-	Strukt\Router\Middleware\Session::class,
-	Strukt\Router\Middleware\Authentication::class,
-	Strukt\Router\Middleware\Authorization::class,
-]);
 $app->inject("session", function(){
 
 	return new Strukt\Http\Session\Native;
@@ -28,6 +22,12 @@ $app->inject("verify", function(Session $session){
 
 	return $user;
 });
+$app->middlewares([
+
+	Strukt\Router\Middleware\Session::class,
+	Strukt\Router\Middleware\Authentication::class,
+	Strukt\Router\Middleware\Authorization::class,
+]);
 $app->get("/", function(){
 
 	return "Hello World!";

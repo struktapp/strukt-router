@@ -22,7 +22,7 @@ class Runner{
  		$middleware = array_shift($this->queue);
 
  		if ($middleware)
-            return (new $middleware())($request, $response, $this);
+            return $middleware($request, $response, $this);
 
         return $response;
  	}

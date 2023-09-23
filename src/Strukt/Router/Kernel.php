@@ -31,9 +31,20 @@ class Kernel{
 		env("acl", false);
 	}
 
+	public function providers(array $providers){
+
+		foreach($providers as $provider){
+
+ 			$closure = \Strukt\Ref::create($provider)->make()->method("register")->getClosure();
+
+ 			call_user_func($closure);
+		}
+	}
+
 	public function middlewares(array $middlewares){
 
-		$this->middlewares = $middlewares;
+		foreach($middlewares as $middleware)
+ 			$this->middlewares[] = \Strukt\Ref::create($middleware)->make()->getInstance();
 	}
 
 	public function inject(string $name, callable $func){
@@ -100,6 +111,7 @@ class Kernel{
 		if(!$response instanceof HttpErrorInterface){
 
 			reg("route.current", $match);
+			reg("route.configs", $this->configs);
 
 			$method = $this->request->getMethod();
 			$name = arr(["path"=>$match, "action"=>$method])->tokenize();
