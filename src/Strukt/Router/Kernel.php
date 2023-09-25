@@ -70,7 +70,7 @@ class Kernel{
 			if(str($config)->contains("allows:")){
 
 				$allows = token($config)->get("allows");
-				if(!is_string($allows))
+				if(is_string($allows))
 					$allows = [$allows];
 			}
 
