@@ -78,7 +78,7 @@ class Kernel{
 				if(!preg_match("/\w+:\w+/", $config))
 					$allows[] = $config;
 
-			$config = str(trim($config))
+			$config = str(trim($config));
 			if(empty($allows))//if still empty
 				if($config->equals("strukt:auth"))
 					$allows[] = "strukt:auth";
