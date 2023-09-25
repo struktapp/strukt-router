@@ -8,7 +8,7 @@ class Auth{
 
 	public function __construct(string $username, string $token = null){
 
-		$session = reg("@inject.session")->exec();
+		$session = event("@inject.session")->exec();
 
 		$session->set("username", $username);
 
