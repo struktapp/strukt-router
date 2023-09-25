@@ -98,7 +98,7 @@ class Kernel{
 
 		reg("@strukt.permissions", $this->permissions);
 		if(!empty($this->config))
-			reg("route.permission.configs", $this->configs);
+			reg("route.configs", $this->configs);
 
 		$response = new PlainResponse;
 		$uri = $this->request->getRequestUri();
