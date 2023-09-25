@@ -31,10 +31,10 @@ class Authorization implements MiddlewareInterface{
 		$name = sprintf("type:route|%s", $name);
 
 		$this->permissions = reg("@strukt.permissions");
+		$permissions_event = event("@inject.permissions");
 
-		if(reg("@inject")->exists("permissions")){
+		if(!is_null($permissions_event)){
 
-			$permissions_event = reg("@inject.permissions");
 			$params = $permissions_event->getParams();
 			if(arr($params)->has(SessionInterface::class))
 				$permissions_event = $permissions_event->apply($request->getSession());

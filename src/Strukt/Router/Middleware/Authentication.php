@@ -17,7 +17,7 @@ class Authentication implements MiddlewareInterface{
 
 	public function __construct(){
 
-		$this->event = reg("@inject.verify");
+		$this->event = event("@inject.verify");
 	}
 
 	public function __invoke(RequestInterface $request, 

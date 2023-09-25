@@ -16,7 +16,7 @@ class Session implements MiddlewareInterface{
 
 	public function __construct(){
 
-		$this->event = reg("@inject.session");
+		$this->event = event("@inject.session");
 	}
 
 	public function __invoke(RequestInterface $request, 

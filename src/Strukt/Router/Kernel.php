@@ -49,7 +49,7 @@ class Kernel{
 
 	public function inject(string $name, callable $func){
 
-		reg(sprintf("@inject.%s", $name), new Event($func));		
+		event(sprintf("@inject.%s", $name), $func);		
 	}
 
 	/**
@@ -97,6 +97,8 @@ class Kernel{
 	public function run(){
 
 		reg("@strukt.permissions", $this->permissions);
+		if(!empty($this->config))
+			reg("route.permission.configs", $this->configs);
 
 		$response = new PlainResponse;
 		$uri = $this->request->getRequestUri();
@@ -111,7 +113,6 @@ class Kernel{
 		if(!$response instanceof HttpErrorInterface){
 
 			reg("route.current", $match);
-			reg("route.configs", $this->configs);
 
 			$method = $this->request->getMethod();
 			$name = arr(["path"=>$match, "action"=>$method])->tokenize();
