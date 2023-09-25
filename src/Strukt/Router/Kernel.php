@@ -74,8 +74,14 @@ class Kernel{
 					$allows = [$allows];
 			}
 
-			if(empty($allows))
-				$allows[] = $config;
+			if(empty($allows))//if empty
+				if(!preg_match("/\w+:\w+/", $config))
+					$allows[] = $config;
+
+			$config = str(trim($config))
+			if(empty($allows))//if still empty
+				if($config->equals("strukt:auth"))
+					$allows[] = "strukt:auth";
 
 			$this->permissions[$name] = array_merge($this->permissions[$name], $allows);
 			$this->configs[$name] = $config;
