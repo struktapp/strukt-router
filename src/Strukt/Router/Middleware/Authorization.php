@@ -6,6 +6,7 @@ use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Http\Error\Unauthorized;
+use Strukt\Contract\Http\SessionInterface;
 
 /**
 * @Name(authz)
@@ -35,9 +36,9 @@ class Authorization implements MiddlewareInterface{
 
 			$permissions_event = reg("@inject.permissions");
 			$params = $permissions_event->getParams();
-			if(arr($params)->has(Strukt\Contract\Http\SessionInterface::class))
+			if(arr($params)->has(SessionInterface::class))
 				$permissions_event = $permissions_event->apply($request->getSession());
-			
+
 			$permissions = $permissions_event->exec();
 
 			$allows = $this->permissions->get($name);
