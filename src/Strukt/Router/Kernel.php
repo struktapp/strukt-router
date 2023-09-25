@@ -97,7 +97,7 @@ class Kernel{
 	public function run(){
 
 		reg("@strukt.permissions", $this->permissions);
-		if(!empty($this->config))
+		if(!empty($this->configs))
 			reg("route.configs", $this->configs);
 
 		$response = new PlainResponse;
