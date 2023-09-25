@@ -67,24 +67,24 @@ class Kernel{
 		$allows = [];
 		if(!is_null($config)){
 
-			if(str($config)->contains("allows:")){
+			$config = str(trim($config));
+			if($config->contains("allows:")){
 
-				$allows = token($config)->get("allows");
+				$allows = token($config->yield())->get("allows");
 				if(is_string($allows))
 					$allows = [$allows];
 			}
 
 			if(empty($allows))//if empty
-				if(!preg_match("/\w+:\w+/", $config))
-					$allows[] = $config;
+				if(!preg_match("/\w+:\w+/", $config->yield()))
+					$allows[] = $config->yield();
 
-			$config = str(trim($config));
 			if(empty($allows))//if still empty
 				if($config->equals("strukt:auth"))
-					$allows[] = "strukt:auth";
+					$allows[] = $config->yield();
 
 			$this->permissions[$name] = array_merge($this->permissions[$name], $allows);
-			$this->configs[$name] = $config;
+			$this->configs[$name] = $config->yield();
 		}
 
 		event($name, $func);
