@@ -127,16 +127,6 @@ class Kernel{
 				$response = $runner($this->request, $response);
 				$headers = $response->headers->all();
 
-				if(env("acl") && reg("@inject")->exists("permissions")){
-
-					$permissions = reg("@inject.permissions")->exec();
-
-					$allows = $this->permissions[$name];
-					if(!empty($allows))
-						if(empty(array_intersect($allows, $permissions)))
-							$response = new Unauthorized;
-				}
-
 				if(!$response instanceof HttpErrorInterface){
 
 					$params = $matcher->params();

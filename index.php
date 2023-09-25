@@ -12,8 +12,8 @@ $app->inject("session", function(){
 });
 $app->inject("permissions", function(){
 
-	// return ["admin_only"];
-	return [];
+	return ["admin_only"];
+	// return [];
 });
 $app->inject("verify", function(Session $session){
 
