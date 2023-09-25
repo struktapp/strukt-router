@@ -33,7 +33,12 @@ class Authorization implements MiddlewareInterface{
 
 		if(reg("@inject")->exists("permissions")){
 
-			$permissions = reg("@inject.permissions")->exec();
+			$permissions_event = reg("@inject.permissions");
+			$params = $permissions_event->getParams();
+			if(arr($params)->has(Strukt\Contract\Http\SessionInterface::class))
+				$permissions_event = $permissions_event->apply($request->getSession());
+			
+			$permissions = $permissions_event->exec();
 
 			$allows = $this->permissions->get($name);
 			if(!empty($allows))
