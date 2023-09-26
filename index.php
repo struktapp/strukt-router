@@ -2,6 +2,7 @@
 
 use Strukt\Http\Request;
 use Strukt\Http\Session\Native as Session;
+use Strukt\Contract\Http\SessionInterface;
 
 require "vendor/autoload.php";
 
@@ -10,10 +11,15 @@ $app->inject("session", function(){
 
 	return new Strukt\Http\Session\Native;
 });
-$app->inject("permissions", function(){
+$app->inject("permissions", function(SessionInterface $session){
 
-	// return ["admin_only"];
-	return [];
+	$permissions = []; 
+
+	// $permissions[] = "admin_only";
+	if($session->has("username"))
+		$permissions[] = "strukt:auth"; 
+	
+	return $permissions;
 });
 $app->inject("verify", function(Session $session){
 
@@ -33,6 +39,11 @@ $app->get("/", function(){
 	return "Hello World!";
 	// return response()->redirect("/hello/world");
 });
+$app->get("/user", function(){
+
+	return "Some User!";
+	// return response()->redirect("/hello/world");
+},"strukt:auth");
 $app->get("/hello/{name}", function($name, Request $request){
 
 	return sprintf("Hello %s!", $name);
