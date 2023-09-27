@@ -100,11 +100,18 @@ class Kernel{
 		$this->add(action: "POST", path:$path, func:$func, config:$config);
 	}
 
-	public function run(){
+	public function init(){
 
 		reg("@strukt.permissions", $this->permissions);
 		if(!empty($this->configs))
 			reg("route.configs", $this->configs);
+
+		return $this;
+	}
+
+	public function run(){
+
+		$this->init();
 
 		$response = new PlainResponse;
 		$uri = $this->request->getRequestUri();
