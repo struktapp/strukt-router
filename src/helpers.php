@@ -67,12 +67,15 @@ if(!function_exists("response")){
 
 			public function body(string $content){
 
+				if(empty($content))
+					$content = "Nothing was returned!";
+
 				return new PlainResponse($content, $this->code, $this->headers);
 			}
 
-			public function redirect(string $content){
+			public function redirect(string $url){
 
-				return new RedirectResponse($content, 302, $this->headers);	
+				return new RedirectResponse($url, 302, $this->headers);	
 			}
 		};
 	}
