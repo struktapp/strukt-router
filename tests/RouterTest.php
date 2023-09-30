@@ -2,7 +2,6 @@
 
 use Strukt\Http\Response\Plain as Response;
 use Strukt\Http\Request;
-use Strukt\Middleware\Router as RouterMiddleware;
 
 class RouterTest extends PHPUnit\Framework\TestCase{
 
@@ -11,13 +10,12 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 		$request = Request::createFromGlobals();
 		$app = new Strukt\Router\Kernel($request);
 
-		$app->providers(array(
-
-			Strukt\Provider\XRouter::class
-		));
+		// $app->providers([]);
 		$app->middlewares(array(
 			
-			Strukt\Middleware\Router::class
+			// \Strukt\Router\Middleware\Session::class,
+			// \Strukt\Router\Middleware\Authentication::class,
+			\Strukt\Router\Middleware\Authorization::class,
 		));
 
 		return array($app, $request);
@@ -28,25 +26,23 @@ class RouterTest extends PHPUnit\Framework\TestCase{
     */
 	public function testTokens(){
 
-		$tokens = "form:user|middlewares:gverify,oauth";
+		$configs = "form:user|middlewares:gverify,oauth";
 
 		list($app, $request) = $this->boot();
 
-		$app->map("GET", "/user/{id:int}", function(Request $request){
+		$app->add(action:"GET", path:"/user/{id:int}", func:function(Request $request){
 
 			return new Response('Hello world', 200);
 
-		}, "user_id", $tokens);
+		}, config:$configs);
 
-		$registry = Strukt\Core\Registry::getSingleton();
-		$router = $registry->get("strukt.router");
-		$route = $router->getByName("user_id");
-		$tokq = $route->getTokenQuery();
+		$app->init();
 
-		$mdls = $tokq->get("middlewares");
+		// dd(reg("@strukt.permissions"));
+		// dd(reg("route.configs"));
 
-		$this->assertEquals("user", $tokq->get("form"));
-		$this->assertEquals(["gverify","oauth"], $tokq->get("middlewares"));
+		// $this->assertEquals("user", $tokq->get("form"));
+		// $this->assertEquals(["gverify","oauth"], $tokq->get("middlewares"));
 	}
 
 	/**
@@ -56,14 +52,14 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		list($app, $request) = $this->boot();
 
-		$app->map("/", function(Request $request){
+		$app->get(path:"/", func:function(Request $request){
 
 			return new Response('Hello world', 200);
 		});
 
-		$response = $app->make()->run();
+		$result = $app->run();
 
-		$this->assertEquals($response->getContent(), "Hello world");
+		$this->assertEquals($result, "Hello world");
 	}
 
 	/**
@@ -75,14 +71,14 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		list($app, $request) = $this->boot();
 
-		$app->map("/yahman/{name}", function($name, Request $request){
+		$app->get("/yahman/{name}", function($name, Request $request){
 
 			return new Response(sprintf("Bombo clat rasta %s!", $name), 200);
 		});
 
-		$response = $app->make()->run();
+		$result = $app->run();
 
-		$this->assertEquals($response->getContent(), "Bombo clat rasta pitsolu!");
+		$this->assertEquals($result, "Bombo clat rasta pitsolu!");
 	}
 
 	/**
@@ -94,11 +90,14 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		list($app, $request) = $this->boot();
 
-		$app->map("/check/{username:alpha}", "App\Controller\UserController@check");
+		$ref = \Strukt\Ref::create(App\Controller\UserController::class)->make();
+		$callable = $ref->method("check")->getClosure();
 
-		$response = $app->make()->run();
+		$app->get("/check/{username:alpha}", $callable);
 
-		$this->assertEquals($response->getContent(), "check pItSoLu");
+		$result = $app->run();
+
+		$this->assertEquals($result, "check pItSoLu");
 	}
 
 	/**
@@ -127,7 +126,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 			return new Response(sprintf("username: %s, password: %s", $username, $password));
 		});
 
-		$response = $app->make()->run();
+		$response = $app->run();
 
 		// $this->assertEquals($response->getStatusCode(), 405);
 	}

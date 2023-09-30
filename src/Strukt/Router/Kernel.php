@@ -176,6 +176,6 @@ class Kernel{
 			}
 		}
 
-		exit($response->getContent());
+		return $response->getContent();
 	}
 }
