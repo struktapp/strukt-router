@@ -17,7 +17,7 @@ Create `composer.json` script with contents below then run `composer update`
 {
     "require":{
 
-        "strukt/router":"v1.1.2-alpha"
+        "strukt/router":"v1.1.3-alpha"
     },
     "minimum-stability":"dev"
 }
@@ -29,7 +29,7 @@ Your `index.php` file.
 require "vendor/autoload.php";
 
 use Strukt\Http\Request;
-use Strukt\Http\Response\Plain as Response;
+// use Strukt\Http\Response\Plain as Response;
 
 $app = new Strukt\Router\QuickStart();
 
@@ -39,7 +39,7 @@ $app->get("/", function(Request $request){
     return "Hello World!";
 });
 
-$app->run();
+exit($app->run());
 ```
 
 ## Advanced Router (The Nitty Gritty)
@@ -47,49 +47,49 @@ $app->run();
 ### Permissions
 
 ```php
-$app->inject("@inject.permissions", function(){
+$app->inject("permissions", function(){
 
     return array(
 
-        "permissions" => array(
-
-            //"show_secrets"
-        )
+        // "show_secrets"
     );
 });
 
 $app->providers(array(
 
-    Strukt\Provider\XRouter::class
+    //App\Provider\ExampleProvider::class
 ));
 
 $app->middlewares(array(
 
-    Strukt\Middleware\Authorization::class,
-    Strukt\Middleware\Router::class
+    Strukt\Router\Middleware\Session::class,
+    Strukt\Router\Middleware\Authentication::class,
+    Strukt\Router\Middleware\Authorization::class,
 ));
 
-$app->map("GET", "/user/secrets", function(){
+$app->get("/user/secrets", function(){
 
     return "Shh!";
 
 },"show_secrets");
+
+exit($app->run());
 ```
 
 ### Authentication
 
 ```php
-$app->inject("@inject.permissions", function(){
+$app->inject("permissions", function(){
 
     return [];
 });
 
-$app->inject("@inject.session", function(){
+$app->inject("session", function(){
 
     return new Strukt\Http\Session\Native;
 });
 
-$app->inject("@inject.verify", function(Strukt\Http\Session\Native $session){
+$app->inject("verify", function(Strukt\Http\Session\Native $session){
 
     $user = new Strukt\User();
     $user->setUsername($session->get("username"));
@@ -99,18 +99,17 @@ $app->inject("@inject.verify", function(Strukt\Http\Session\Native $session){
 
 $app->providers(array(
 
-    Strukt\Provider\XRouter::class
+    //App\Provider\ExampleProvider::class
 ));
 
 $app->middlewares(array(
 
-    Strukt\Middleware\Session::class,
-    Strukt\Middleware\Authentication::class,
-    Strukt\Middleware\Authorization::class,
-    Strukt\Middleware\Router::class
+    Strukt\Router\Middleware\Session::class,
+    Strukt\Router\Middleware\Authentication::class,
+    Strukt\Router\Middleware\Authorization::class,
 ));
 
-$app->map("POST", "/login", function(Strukt\Http\Request $request){
+$app->post("/login", function(Strukt\Http\Request $request){
 
     $username = $request->get("username");
     $password = $request->get("password");
@@ -120,36 +119,22 @@ $app->map("POST", "/login", function(Strukt\Http\Request $request){
     return new Strukt\Http\Response\Plain(sprintf("User %s logged in.", $username));
 });
 
-$app->map("/current/user", function(Strukt\Http\Request $request){
+$app->get("/current/user", function(Strukt\Http\Request $request){
 
     return $request->getSession()->get("username");
 });
 
-$app->map("/logout", function(Strukt\Http\Request $request){
+$app->get("/logout", function(Strukt\Http\Request $request){
 
     $request->getSession()->invalidate();
 
     return new Strukt\Http\Response\Plain("User logged out.");
 });
+
+exit($app->run());
 ```
 
 ### Environment
-
-Setting your environment in your `index.php` file.
-
-```php
-Strukt\Env::set("root_dir", getcwd());
-Strukt\Env::set("rel_static_dir", "/public/static");
-Strukt\Env::set("is_dev", true);
-```
-
-### Exception Handler
-
-You can add exception handler middleware (as the first middleware)
-
-```php
-Strukt\Middleware\ExceptionHandler::class
-```
 
 After installation run  `composer exec static` to get `public\` directory.
 
@@ -168,12 +153,6 @@ After installation run  `composer exec static` to get `public\` directory.
             └── script.js
 ```
 
-### Mapping Classes
-
-```php
-$app->map("POST","/login", "App\Controller\UserController@login");
-
-```
 ### Apache
 
 `.htaccess` file:
@@ -192,7 +171,7 @@ RewriteRule . index.php [L]
 under a router easily! Download the adminer.php file and place in root folder.
 
 ```php
-$app->map("ANY", "/dba", function(Request $request){
+$app->any("/dba", function(Request $request){
 
     include "./adminer-x.x.x.php";
 

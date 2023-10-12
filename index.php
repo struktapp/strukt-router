@@ -72,4 +72,4 @@ $app->get("/secret", function(Request $request){
 	return "secret accessed!";
 },"admin_only");
 
-$app->run();
+exit($app->run());
