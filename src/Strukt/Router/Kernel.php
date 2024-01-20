@@ -28,7 +28,7 @@ class Kernel{
 		$this->permissions = [];
 		$this->configs = [];
 
-		env("acl", false);
+		// env("acl", false);
 	}
 
 	public function providers(array $providers){

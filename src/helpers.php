@@ -73,7 +73,7 @@ if(!function_exists("response")){
 				return new PlainResponse($content, $this->code, $this->headers);
 			}
 
-			public function redirect(string $url){
+			public function goto(string $url){
 
 				return new RedirectResponse($url, 302, $this->headers);	
 			}

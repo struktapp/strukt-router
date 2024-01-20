@@ -41,7 +41,7 @@ class Authorization implements MiddlewareInterface{
 
 			$permissions = $permissions_event->exec();
 
-			$allows = $this->permissions->get($name);
+			$allows = $this->permissions[$name];
 			if(!empty($allows))
 				if(empty(array_intersect($allows, $permissions)))
 					return new Unauthorized;

@@ -108,7 +108,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
      */
 	public function testRouteMethod(){
 
-		$this->markTestSkipped("Troubled test!");
+		// $this->markTestSkipped("Troubled test!");
 
 		$_SERVER["REQUEST_URI"] = "/user/login";
 		$_SERVER["REQUEST_METHOD"] = "GET";
@@ -118,7 +118,7 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 		$request->query->set("username", "pitsolu");
 		$request->query->set("password", "p@55w0rd");
 
-		$app->map("POST", "/user/login", function(Request $request){
+		$app->add(action:"POST", path:"/user/login", func:function(Request $request){
 
 			$username = $request->query->get("username");
 			$password = $request->query->get("password");
@@ -128,6 +128,6 @@ class RouterTest extends PHPUnit\Framework\TestCase{
 
 		$response = $app->run();
 
-		// $this->assertEquals($response->getStatusCode(), 405);
+		$this->assertEquals($response, "Method Not Allowed!");
 	}
 }
