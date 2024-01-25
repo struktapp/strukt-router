@@ -6,7 +6,9 @@ use Strukt\Http\Response\Json as JsonResponse;
 use Strukt\Http\Response\Plain as PlainResponse;
 use Strukt\Http\Response\Redirect as RedirectResponse;
 
-if(!function_exists("matcher")){
+helper("router");
+
+if(helper_add("matcher")){
 
 	function matcher(){
 
@@ -38,7 +40,7 @@ if(!function_exists("matcher")){
 }
 
 
-if(!function_exists("response")){
+if(helper_add("response")){
 
 	function response($code = 200, array $headers = []){
 
