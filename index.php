@@ -6,6 +6,9 @@ use Strukt\Contract\Http\SessionInterface;
 
 require "vendor/autoload.php";
 
+env("json_validation_err", true);
+env("res_send_headers", true);
+
 $app = new Strukt\Router\Kernel(Request::createFromGlobals());
 $app->inject("session", function(){
 
@@ -79,7 +82,7 @@ $app->post("/user/current", function(Request $request){
 	if(!empty($username))
 		return response()->body(sprintf("User:%s", $username));
 
-	return response()->body("No user!");
+	return response(403)->body("No user!");
 });
 
 $app->post("/logout", function(Request $request){

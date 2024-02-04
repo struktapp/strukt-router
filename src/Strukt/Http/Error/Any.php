@@ -23,6 +23,15 @@ class Any extends Plain implements HttpErrorInterface{
 		if(!self::isCode($code))
 			$code = 500;
 
+		if(\Strukt\Env::has("json_validation_err")){
+
+			if(env("json_validation_err")){
+
+				$headers["Content-Type"] = "application/json";
+				$message = json(["success"=>false, "data"=>[], "message"=>$message])->encode();
+			}
+		}
+
 		parent::__construct($message, $code, $headers);
 	}
 

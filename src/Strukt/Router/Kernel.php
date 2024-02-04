@@ -27,8 +27,6 @@ class Kernel{
 		$this->request = $request;
 		$this->permissions = [];
 		$this->configs = [];
-
-		// env("acl", false);
 	}
 
 	public function providers(array $providers){
@@ -168,13 +166,17 @@ class Kernel{
 					$response = $event->exec();
 
 					if(is_string($response))
-				 		$response = new PlainResponse($response, 200, $headers);
+				 		$response = new PlainResponse($response, $response->getStatusCode(), $headers);
 
 				 	if(is_array($response))
-				 		$response = new JsonResponse($response, 200, $headers);
+				 		$response = new JsonResponse($response, $response->getStatusCode(), $headers);
 				}
 			}
 		}
+
+		if(\Strukt\Env::has("res_send_headers"))
+			if(env("res_send_headers"))
+				$response->sendHeaders();
 
 		return $response->getContent();
 	}
