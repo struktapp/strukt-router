@@ -72,7 +72,7 @@ $app->post("/login", function(Request $request){
 		}
 	}
 
-	return response()->body("Unable to log in!");
+	return response(401)->body("Unable to log in!");
 });
 
 $app->post("/user/current", function(Request $request){

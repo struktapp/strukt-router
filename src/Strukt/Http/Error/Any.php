@@ -18,7 +18,7 @@ class Any extends Plain implements HttpErrorInterface{
 		503 => "Service Unavailable"
 	);
 
-	public function __construct(string $message, int $code, array $headers = []){
+	public function __construct(string|array $message, int $code, array $headers = []){
 
 		if(!self::isCode($code))
 			$code = 500;
@@ -28,7 +28,16 @@ class Any extends Plain implements HttpErrorInterface{
 			if(env("json_validation_err")){
 
 				$headers["Content-Type"] = "application/json";
-				$message = json(["success"=>false, "data"=>[], "message"=>$message])->encode();
+
+				$tmp = $message;
+				$message = ["success"=>false, "data"=>[]];
+				if(is_array($tmp))
+					$message = array_merge($message, $tmp);
+
+				if(is_string($tmp))
+					$message["message"] = $tmp;
+					
+				$message = json($message)->encode();
 			}
 		}
 

@@ -7,8 +7,9 @@ use Strukt\Router\Kernel as Router;
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\SessionInterface;
 use Strukt\Http\Request;
+use Strukt\Router\Contract\AbstractKernel;
 
-class QuickStart{
+class QuickStart extends AbstractKernel{
 
 	protected $router;
 
@@ -58,41 +59,6 @@ class QuickStart{
 
 		$this->router->providers($providers);
 		$this->router->middlewares($middlewares);
-	}
-
-	public function get(string $path, callable $func, string $config = null){
-
-		$this->router->add(action: "GET", path:$path, func:$func, config:$config);
-	}
-
-	public function post(string $path, callable $func, string $config = null){
-
-		$this->router->add(action: "POST", path:$path, func:$func, config:$config);
-	}
-
-	public function delete(string $path, callable $func, string $config = null){
-
-		$this->router->add(action: "DELETE", path:$path, func:$func, config:$config);
-	}
-
-	public function patch(string $path, callable $func, string $config = null){
-
-		$this->router->add(action: "PATCH", path:$path, func:$func, config:$config);
-	}
-
-	public function put(string $path, callable $func, string $config = null){
-
-		$this->router->add(action: "PUT", path:$path, func:$func, config:$config);
-	}
-
-	public function any(string $path, callable $func, string $config = null){
-
-		$this->router->add(action: "ANY", path:$path, func:$func, config:$config);
-	}
-
-	public function options(string $path, callable $func, string $config = null){
-
-		$this->router->add(action: "OPTIONS", path:$path, func:$func, config:$config);
 	}
 
 	public function getRouter(){

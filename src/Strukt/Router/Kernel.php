@@ -14,8 +14,9 @@ use Strukt\Http\Error\NotFound;
 use Strukt\Http\Error\Unauthorized;
 use Strukt\Raise;
 use Strukt\Event;
+use Strukt\Router\Contract\AbstractKernel;
 
-class Kernel{
+class Kernel extends AbstractKernel{
 
 	protected $middlewares;
 	protected $request;
@@ -88,16 +89,6 @@ class Kernel{
 		event($name, $func);
 	}
 
-	public function get(string $path, callable $func, string $config = null){
-
-		$this->add(action: "GET", path:$path, func:$func, config:$config);
-	}
-
-	public function post(string $path, callable $func, string $config = null){
-
-		$this->add(action: "POST", path:$path, func:$func, config:$config);
-	}
-
 	public function init(){
 
 		reg("@strukt.permissions", $this->permissions);
@@ -165,11 +156,13 @@ class Kernel{
 
 					$response = $event->exec();
 
+					$code = 200;
+
 					if(is_string($response))
-				 		$response = new PlainResponse($response, $response->getStatusCode(), $headers);
+				 		$response = new PlainResponse($response, $code, $headers);
 
 				 	if(is_array($response))
-				 		$response = new JsonResponse($response, $response->getStatusCode(), $headers);
+				 		$response = new JsonResponse($response, $code, $headers);
 				}
 			}
 		}
