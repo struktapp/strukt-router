@@ -3,11 +3,12 @@
 namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
+use Strukt\Contract\AbstractAnyError;
 
-class MethodNotAllowed extends Any{
+class MethodNotAllowed extends AbstractAnyError{
 
-	public function __construct(string $message="Method Not Allowed!", array $headers = []){
+	public function __construct(string|array $message="Method Not Allowed!", array $headers = []){
 
-		parent::__construct($message, 405, $headers);
+		parent::__construct($message, $headers);
 	}
 }

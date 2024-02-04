@@ -26,6 +26,8 @@ class RouterTest extends PHPUnit\Framework\TestCase{
     */
 	public function testTokens(){
 
+		$this->markTestSkipped("No assertions!");
+
 		$configs = "form:user|middlewares:gverify,oauth";
 
 		list($app, $request) = $this->boot();

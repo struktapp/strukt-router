@@ -14,7 +14,7 @@ use Strukt\Http\Error\NotFound;
 use Strukt\Http\Error\Unauthorized;
 use Strukt\Raise;
 use Strukt\Event;
-use Strukt\Router\Contract\AbstractKernel;
+use Strukt\Contract\AbstractKernel;
 
 class Kernel extends AbstractKernel{
 

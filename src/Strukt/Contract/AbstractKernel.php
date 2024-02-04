@@ -1,8 +1,8 @@
 <?php
 
-namespace Strukt\Router\Contract;
+namespace Strukt\Contract;
 
-class AbstractKernel{
+abstract class AbstractKernel{
 
 	protected function whichRouter(){
 

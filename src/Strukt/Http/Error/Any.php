@@ -3,19 +3,18 @@
 namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
-use Strukt\Contract\Http\Error\HttpErrorInterface;
 
-class Any extends Plain implements HttpErrorInterface{
+class Any extends Plain{
 
-	private static $codes = array(
+	protected static $codes = array(
 
-		400 => "Bad Request",
-		401 => "Unauthorized",
-		403 => "Forbidden",
-		404 => "Not Found",
-		405 => "Method Not Allowed",
-		500 => "Server Error",
-		503 => "Service Unavailable"
+		\Strukt\Http\Error\BadRequest::class => 400,
+		\Strukt\Http\Error\Unauthorized::class => 401,
+		\Strukt\Http\Error\Forbidden::class => 403,
+		\Strukt\Http\Error\NotFound::class => 404,
+		\Strukt\Http\Error\MethodNotAllowed::class => 405,
+		\Strukt\Http\Error\ServerError::class => 500,
+		\Strukt\Http\Error\ServiceUnavailable::class => 503
 	);
 
 	public function __construct(string|array $message, int $code, array $headers = []){
@@ -46,6 +45,6 @@ class Any extends Plain implements HttpErrorInterface{
 
 	public static function isCode($code):bool{
 
-		return array_key_exists($code, static::$codes);
+		return in_array($code, static::$codes);
 	}
 }

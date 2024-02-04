@@ -3,11 +3,12 @@
 namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
+use Strukt\Contract\AbstractAnyError;
 
-class ServerError extends Any{
+class ServerError extends AbstractAnyError{
 
-	public function __construct(string $message="Server Error!", array $headers = []){
+	public function __construct(string|array $message="Server Error!", array $headers = []){
 
-		parent::__construct($message, 500, $headers);
+		parent::__construct($message, $headers);
 	}
 }

@@ -3,11 +3,12 @@
 namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
+use Strukt\Contract\AbstractAnyError;
 
-class Forbidden extends Any{
+class Forbidden extends AbstractAnyError{
 
-	public function __construct(string $message="Forbidden Resource!", array $headers = []){
+	public function __construct(string|array $message="Forbidden Resource!", array $headers = []){
 
-		parent::__construct($message, 403, $headers);
+		parent::__construct($message, $headers);
 	}
 }

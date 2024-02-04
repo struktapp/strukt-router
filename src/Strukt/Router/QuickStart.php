@@ -7,7 +7,7 @@ use Strukt\Router\Kernel as Router;
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\SessionInterface;
 use Strukt\Http\Request;
-use Strukt\Router\Contract\AbstractKernel;
+use Strukt\Contract\AbstractKernel;
 
 class QuickStart extends AbstractKernel{
 
