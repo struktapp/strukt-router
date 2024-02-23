@@ -5,6 +5,8 @@ use Strukt\Router\UrlMatcher;
 use Strukt\Http\Response\Json as JsonResponse;
 use Strukt\Http\Response\Plain as PlainResponse;
 use Strukt\Http\Response\Redirect as RedirectResponse;
+use Strukt\Http\Response\File as FileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 helper("router");
 
@@ -79,6 +81,14 @@ if(helper_add("response")){
 
 				return new RedirectResponse($url, 302, $this->headers);	
 			}
+
+			public function file(string $path, string $filename){
+
+				$download = new FileResponse($path, $this->code, $this->headers);
+				$download->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
+
+				return $download;
+			}	
 		};
 	}
 }

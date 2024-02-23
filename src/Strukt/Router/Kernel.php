@@ -6,6 +6,7 @@ use Strukt\Http\Response\Plain as PlainResponse;
 use Strukt\Http\Response\Json as JsonResponse;
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Http\DownloadInterface;
 use Strukt\Contract\Http\Error\HttpErrorInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Router\UrlMatcher;
@@ -112,6 +113,7 @@ class Kernel extends AbstractKernel{
 		if(is_null($match))
 			$response = new NotFound;
 
+		$is_download = false;
 		if(!$response instanceof HttpErrorInterface){
 
 			reg("route.current", $match);
@@ -155,14 +157,17 @@ class Kernel extends AbstractKernel{
 						$event = $event->applyArgs($params);
 
 					$response = $event->exec();
-
+					$is_download = $response instanceof DownloadInterface;
 					$code = 200;
 
-					if(is_string($response))
-				 		$response = new PlainResponse($response, $code, $headers);
+					if(!$is_download){
 
-				 	if(is_array($response))
-				 		$response = new JsonResponse($response, $code, $headers);
+						if(is_string($response))
+					 		$response = new PlainResponse($response, $code, $headers);
+
+					 	if(is_array($response))
+					 		$response = new JsonResponse($response, $code, $headers);
+					}
 				}
 			}
 		}
@@ -171,6 +176,9 @@ class Kernel extends AbstractKernel{
 			if(env("res_send_headers"))
 				$response->sendHeaders();
 
-		return $response->getContent();
+		if(!$is_download)
+			return $response->getContent();
+
+		return $response->sendContent();
 	}
 }

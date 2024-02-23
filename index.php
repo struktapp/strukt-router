@@ -98,4 +98,14 @@ $app->get("/secret", function(Request $request){
 
 },"admin_only");
 
+$app->get("/test", function(Request $request){
+
+	return response()->body("<a href='/download' download>Download</a>");
+});
+
+$app->get("/download", function(Request $request){
+
+	return response()->file(fs("fixtures")->path("gold.pdf"), "myfile.pdf");
+});
+
 exit($app->run());
