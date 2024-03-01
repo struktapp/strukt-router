@@ -10,7 +10,8 @@ class ArrayCache extends AbstractSession{
 
 	public function __construct(){
 
-		static::$bag = [];
+		if(empty(static::$bag))
+			static::$bag = [];
 	}
 
 	public function get(/*string*/ $name, $default = null){
