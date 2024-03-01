@@ -6,21 +6,21 @@ use Strukt\Contract\Http\SessionInterface;
 
 class ArrayCache extends AbstractSession{
 
-	private $bag;
+	private static $bag;
 
 	public function __construct(){
 
-		$this->bag = [];
+		static::$bag = [];
 	}
 
 	public function get(/*string*/ $name, $default = null){
 
-		return $this->bag[$name];
+		return static::$bag[$name];
 	}
 
 	public function set(/*string*/ $name, $value){
 
-		$this->bag[$name] = $value;
+		static::$bag[$name] = $value;
 	}
 
 	public function start():bool{
@@ -30,6 +30,6 @@ class ArrayCache extends AbstractSession{
 
 	public function has($name):bool{
 
-		return array_key_exists($name, $this->bag);
+		return array_key_exists($name, static::$bag);
 	}
 }
