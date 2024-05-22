@@ -6,7 +6,7 @@ use Strukt\Contract\Http\SessionInterface;
 
 class ArrayCache extends AbstractSession{
 
-	private static $bag;
+	public static $bag;
 
 	public function __construct(){
 
