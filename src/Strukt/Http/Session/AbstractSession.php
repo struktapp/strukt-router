@@ -101,7 +101,7 @@ abstract class AbstractSession implements SessionInterface, SymfonySessionInterf
      *
      * @return bool
      */
-    public function invalidate(?int $lifetime = null){
+    public function invalidate(?int $lifetime = null):bool{
 
     	return true;
     }
