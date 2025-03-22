@@ -9,11 +9,18 @@ use Strukt\Contract\Http\SessionInterface;
 use Strukt\Http\Request;
 use Strukt\Contract\AbstractKernel;
 
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
 class QuickStart extends AbstractKernel{
 
 	protected $router;
 
-	public function __construct(array $options = [], RequestInterface $request = null){
+	/**
+	 * @param array $options
+	 * @param \Strukt\Contract\Http\RequestInterface $request
+	 */
+	public function __construct(array $options = [], ?RequestInterface $request = null){
 
 		if(is_null($request))
 			$request = Request::createFromGlobals();
@@ -61,12 +68,18 @@ class QuickStart extends AbstractKernel{
 		$this->router->middlewares($middlewares);
 	}
 
+	/**
+	 * @return \Strukt\Router\Kernel
+	 */
 	public function getRouter(){
 
 		return $this->router;
 	}
 
-	public function run(){
+	/**
+	 * @return string
+	 */
+	public function run():string{
 
 		return $this->router->run();
 	}

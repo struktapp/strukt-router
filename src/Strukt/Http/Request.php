@@ -7,17 +7,28 @@ use Strukt\Contract\Http\RequestInterface;
 
 use Symfony\Component\HttpFoundation\Request as NativeRequest; 
 
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
 class Request extends NativeRequest implements RequestInterface{
 
 	private $user = null;
 
-	public function setUser(UserInterface $user = null){
+	/**
+	 * @param \Strukt\Contract\UserInterface $user 
+	 * 
+	 * @return void
+	 */
+	public function setUser(?UserInterface $user = null):void{
 
 		$this->user = $user;
 	}
 
-	public function getUser(){
+	/**
+	 * @return string
+	 */
+	public function getUser():?string{
 
-		return $this->user;
+		return $this->user->getUsername();
 	}
 }

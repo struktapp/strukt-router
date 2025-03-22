@@ -2,45 +2,100 @@
 
 namespace Strukt\Contract;
 
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
 abstract class AbstractKernel{
 
-	protected function whichRouter(){
+	/**
+	 * @return \Strukt\Contract\AbstractKernel
+	 */
+	protected function router():self{
 
 		return $this->router ?? $this;
 	}
 
-	public function get(string $path, callable $func, string $config = null){
+	/**
+	 * @param string $path
+	 * @param callable $func
+	 * @param string $config
+	 * 
+	 * @return void
+	 */
+	public function get(string $path, callable $func, ?string $config = null):void{
 
-		$this->whichRouter()->add(action: "GET", path:$path, func:$func, config:$config);
+		$this->router()->add(...array($path, $func, "GET", $config));
 	}
 
-	public function post(string $path, callable $func, string $config = null){
+	/**
+	 * @param string $path
+	 * @param callable $func
+	 * @param string $config
+	 * 
+	 * @return void
+	 */
+	public function post(string $path, callable $func, ?string $config = null):void{
 
-		$this->whichRouter()->add(action: "POST", path:$path, func:$func, config:$config);
+		$this->router()->add(...array($path, $func, "POST", $config));
 	}
 
-	public function delete(string $path, callable $func, string $config = null){
+	/**
+	 * @param string $path
+	 * @param callable $func
+	 * @param string $config
+	 * 
+	 * @return void
+	 */
+	public function delete(string $path, callable $func, ?string $config = null):void{
 
-		$this->whichRouter()->add(action: "DELETE", path:$path, func:$func, config:$config);
+		$this->router()->add(...array($path, $func, "DELETE", $config));
 	}
 
-	public function patch(string $path, callable $func, string $config = null){
+	/**
+	 * @param string $path
+	 * @param callable $func
+	 * @param string $config
+	 * 
+	 * @return void
+	 */
+	public function patch(string $path, callable $func, ?string $config = null):void{
 
-		$this->whichRouter()->add(action: "PATCH", path:$path, func:$func, config:$config);
+		$this->router()->add(...array($path, $func, "PATCH", $config));
 	}
 
-	public function put(string $path, callable $func, string $config = null){
+	/**
+	 * @param string $path
+	 * @param callable $func
+	 * @param string $config
+	 * 
+	 * @return void
+	 */
+	public function put(string $path, callable $func, ?string $config = null):void{
 
-		$this->whichRouter()->add(action: "PUT", path:$path, func:$func, config:$config);
+		$this->router()->add(...array($path, $func, "PUT", $config));
 	}
 
-	public function any(string $path, callable $func, string $config = null){
+	/**
+	 * @param string $path
+	 * @param callable $func
+	 * @param string $config
+	 * 
+	 * @return void
+	 */
+	public function any(string $path, callable $func, ?string $config = null):void{
 
-		$this->whichRouter()->add(action: "ANY", path:$path, func:$func, config:$config);
+		$this->router()->add(...array($path, $func, "ANY", $config));
 	}
 
-	public function options(string $path, callable $func, string $config = null){
+	/**
+	 * @param string $path
+	 * @param callable $func
+	 * @param string $config
+	 * 
+	 * @return void
+	 */
+	public function options(string $path, callable $func, ?string $config = null):void{
 
-		$this->whichRouter()->add(action: "OPTIONS", path:$path, func:$func, config:$config);
+		$this->router()->add(...array($path, $func, "OPTIONS", $config));
 	}
 }

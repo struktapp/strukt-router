@@ -17,6 +17,9 @@ use Strukt\Raise;
 use Strukt\Event;
 use Strukt\Contract\AbstractKernel;
 
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
 class Kernel extends AbstractKernel{
 
 	protected $middlewares;
@@ -24,6 +27,9 @@ class Kernel extends AbstractKernel{
 	protected $permissions;
 	protected $configs;
 
+	/**
+	 * @param \Strukt\Contract\Http\RequestInterface request
+	 */
 	public function __construct(RequestInterface $request){
 
 		$this->request = $request;
@@ -31,7 +37,10 @@ class Kernel extends AbstractKernel{
 		$this->configs = [];
 	}
 
-	public function providers(array $providers){
+	/**
+	 * @param array providers
+	 */
+	public function providers(array $providers):void{
 
 		foreach($providers as $provider){
 
@@ -41,24 +50,31 @@ class Kernel extends AbstractKernel{
 		}
 	}
 
-	public function middlewares(array $middlewares){
+	/**
+	 * @param array middlewares
+	 */
+	public function middlewares(array $middlewares):void{
 
 		foreach($middlewares as $middleware)
  			$this->middlewares[] = \Strukt\Ref::create($middleware)->make()->getInstance();
 	}
 
+	/**
+	 * @param string $name
+	 * @param callable $func
+	 */
 	public function inject(string $name, callable $func){
 
 		event(sprintf("@inject.%s", $name), $func);		
 	}
 
 	/**
-	* @param $path uri pattern
-	* @param $func callable
-	* @param $action HTTP method
-	* @param $config permission|token
+	* @param string $path - uri pattern
+	* @param callable $func
+	* @param string $action HTTP method
+	* @param string $config permission|token
 	*/
-	public function add(string $path, callable $func, string $action="GET", string $config = null){
+	public function add(string $path, callable $func, string $action="GET", ?string $config = null){
 
 		$name = arr(["path"=>$path, "action"=>$action])->tokenize();
 		$name = sprintf("type:route|%s", $name);
@@ -90,7 +106,10 @@ class Kernel extends AbstractKernel{
 		event($name, $func);
 	}
 
-	public function init(){
+	/**
+	 * @return static
+	 */
+	public function init():static{
 
 		reg("@strukt.permissions", $this->permissions);
 		if(!empty($this->configs))
@@ -99,7 +118,10 @@ class Kernel extends AbstractKernel{
 		return $this;
 	}
 
-	public function run(){
+	/**
+	 * @return string
+	 */
+	public function run():string{
 
 		$this->init();
 

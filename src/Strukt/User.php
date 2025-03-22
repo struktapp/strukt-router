@@ -4,45 +4,77 @@ namespace Strukt;
 
 use Strukt\Contract\UserInterface;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 class User implements UserInterface{
 
 	private $username;
 	private $password;
 	private $token;
 
-	public function __construct($username = null, $password = null, $token = null){
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @param string $token
+	 */
+	public function __construct(string $username = null, string $password = null, string $token = null){
 
 		$this->username = $username;
 		$this->password = $password;
 		$this->token = $token;
 	}
 
-	public function setUsername($username){
+	/**
+	 * @param string|null $username
+	 * 
+	 * @return void
+	 */
+	public function setUsername(?string $username):void{
 
 		$this->username = $username;
 	}
 
-	public function getUsername(){
+	/**
+	 * @return string
+	 */
+	public function getUsername():string{
 
 		return $this->username;
 	}
 
-	public function setPassword($password){
+	/**
+	 * @param string $password
+	 * 
+	 * @return void
+	 */
+	public function setPassword(string $password):void{
 
 		$this->password = $password;
 	}
 
-	public function getPassword(){
+	/**
+	 * @return string
+	 */
+	public function getPassword():string{
 
 		return $this->password;
 	}
 
-	public function setToken($token){
+	/**
+	 * @param string $token
+	 * 
+	 * @return void
+	 */
+	public function setToken(string $token):void{
 
 		$this->token = $token;
 	}
 
-	public function getToken(){
+	/**
+	 * @return string
+	 */
+	public function getToken():string{
 
 		return $this->token;
 	}

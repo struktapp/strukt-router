@@ -7,6 +7,7 @@ use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Http\Error\Unauthorized;
 use Strukt\Contract\Http\SessionInterface;
+use Strukt\Http\Response\Plain as PlainResponse;
 
 /**
 * @Name(authz)
@@ -22,8 +23,15 @@ class Authorization implements MiddlewareInterface{
 		$this->permissions = [];
 	}
 
+	/**
+	 * @param Strukt\Contract\Http\RequestInterface $request
+	 * @param Strukt\Contract\Http\ResponseInterface $response
+	 * @param callable $next
+	 * 
+	 * @return \Strukt\Http\Response\Plain
+	 */
 	public function __invoke(RequestInterface $request, 
-								ResponseInterface $response, callable $next){
+								ResponseInterface $response, callable $next):PlainResponse{
 
 		$match = reg("route.current");
 		$method = $request->getMethod();

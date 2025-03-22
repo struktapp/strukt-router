@@ -4,6 +4,9 @@ namespace Strukt\Http\Error;
 
 use Strukt\Http\Response\Plain;
 
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
 class Any extends Plain{
 
 	protected static $codes = array(
@@ -17,6 +20,11 @@ class Any extends Plain{
 		\Strukt\Http\Error\ServiceUnavailable::class => 503
 	);
 
+	/**
+	 * @param string|array $message
+	 * @param int $code
+	 * @param array $headers
+	 */
 	public function __construct(string|array $message, int $code, array $headers = []){
 
 		if(!self::isCode($code))
@@ -43,7 +51,12 @@ class Any extends Plain{
 		parent::__construct($message, $code, $headers);
 	}
 
-	public static function isCode($code):bool{
+	/**
+	 * @param mixed $code
+	 * 
+	 * @return bool
+	 */
+	public static function isCode(mixed $code):bool{
 
 		return in_array($code, static::$codes);
 	}

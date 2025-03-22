@@ -7,44 +7,83 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface as SymfonySessionI
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
 
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
 abstract class AbstractSession implements SessionInterface, SymfonySessionInterface{
 
-	public function get(/*string*/ $name, $default = null){
+    /**
+     * @param string $name
+     * @param mixed $default
+     * 
+     * @return mixed
+     */
+	public function get(string $name, mixed $default = null):mixed{
 
 		return $this->bag[$name];
 	}
 
-	public function set(/*string*/ $name, $value){
+    /**
+     * @param string $name
+     * @param mixed $value
+     * 
+     * @return void
+     */
+	public function set(string $name, mixed $value):void{
 
 		$this->bag[$name] = $value;
 	}
 
+    /**
+     * @return bool
+     */
 	public function start():bool{
 
 		return true;
 	}
 
-	public function has($name):bool{
+    /**
+     * @param string $name
+     * 
+     * @return bool
+     */
+	public function has(string $name):bool{
 
 		return array_key_exists($name, $this->bag);
 	}
 
+    /**
+     * @return string
+     */
     public function getId():string{
 
     	return "";
     }
 
-    public function setId(/*string*/ $id):void{
+    /**
+     * @param $id
+     * 
+     * @return void
+     */
+    public function setId(string $id):void{
 
     	//
     }
 
-    public function getName(){
+    /**
+     * @return string
+     */
+    public function getName():string{
 
     	return "";
     }
 
-    public function setName(/*string*/ $name):void{
+    /**
+     * @param string $name
+     * 
+     * @return void
+     */
+    public function setName(string $name):void{
 
     	//
     }
@@ -62,7 +101,7 @@ abstract class AbstractSession implements SessionInterface, SymfonySessionInterf
      *
      * @return bool
      */
-    public function invalidate($lifetime = null){
+    public function invalidate(?int $lifetime = null){
 
     	return true;
     }
@@ -70,27 +109,48 @@ abstract class AbstractSession implements SessionInterface, SymfonySessionInterf
     /**
      * Migrates the current session to a new session id while maintaining all
      * session attributes.
+     * 
+     * @param bool $destroy
+     * @param int|null $lifetime
+     * 
+     * @return bool
      */
-    public function migrate($destroy = false, $lifetime = null):bool{
+    public function migrate(bool $destroy = false, ?int $lifetime = null): bool{;
 
     	return true;
     }
 
+    /**
+     * @return void
+     */
     public function save():void{
 
     	//
     }
 
+    /**
+     * @return array
+     */
     public function all():array{
 
     	return $this->bag;
     }
 
+    /**
+     * @param array $attributes
+     * 
+     * @return void
+     */
     public function replace(array $attributes):void{
 
     	//
     }
 
+    /**
+     * @param $name
+     * 
+     * @return mixed
+     */
     public function remove(/*string*/ $name):mixed{
 
     	$val = $this->bag[$name];
@@ -100,26 +160,45 @@ abstract class AbstractSession implements SessionInterface, SymfonySessionInterf
 
     }
 
+    /**
+     * @return void
+     */
     public function clear():void{
 
     	//
     }
 
+    /**
+     * @return bool
+     */
     public function isStarted():bool{
 
     	return true;
     }
 
+    /**
+     * @param \Symfony\Component\HttpFoundation\Session\SessionBagInterface $bag
+     * 
+     * @return void
+     */
     public function registerBag(SessionBagInterface $bag):void{
 
     	//
     }
 
+    /**
+     * @param $name
+     * 
+     * @return \Symfony\Component\HttpFoundation\Session\SessionBagInterface
+     */
     public function getBag(/*string*/ $name):SessionBagInterface{
 
     	return null;
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Session\Storage\MetadataBag
+     */
     public function getMetadataBag():MetadataBag{
 
     	return null;

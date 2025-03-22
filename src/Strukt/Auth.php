@@ -2,11 +2,16 @@
 
 namespace Strukt;
 
-use Strukt\Http\Session;
-
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 class Auth{
 
-	public function __construct(string $username, string $token = null){
+	/**
+	 * @param string $username
+	 * @param string $token
+	 */
+	public function __construct(string $username, ?string $token = null){
 
 		$session = event("@inject.session")->exec();
 

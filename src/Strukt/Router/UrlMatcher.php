@@ -26,9 +26,9 @@ class UrlMatcher{
 	/**
      * Constructor
      *
-     * @param string $pattern url pattern
+     * @param array $patterns - url pattern
      */
-	public function __construct(Array $patterns){
+	public function __construct(array $patterns){
 
 		$this->patterns = $patterns;
 
@@ -38,11 +38,12 @@ class UrlMatcher{
 	/**
      * Match url to specific url pattern
      *
-     * @param string $url route
+     * @param string $pattern
+     * @param string $url
      *
      * @return boolean
      */
-	private function isMatch($pattern, $url){
+	private function isMatch($pattern, $url):bool{
 
 		$url = trim($url);
 		if($url == $pattern)
@@ -94,15 +95,16 @@ class UrlMatcher{
 		return (bool)preg_match(sprintf("/^%s$/", implode("\/", $regex)), trim($url, "/"));
 	}
 
-	public function whichPattern($url){
+	/**
+	 * @param string $url
+	 * 
+	 * @return string|null
+	 */
+	public function whichPattern(string $url):string|null{
 
-		foreach($this->patterns as $pattern){
-
-			if($this->isMatch($pattern, $url)){
-
+		foreach($this->patterns as $pattern)
+			if($this->isMatch($pattern, $url))
 				return $pattern;
-			}
-		}
 
 		return null;
 	}
@@ -112,7 +114,7 @@ class UrlMatcher{
      *
      * @return array
      */
-	public function getParams(){
+	public function getParams():array{
 
 		return $this->params;
 	}

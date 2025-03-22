@@ -12,7 +12,10 @@ helper("router");
 
 if(helper_add("matcher")){
 
-	function matcher(){
+	/**
+	 * @return object
+	 */
+	function matcher():object{
 
 		return new class(){
 
@@ -28,12 +31,20 @@ if(helper_add("matcher")){
 				$this->matcher = new UrlMatcher($patterns->yield());
 			}
 
-			public function which(string $route){
+			/**
+			 * @param string $route
+			 * 
+			 * @return string|null
+			 */
+			public function which(string $route):string|null{
 
 				return $this->matcher->whichPattern($route);
 			}
 
-			public function params(){
+			/**
+			 * @return array
+			 */
+			public function params():array{
 
 				return $this->matcher->getParams();
 			}
@@ -44,31 +55,56 @@ if(helper_add("matcher")){
 
 if(helper_add("response")){
 
-	function response($code = 200, array $headers = []){
+	/**
+	 * @param integer $code
+	 * @param array $headers
+	 * 
+	 * @return object
+	 */
+	function response(int $code = 200, array $headers = []):object{
 
 		return new class($code, $headers){
 
 			private $code;
 			private $headers;
 
-			public function __construct($code, array $headers = []){
+			/**
+			 * @param integer $code
+			 * @param array $headers
+			 */
+			public function __construct(int $code, array $headers = []){
 
 				$this->code = $code;
 				$this->headers = $headers;
 			}
 
-			public function headers(array $headers){
+			/**
+			 * @param array $headers
+			 * 
+			 * @return static
+			 */
+			public function headers(array $headers):static{
 
 				$this->headers = array_merge($this->headers, $headers);
 
 				return $this;
 			}
 
-			public function json(array $content){
+			/**
+			 * @param array $content
+			 * 
+			 * @return \Strukt\Http\Response\Json
+			 */
+			public function json(array $content):JsonResponse{
 
 				return new JsonResponse($content, $this->code, $this->headers);
 			}
 
+			/**
+			 * @param string $content
+			 * 
+			 * @return \Strukt\Http\Response\Plain
+			 */
 			public function body(string $content){
 
 				if(empty($content))
@@ -77,11 +113,22 @@ if(helper_add("response")){
 				return new PlainResponse($content, $this->code, $this->headers);
 			}
 
+			/**
+			 * @param string $url
+			 * 
+			 * @return \Strukt\Http\Response\Redirect
+			 */
 			public function goto(string $url){
 
 				return new RedirectResponse($url, 302, $this->headers);	
 			}
 
+			/**
+			 * @param string $path
+			 * @param string $filename
+			 * 
+			 * @return \Strukt\Http\Response\File
+			 */
 			public function file(string $path, string $filename){
 
 				$download = new FileResponse($path, $this->code, $this->headers);

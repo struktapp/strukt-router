@@ -4,7 +4,11 @@ namespace Strukt\Router;
 
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Http\RequestInterface;
+use Strukt\Http\Response\Plain;
 
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
 class Runner{
 
 	/**
@@ -12,12 +16,21 @@ class Runner{
 	*/
  	private $queue;
  
+ 	/**
+ 	 * @param array $queue
+ 	 */
  	public function __construct(array $queue){
 
  		$this->queue = $queue;
  	}
  
- 	public function __invoke(RequestInterface $request, ResponseInterface $response){
+ 	/**
+ 	 * @param \Strukt\Contract\Http\RequestInterface $request
+ 	 * @param \Strukt\Contract\Http\ResponseInterface $response
+ 	 * 
+ 	 * @return \Strukt\Http\Response\Plain
+ 	 */
+ 	public function __invoke(RequestInterface $request, ResponseInterface $response):Plain{
  		
  		$middleware = array_shift($this->queue);
 
