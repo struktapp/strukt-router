@@ -19,7 +19,7 @@ $app->inject("permissions", function(SessionInterface $session){
 
 	$permissions = []; 
 
-	// $permissions[] = "admin_only";
+	$permissions[] = "admin_only";
 	if($session->has("username"))
 		$permissions[] = "strukt:auth"; 
 	
@@ -77,7 +77,7 @@ $app->post("/login", function(Request $request){
 
 $app->post("/user/current", function(Request $request){
 
-	$username = $request->getUser()->getUsername();
+	$username = $request->getUser();
 
 	if(!empty($username))
 		return response()->body(sprintf("User:%s", $username));
