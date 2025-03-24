@@ -18,7 +18,7 @@ class User implements UserInterface{
 	 * @param string $password
 	 * @param string $token
 	 */
-	public function __construct(string $username = null, string $password = null, string $token = null){
+	public function __construct(?string $username = null, ?string $password = null, ?string $token = null){
 
 		$this->username = $username;
 		$this->password = $password;
