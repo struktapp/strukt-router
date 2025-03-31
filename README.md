@@ -7,9 +7,9 @@ Strukt Router
 [![Latest Unstable Version](https://poser.pugx.org/strukt/router/v/unstable)](https://packagist.org/packages/strukt/router)
 [![License](https://poser.pugx.org/strukt/router/license)](https://packagist.org/packages/strukt/router)
 
-# Getting Started
+## Getting Started
 
-## Quick Start 
+### Quick Start 
 
 Create `composer.json` script with contents below then run `composer update`
 
@@ -165,7 +165,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . index.php [L]
 ```
 
-# BTW, DB Tip...
+## BTW, DB Tip...
 
 [Adminer](adminer.org) is a really neat tool! It is a single file dba and can be placed 
 under a router easily! Download the adminer.php file and place in root folder.
