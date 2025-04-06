@@ -17,7 +17,7 @@ Create `composer.json` script with contents below then run `composer update`
 {
     "require":{
 
-        "strukt/router":"v1.1.3-alpha"
+        "strukt/router":"v1.1.5-alpha"
     },
     "minimum-stability":"dev"
 }
