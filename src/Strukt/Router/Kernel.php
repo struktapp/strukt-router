@@ -132,6 +132,10 @@ class Kernel extends AbstractKernel{
 
 		$matcher = matcher();
 		$match = $matcher->which($uri);
+
+		/**
+		 * Route not found
+		 */
 		if(is_null($match))
 			$response = new NotFound;
 
@@ -145,15 +149,25 @@ class Kernel extends AbstractKernel{
 			$name = sprintf("type:route|%s", $name);
 
 			$event = event($name);
+
+			/**
+			 * If matcher does not match at this point then http method is wrong
+			 */
 			if(is_null($event))
 				$response = new MethodNotAllowed;
 
+			/**
+			 * If response is still not http error
+			 */
 			if(!$response instanceof HttpErrorInterface){
 		
 				$runner = new Runner($this->middlewares);
 				$response = $runner($this->request, $response);
 				$headers = $response->headers->all();
 
+				/**
+				 * If response is still not http error
+				 */
 				if(!$response instanceof HttpErrorInterface){
 
 					$params = $matcher->params();
@@ -182,6 +196,9 @@ class Kernel extends AbstractKernel{
 					$is_download = $response instanceof DownloadInterface;
 					$code = 200;
 
+					/**
+					 * Is response downloadable
+					 */
 					if(!$is_download){
 
 						if(is_string($response))

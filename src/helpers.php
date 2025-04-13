@@ -7,17 +7,25 @@ use Strukt\Http\Response\Plain as PlainResponse;
 use Strukt\Http\Response\Redirect as RedirectResponse;
 use Strukt\Http\Response\File as FileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Strukt\Contract\MatcherInterface;
+use Strukt\Http\Response\DownloadInterface;
+use Strukt\Contract\ResponseInterface;
 
 helper("router");
 
 if(helper_add("matcher")){
 
 	/**
-	 * @return object
+	 * Example:
+	 * 	$m = matcher()
+	 * 	$m->which("/hello/pitsolu") // returns /hello/{name}
+	 * 	$m->params(); // returns ["name"=>"pitsolu"]
+	 * 
+	 * @return \Strukt\Contract\MatcherInterface
 	 */
-	function matcher():object{
+	function matcher():MatcherInterface{
 
-		return new class(){
+		return new class() implements MatcherInterface{
 
 			private $matcher;
 
@@ -59,11 +67,11 @@ if(helper_add("response")){
 	 * @param integer $code
 	 * @param array $headers
 	 * 
-	 * @return object
+	 * @return \Strukt\Http\Response\ResponseInterface
 	 */
-	function response(int $code = 200, array $headers = []):object{
+	function response(int $code = 200, array $headers = []):ResponseInterface{
 
-		return new class($code, $headers){
+		return new class($code, $headers) implements ResponseInterface{
 
 			private $code;
 			private $headers;
@@ -105,7 +113,7 @@ if(helper_add("response")){
 			 * 
 			 * @return \Strukt\Http\Response\Plain
 			 */
-			public function body(string $content){
+			public function body(string $content):PlainResponse{
 
 				if(empty($content))
 					$content = "Nothing was returned!";
@@ -118,7 +126,7 @@ if(helper_add("response")){
 			 * 
 			 * @return \Strukt\Http\Response\Redirect
 			 */
-			public function goto(string $url){
+			public function goto(string $url):RedirectResponse{
 
 				return new RedirectResponse($url, 302, $this->headers);	
 			}
@@ -127,9 +135,9 @@ if(helper_add("response")){
 			 * @param string $path
 			 * @param string $filename
 			 * 
-			 * @return \Strukt\Http\Response\File
+			 * @return \Strukt\Http\Response\{File|DownloadInterface}
 			 */
-			public function file(string $path, string $filename){
+			public function file(string $path, string $filename):DownloadInterface{
 
 				$download = new FileResponse($path, $this->code, $this->headers);
 				$download->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
