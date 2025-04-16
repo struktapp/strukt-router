@@ -108,4 +108,4 @@ $app->get("/download", function(Request $request){
 	return response()->file(fs("fixtures")->path("gold.pdf"), "myfile.pdf");
 });
 
-// exit($app->run());
+exit($app->run());
