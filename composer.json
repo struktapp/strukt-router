@@ -1,0 +1,42 @@
+{
+    "name": "strukt/router",
+    "description": "Router",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Strukt\\Router\\": "src/Strukt/Router",
+            "Strukt\\Http\\":"src/Strukt/Http",
+            "Strukt\\Contract\\":"src/Strukt/Contract"
+        },
+        "files": ["src/helpers.php"]
+    },
+    "autoload-dev": {
+        "psr-4": { 
+            "Payroll\\": "app/src/Payroll" 
+        }
+    },
+    "authors": [
+        {
+            "name": "pitsolu",
+            "email": "pitsolu@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "symfony/http-foundation": "7.3.x-dev",
+        "strukt/commons":"dev-changes"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "6.4.x-dev"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../commons",
+            "options": {
+                "symlink": false
+            }
+        }
+    ]
+}
