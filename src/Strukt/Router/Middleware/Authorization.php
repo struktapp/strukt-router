@@ -33,7 +33,15 @@ class Authorization implements MiddlewareInterface{
 	public function __invoke(RequestInterface $request, 
 								ResponseInterface $response, callable $next):PlainResponse{
 
-		//
+		$allow = config("user.allow");
+		$rconfig = reg("router.config");
+		$fn["session"] = $rconfig->get("session");
+		$fn["permissions"] = $rconfig->get("permissions");
+		$permissions = $fn["permissions"]($fn["session"]());
+
+		if(negate(empty($allow)))
+			if(empty(array_intersect($allow, $permissions)))
+				raise("Unauthorized access!", 401);
 
 		return $next($request, $response);
 	}

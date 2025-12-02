@@ -30,8 +30,8 @@ class Session implements MiddlewareInterface{
 	public function __invoke(RequestInterface $request, 
 								ResponseInterface $response, callable $next):PlainResponse{
 
-		$session = ref(reg("router.config")->get("session"))->invoke();
-		$request->setSession($session);
+		$fn["session"] = reg("router.config")->get("session");
+		$request->setSession($fn["session"]());
 
 		return $next($request, $response);
 	}

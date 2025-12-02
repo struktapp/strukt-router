@@ -31,7 +31,16 @@ class Authentication implements MiddlewareInterface{
 	public function __invoke(RequestInterface $request, 
 								ResponseInterface $response, callable $next):PlainResponse{
 
-		//
+		$rconfig = reg("router.config");
+		$fn["verify"] = $rconfig->get("verify");
+		$fn["session"] = $rconfig->get("session");
+		$user = $fn["verify"]($fn["session"]());
+
+		if(notnull($user))
+			if(negate($user instanceof UserInterface))
+				raise(sprintf("%s must implement %s!", get_class($user), UserInterface::class));
+
+		$request->setUser($user);
 
 		return $next($request, $response);
 	}

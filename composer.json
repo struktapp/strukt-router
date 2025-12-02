@@ -25,7 +25,9 @@
     "minimum-stability": "dev",
     "require": {
         "symfony/http-foundation": "7.3.x-dev",
-        "strukt/commons":"dev-changes"
+        "strukt/commons":"dev-changes",
+        "strukt/form": "dev-changes",
+        "strukt/user": "dev-changes"
     },
     "require-dev": {
         "symfony/var-dumper": "6.4.x-dev"
@@ -34,6 +36,13 @@
         {
             "type": "path",
             "url": "../commons",
+            "options": {
+                "symlink": false
+            }
+        },
+        {
+            "type": "path",
+            "url": "../user",
             "options": {
                 "symlink": false
             }

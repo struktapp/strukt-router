@@ -20,7 +20,7 @@ alias("request", Strukt\Contract\Http\RequestInterface::class);
 alias("response", Strukt\Contract\Http\ResponseInterface::class);
 alias("session", Strukt\Contract\Http\SessionInterface::class);
 alias("middleware", Strukt\Contract\MiddlewareInterface::class);
-alias("provider", Strukt\Contract\ProviderInterface::class);
+// alias("provider", Strukt\Contract\ProviderInterface::class);
 
 app("response", [
 
@@ -43,6 +43,9 @@ app("middleware", [
 	"sess"=>Strukt\Router\Middleware\Session::class
 ]);
 
+if(app("provider.validator"))
+	provider(app("provider.validator"));
+
 reg("router.config", new class([]){
 
 	private array $configs;
@@ -54,7 +57,7 @@ reg("router.config", new class([]){
 
 	public function add(string $name, mixed $config){
 
-		if(!is_null($config))
+		if(notnull($config))
 			$this->configs[$name] = $config;
 
 		return $this;
@@ -83,18 +86,19 @@ reg("router.base", new class([]){
 
 	public function get(string $route, Closure $fn){
 
-		$this->assignConfig($route);
-
-		$this->methods["GET"][] = $route;
-		$this->routes["fn"][$route] = $fn;
-		$this->routes["configs"][$route] = $this->configs;
+		$this->action("GET", $route, $fn);
 	}
 
 	public function post(string $route, Closure $fn){
 
+		$this->action("POST", $route, $fn);
+	}
+
+	public function action(string $method, string $route, Closure $fn){
+
 		$this->assignConfig($route);
 
-		$this->methods["POST"][] = $route;
+		$this->methods[$method][] = $route;
 		$this->routes["fn"][$route] = $fn;
 	}
 
@@ -127,26 +131,32 @@ reg("router.base", new class([]){
 			$pattern = $matcher->which($url);
 
 			if(is_null($pattern))
-				new Raise("", 404);
+				raise("", 404);
 
 			$this->params = $matcher->params();
 			if(!in_array($pattern, $this->methods[$method]))
-				new Raise("Method Disallowed", 405);
+				raise("Method Disallowed", 405);
 
 			$this->match = $this->routes["fn"][$pattern];
+			$configs = $this->routes["configs"][$pattern];
+			config("user", [
+
+				"allow"=>$configs["allow"],
+				"form"=>$configs["form"]
+			]);
 
 			return $this;
 		}
 		catch(\Exception $e){
 
 			if(in_array($e->getCode(), [405]))
-				new Raise($e->getMessage(), $e->getCode());
+				raise($e->getMessage(), $e->getCode());
 
-			new Raise("Not found!", 404);
+			raise("Not found!", 404);
 		}
 	}
 
-	public function getMatch(){			
+	public function getMatch():\Closure{			
 
 		return $this->match;
 	}
@@ -162,7 +172,7 @@ reg("router.base", new class([]){
 		$params = $this->getParams();
 		$expects = arr($ref->getRef()->getParameters())
 			->map(fn($k, $v)=>[$v->getName()=>$v->getType()?->getName()])
-			->level();
+			->level(noPrefix:true);
 
 		$params = arr($expects)->each(fn($k, $v)=>$params[$k]??$v);
 		if(in_array(RequestInterface::class, $expects))
@@ -171,6 +181,19 @@ reg("router.base", new class([]){
 		if(notnull($response))
 			if(in_array(ResponseInterface::class, $expects))
 				$params = $params->each(fn($k,$v)=>$v==ResponseInterface::class?$response:$v);
+
+		$form_interface = alias("form");
+		if(in_array($form_interface, $expects)){
+
+			$form = config("user.form");
+			if(notnull($form)){
+				$f = new $form($request);
+				if(negate($f->validate()["success"]))
+					raise("Form failed validation!");
+
+				$params = $params->each(fn($k,$v)=>$form_interface == $v?$f:$v);
+			}
+		}
 
 		return $ref->invoke(...$params->yield());
 	}
@@ -196,11 +219,11 @@ if(helper_add("router")){
 		$is_route = negate(arr([$form, $allow])->are()->all()->null());
 
 		if($is_setup && $is_route)
-			new Raise("Can only setup router or declare route, not both!");
+			raise("Can only setup router or declare route, not both!");
 
 		if($is_route && !is_null($form))
 			if(!class_implements($form, Strukt\Contract\FormInterface::class))
-				new Raise(sprintf("%s does not implement FormInterface!", $form));
+				raise(sprintf("%s does not implement FormInterface!", $form));
 
 		if($is_setup)
 			return reg("router.config")
@@ -208,7 +231,8 @@ if(helper_add("router")){
 				->add("session", $session)
 				->add("roles", $roles)
 				->add("permissions", $permissions)
-				->add("middlewares", $middlewares);
+				->add("middlewares", $middlewares)
+				->add("verify", $verify);
 
 		$base = reg("router.base");
 		if($is_route)

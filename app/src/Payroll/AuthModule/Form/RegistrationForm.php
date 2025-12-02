@@ -17,4 +17,10 @@ class UserForm extends Form implements FormInterface{
 	* @IsNotEmpty()
 	*/
 	public $password;
+
+	/**
+	* @EqualTo(.password)
+	* @IsNotEmpty()
+	*/
+	public $confirm_password;
 }

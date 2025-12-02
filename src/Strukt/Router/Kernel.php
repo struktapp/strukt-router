@@ -44,9 +44,28 @@ class Kernel{
 		if(!is_null(parse_url($uri, PHP_URL_QUERY)))
 			list($uri, $qs) = explode("?", $uri);
 
-		$runner = new Runner($this->middlewares);
-		$response = $runner($this->request, $response);
+		try{
 
-		return reg("router.base")->which($uri, $method)->run($this->request, $response);
+			$rbase = reg("router.base")->which($uri, $method);
+
+			$runner = new Runner($this->middlewares);
+			$response = $runner($this->request, $response);
+			$headers = $response->headers->all();
+
+			$expected = $rbase->run($this->request, $response);
+			if(is_string($expected))
+				$response = new PlainResponse($expected, 200, $headers);
+
+			if($expected instanceof ResponseInterface)
+				$response = $expected;
+
+			$response->sendHeaders();
+			return $response->getContent();
+
+		}
+		catch(\Exception $e){
+
+			return $e->getMessage();
+		}
 	}
 }
