@@ -141,8 +141,8 @@ reg("router.base", new class([]){
 			$configs = $this->routes["configs"][$pattern];
 			config("user", [
 
-				"allow"=>$configs["allow"],
-				"form"=>$configs["form"]
+				"allow"=>$configs["allow"]??null,
+				"form"=>$configs["form"]??null
 			]);
 
 			return $this;
@@ -172,7 +172,8 @@ reg("router.base", new class([]){
 		$params = $this->getParams();
 		$expects = arr($ref->getRef()->getParameters())
 			->map(fn($k, $v)=>[$v->getName()=>$v->getType()?->getName()])
-			->level(noPrefix:true);
+			->level()->noPrefix()->yield();
+			// ->level(noPrefix:true);
 
 		$params = arr($expects)->each(fn($k, $v)=>$params[$k]??$v);
 		if(in_array(RequestInterface::class, $expects))

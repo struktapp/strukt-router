@@ -14,7 +14,7 @@ use Payroll\AuthModule\Form\UserForm;
 router(globals:fn()=>Request::createFromGlobals());
 router(session:fn()=>new Strukt\Http\Session\Native);
 router(roles:fn(SessionInterface $session)=>[]);
-router(permissions:fn(SessionInterface $session)=>[]);
+router(permissions:fn(SessionInterface $session)=>["user_view"]);
 router(verify:fn(SessionInterface $session)=>new Strukt\User(email:$session->get("email")));
 router(middlewares:[
 
