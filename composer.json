@@ -1,0 +1,125 @@
+{
+    "name": "strukt/router",
+    "description": "Typed HTTP router with parameter matching, a middleware pipeline, reflection action resolution, and form validation.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2",
+        "strukt/base": "dev-main",
+        "strukt/commons": "dev-main",
+        "strukt/contract": "dev-main",
+        "strukt/form": "dev-main"
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.0",
+        "strukt/cache": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Strukt\\": "src/Strukt/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Strukt\\Router\\Fixtures\\": "tests/Fixtures/",
+            "Tests\\": "tests/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../strukt4/base",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/base": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../strukt4/cache",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/cache": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../strukt4/commons",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/commons": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../strukt4/contract",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/contract": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../strukt4/form",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/form": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../strukt4/fs",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/fs": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../../strukt4/rules",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "strukt/rules": "dev-main"
+                }
+            }
+        }
+    ],
+    "scripts": {
+        "test": "pest",
+        "test:coverage": "pest --coverage",
+        "lint": "find src bin tests examples -name '*.php' -print0 | xargs -0 -n1 php -l"
+    },
+    "bin": [
+        "bin/routes"
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "pitsolu",
+            "email": "pitsolu@gmail.com"
+        }
+    ]
+}

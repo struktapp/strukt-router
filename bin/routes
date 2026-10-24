@@ -1,0 +1,66 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Strukt\Router\Cli\RouteLister;
+
+$autoloaders = [
+    dirname(__DIR__) . '/vendor/autoload.php',
+    dirname(__DIR__, 3) . '/autoload.php',
+    (getcwd() ?: '.') . '/vendor/autoload.php',
+];
+
+foreach ($autoloaders as $autoload) {
+    if (is_file($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+if (!class_exists(RouteLister::class)) {
+    fwrite(STDERR, "strukt-routes could not load Composer's autoloader.\n");
+    exit(1);
+}
+
+$usage = <<<'USAGE'
+Usage: strukt-routes [routes-file] [--help]
+
+Lists every route registered by a routes file as an aligned table. The file
+must return the Strukt\Router\Router instance it declared its routes on and
+defaults to ./routes.php in the working directory.
+
+USAGE;
+
+$arguments = array_slice($_SERVER['argv'] ?? [], 1);
+
+if (in_array('-h', $arguments, true) || in_array('--help', $arguments, true)) {
+    fwrite(STDOUT, $usage);
+    exit(0);
+}
+
+foreach ($arguments as $argument) {
+    if (str_starts_with($argument, '-')) {
+        fwrite(STDERR, sprintf("Unknown option [%s].\n", $argument));
+        fwrite(STDERR, $usage);
+        exit(1);
+    }
+}
+
+if (count($arguments) > 1) {
+    fwrite(STDERR, "Expected at most one routes file.\n");
+    fwrite(STDERR, $usage);
+    exit(1);
+}
+
+$file = $arguments[0] ?? (getcwd() ?: '.') . '/routes.php';
+
+try {
+    $router = RouteLister::load($file);
+} catch (\Throwable $error) {
+    fwrite(STDERR, $error->getMessage() . "\n");
+    exit(1);
+}
+
+fwrite(STDOUT, (new RouteLister($router))->render());
+exit(0);

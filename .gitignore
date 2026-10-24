@@ -1,0 +1,4 @@
+/vendor/
+/.phpunit.cache/
+/composer.phar
+/routes.php
