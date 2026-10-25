@@ -5,14 +5,14 @@
     "license": "MIT",
     "require": {
         "php": ">=8.2",
-        "strukt/base": "dev-main",
-        "strukt/commons": "dev-main",
-        "strukt/contract": "dev-main",
-        "strukt/form": "dev-main"
+        "strukt/base": "v1.0.0",
+        "strukt/commons": "v1.1.0",
+        "strukt/contract": "v1.0.0",
+        "strukt/form": "v1.0.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.0",
-        "strukt/cache": "dev-main"
+        "strukt/cache": "v1.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -28,78 +28,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../strukt4/base",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/base": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/cache",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/cache": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/commons",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/commons": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/contract",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/contract": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/form",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/form": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/fs",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/fs": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../../strukt4/rules",
-            "options": {
-                "symlink": false,
-                "versions": {
-                    "strukt/rules": "dev-main"
-                }
-            }
-        }
-    ],
     "scripts": {
         "test": "pest",
         "test:coverage": "pest --coverage",
@@ -121,5 +49,6 @@
             "name": "pitsolu",
             "email": "pitsolu@gmail.com"
         }
-    ]
+    ],
+    "version": "1.0.0"
 }
